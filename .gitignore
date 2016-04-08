@@ -1,0 +1,15 @@
+*.pem
+task.*.task
+.vim_tw.history
+undo.data
+public/
+*.log
+*.sh
+*.markdown~
+*.md~
+.DS_Store
+src/scss/.sass-cache/
+
+node_modules/
+npm-debug.log
+bundle/
