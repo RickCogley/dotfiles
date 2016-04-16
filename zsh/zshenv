@@ -1,11 +1,38 @@
 #
-# Defines environment variables.
+# .zshenv Defines environment variables.
 #
 # Authors:
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
 #
+# This file is sourced by all instances of Zsh, and thus, it should be kept as
+# small as possible and should only define environment variables.
+#
+# The configuration files are read in the following order:
+# 
+# /etc/zshenv
+#~/.zshenv
+#/etc/zprofile
+#~/.zprofile
+#/etc/zshrc
+#~/.zshrc
+#~/.zpreztorc
+#/etc/zlogin
+#~/.zlogin
+#~/.zlogout
+#/etc/zlogout
 
 # Ensure that a non-login, non-interactive shell has a defined environment.
 if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
+
+export PATH="/Users/rcogley/gocode:/Users/rcogley/gocode/bin:/usr/local/sbin:/usr/local/bin:/usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/Users/rcogley/.rvm/gems/ruby-1.9.3-p362/bin:/Users/rcogley/.rvm/gems/ruby-1.9.3-p362@global/bin:/Users/rcogley/.rvm/rubies/ruby-1.9.3-p362/bin:/Users/rcogley/.rvm/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/git/bin:/usr/local/go/bin:/Users/rcogley/.rvm/bin"
+export PATH=$PATH:/usr/local/opt/go/libexec/bin
+# export MANPATH="/usr/local/man:$MANPATH"
+
+export GOPATH=/Users/rcogley/gocode
+export XML_CATALOG_FILES=/usr/local/etc/xml/catalog
+export HOMEBREW_GITHUB_API_TOKEN="$(cat ~/.homebrew_github_api_token)"
+export HOMEBREW_CASK_OPTS="--appdir=/Applications"
+
+HELPDIR=/usr/local/share/zsh/help
