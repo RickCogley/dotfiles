@@ -1,0 +1,164 @@
+#
+# macros
+#
+
+[macros.clone]
+    deps = ["git"]
+    prefix = ["git", "clone"]
+
+[macros.install]
+    deps = ["packer"]
+    prefix = ["packer", "--noconfirm", "-S"]
+
+[macros.enable]
+    prefix = ["sudo", "systemctl", "enable"]
+
+[macros.go-get]
+    deps = ["golang"]
+    prefix = ["go", "get"]
+
+
+#
+# development
+#
+
+#[tasks.dev]
+    #deps = ["golang", "python", "git", "vim", "node"]
+    #cmds = [
+        #["@install", "base-devel", "cmake", "the_silver_searcher"],
+        #["@go-get", "github.com/mitchellh/gox"],
+        #["@go-get", "github.com/FooSoft/md2vim"],
+    #]
+
+#[tasks.fish]
+#    rejects = [["which", "fish"]]
+#    cmds = [["@install", "fish"], ["chsh", "-s", "/usr/bin/fish"]]
+#    links = [[".config/fish/config.fish"]]
+#
+#[tasks.git]
+#    cmds = [["@install", "git", "git-lfs", "git-crypt"]]
+#    links = [[".gitconfig"]]
+#
+#[tasks.golang]
+#    envs = [["GOPATH", "${HM_DEST}/projects/go"]]
+#    cmds = [["mkdir", "-p", "$GOPATH"], ["@install", "go"]]
+#
+#[tasks.latex]
+#    cmds = [["@install", "texlive-most"]]
+#
+#[tasks.node]
+#    cmds = [["@install", "nodejs", "npm"]]
+#
+#[tasks.libreoffice]
+#    cmds = [["@install", "libreoffice-fresh"]]
+#
+#[tasks.packer]
+#    rejects = [["which", "packer"]]
+#    cmds = [["./bin/install_packer.sh"]]
+#
+#[tasks.python]
+#    cmds = [["@install", "python-pip", "python2-pip"]]
+#
+#[tasks.vim]
+#    deps = ["vimrc"]
+#    cmds = [["@install", "gvim"]]
+#
+#[tasks.vimrc]
+#    rejects = [["test", "-d", ".config/vim"]]
+#    cmds = [["@clone", "https://FooSoft@github.com/FooSoft/dotvim.git", ".config/vim"]]
+#    links = [
+#        [".vim", "$HM_DEST/.config/vim/.vim"],
+#        [".vimrc", "$HM_DEST/.config/vim/.vimrc"],
+#        [".eslintrc.json"],
+#    ]
+#
+#[tasks.virtualbox]
+#    cmds = [
+#        ["@install", "virtualbox", "linux-headers"],
+#        ["sudo", "gpasswd", "-a", "$USER", "vboxusers"],
+#        ["sudo", "/sbin/rcvboxdrv", "setup"],
+#        ["sudo", "ln", "-s", "/etc/modules-load.d/virtualbox.conf", "$HM_SRC/etc/modules-load.d/virtualbox.conf"],
+#    ]
+#    links = [[".config/VirtualBox/VirtualBox.xml"]]
+
+
+#
+# general
+#
+
+#[tasks.anki]
+#    cmds = [["@install", "anki"]]
+#
+#[tasks.audio]
+#    cmds = [["@install", "pulseaudio", "alsa-utils"]]
+#
+#[tasks.backup]
+#    cmds = [
+#        ["@install", "duplicity", "s3cmd"],
+#        ["gpg", "--output", ".s3cfg", "--decrypt", "$HM_SRC/.s3cfg.gpg"],
+#    ]
+#
+#[tasks.common]
+#    deps = ["common-term", "vlc", "fonts", "audio", "ibus", "xscreensaver", "xarchiver", "unzip"]
+#    cmds = [["@install", "qpdfview", "google-chrome", "gimp", "dropbox", "keepassx"]]
+#
+#[tasks.common-term]
+#    deps = ["ssh"]
+#    cmds = [["@install", "htop", "p7zip", "tmux", "traceroute", "tree", "whois", "rsync"]]
+#    links = [["bin"]]
+#
+#[tasks.fonts]
+#    cmds = [[
+#        "@install",
+#        "ttf-liberation",
+#        "ttf-ms-fonts",
+#        "otf-ipafont",
+#        "adobe-source-han-sans-jp-fonts",
+#        "adobe-source-han-sans-otc-fonts",
+#    ]]
+#
+#[tasks.ibus]
+#    cmds = [["@install", "ibus", "ibus-anthy", "ibus-qt"]]
+#
+#[tasks.network-manager]
+#    cmds = [
+#        ["@install", "networkmanager", "network-manager-applet"],
+#        ["@enable", "NetworkManager.service"],
+#    ]
+#
+#[tasks.steam]
+#    cmds = [["@install", "steam", "lib32-alsa-plugins"]]
+#
+#[tasks.ssh]
+#    cmds = [["@install", "openssh"], ["@enable", "sshd.service"]]
+#
+#[tasks.vlc]
+#    cmds = [["@install", "vlc"], ["/usr/lib/vlc/vlc-cache-gen", "-f", "/usr/lib/vlc/plugins"]]
+#
+#[tasks.xfce]
+#    deps = ["xorg", "network-manager"]
+#    cmds = [["@install", "xfce4", "xfce4-goodies", "gvfs"]]
+#
+#[tasks.xfce-desktop]
+#    deps = ["xfce", "common"]
+#    links = [
+#        [".xinitrc", ".xinitrc_xfce"],
+#        [".config/xfce4/terminal/terminalrc"],
+#        [".config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml"],
+#    ]
+#
+#[tasks.xorg]
+#    cmds = [["@install", "xorg-server", "xorg-xinit", "xf86-video-intel"]]
+#
+#[tasks.xscreensaver]
+#    cmds = [["@install", "xscreensaver"]]
+#    links = [[".xscreensaver"]]
+
+
+#
+# default
+#
+
+#[tasks.default]
+#    deps = ["xfce-desktop", "dev"]
+
