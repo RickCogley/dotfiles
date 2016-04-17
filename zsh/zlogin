@@ -21,3 +21,6 @@ if (( $+commands[fortune] )); then
     print
   fi
 fi
+
+# Preview current prompts to reset prompt 
+prompt -p
