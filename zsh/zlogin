@@ -23,4 +23,5 @@ if (( $+commands[fortune] )); then
 fi
 
 # Preview current prompts to reset prompt 
-prompt -p
+# RESULT: This does not work
+#prompt -p
