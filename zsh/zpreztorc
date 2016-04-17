@@ -23,6 +23,7 @@ zstyle ':prezto:load' zfunction 'zargs' 'zmv'
 
 # Set the Prezto modules to load (browse modules).
 # The order matters.
+# JRC: also want to try - gpg, ssh, node
 
 zstyle ':prezto:load' pmodule \
   'environment' \
@@ -33,6 +34,8 @@ zstyle ':prezto:load' pmodule \
   'spectrum' \
   'utility' \
   'completion' \
+  'tmux' \
+  'homebrew' \
   'git' \
   'archive' \
   'osx' \
@@ -101,7 +104,7 @@ zstyle ':prezto:module:editor' key-bindings 'vi'
 # Set the prompt theme to load.
 # Setting it to 'random' loads a random theme.
 # Auto set to 'off' on dumb terminals.
-zstyle ':prezto:module:prompt' theme 'sorin'
+zstyle ':prezto:module:prompt' theme 'garrett'
 
 #
 # Ruby
@@ -143,9 +146,9 @@ zstyle ':prezto:module:syntax-highlighting' highlighters \
 
 # Set syntax highlighting styles.
 zstyle ':prezto:module:syntax-highlighting' styles \
-   'builtin' 'bg=blue' \
-   'command' 'bg=blue' \
-   'function' 'bg=blue'
+   'builtin' 'bg=aqua' \
+   'command' 'bg=aqua' \
+   'function' 'bg=aqua'
 
 #
 # Terminal
