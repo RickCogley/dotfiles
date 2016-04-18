@@ -52,7 +52,7 @@ HELPDIR=/usr/local/share/zsh/help
 # autoload -U compinit && compinit
 
 # iTerm2 shell
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+# test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # AWS
 
