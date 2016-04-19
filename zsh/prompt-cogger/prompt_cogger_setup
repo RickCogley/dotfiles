@@ -194,7 +194,7 @@ function prompt_cogger_precmd {
 
   # Determine the length needed for prompt_cogger_space.
   # NOTE: Be sure not to include the ${(e)prompt_cogger_space} portion or it won't work.
-  local prompt_line1="${prompt_cogger_upper_left_corner}( ${prompt_cogger_current_dir}${git_info[remote_status]}${git_info[prompt_info]}${git_info[local_status]}${git_info[sha]} )( $(cat $HOME/.tw_get_status_line) ${ruby_info[version]}${prompt_cogger_location} )${prompt_cogger_upper_right_corner}"
+  local prompt_line1="${prompt_cogger_upper_left_corner}( ${prompt_cogger_current_dir}${git_info[remote_status]}${git_info[prompt_info]}${git_info[local_status]}${git_info[sha]} )( $(cat $HOME/.tw_get_status_line) ${prompt_cogger_location} )${prompt_cogger_upper_right_corner}"
   local zero='%([BSUbfksu]|([FB]|){*})'
   local prompt_cogger_width_line1=${#${(S%%)prompt_line1//$~zero/}}
 
@@ -208,7 +208,7 @@ function prompt_cogger_precmd {
 
   # Prompt line 1 (set above PROMPT, below).
   print
-  print -P '${prompt_cogger_altchar_enable}${prompt_cogger_color_prompt}${prompt_cogger_upper_left_corner}( ${prompt_cogger_current_dir}${git_info[remote_status]}${git_info[prompt_info]}${git_info[local_status]}${git_info[sha]} ${prompt_cogger_color_prompt})${prompt_cogger_altchar_enter}${(e)prompt_cogger_space}${prompt_cogger_altchar_leave}( $(cat $HOME/.tw_get_status_line) ${ruby_info[version]}${prompt_cogger_location}${prompt_cogger_color_prompt} )${prompt_cogger_upper_right_corner}'
+  print -P '${prompt_cogger_altchar_enable}${prompt_cogger_color_prompt}${prompt_cogger_upper_left_corner}( ${prompt_cogger_current_dir}${git_info[remote_status]}${git_info[prompt_info]}${git_info[local_status]}${git_info[sha]} ${prompt_cogger_color_prompt})${prompt_cogger_altchar_enter}${(e)prompt_cogger_space}${prompt_cogger_altchar_leave}( $(cat $HOME/.tw_get_status_line) ${prompt_cogger_location}${prompt_cogger_color_prompt} )${prompt_cogger_upper_right_corner}'
 }
 
 # Configure the prompt.
