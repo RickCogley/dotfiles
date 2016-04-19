@@ -256,7 +256,7 @@ alias twork="task rc.context=work"
 alias thome="task rc.context=home"
 alias tgoto="task rc.context=goto"
 
-# tw status one-liner
+# tw status one-liner (note that export -f does not work with zsh)
 
 tw_get_status_line () {
     echo "TW Done:$(task count end.after:today) Due:$(task count +DUE) Overdue:$(task count +OVERDUE) Next:$(task count +next)"
