@@ -1,3 +1,10 @@
+# Cogger Zsh Theme for Prezto
+
+This prompt is based on the Garrett prompt, but I did not want the ruby version
+so I edited out, and instead added taskwarrior information. 
+
+The original README is below:
+
 # Garrett Zsh Theme for Prezto
 
 > A prompt with the information you need the moment you need it.

@@ -1,9 +1,7 @@
 #!/usr/bin/env zsh
 #
-# cogger Zsh Theme for Prezto
-# Created with modified code by Chauncey cogger - @chauncey_io
-#
-# http://chauncey.io/projects/zsh-prompt-cogger/
+# cogger Zsh Theme for Prezto, based on garrett
+# Originally: http://chauncey.io/projects/zsh-prompt-garrett
 #
 # A prompt with the information you need the moment you need it.
 #
