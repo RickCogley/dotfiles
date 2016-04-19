@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Disabled</key>
+	<false/>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>PATH</key>
+		<string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:/Library/TeX/texbin:/usr/local/sbin</string>
+	</dict>
+	<key>Label</key>
+	<string>com.taskwarrior.updatestatus</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Users/rcogley/dev/dotfiles/zsh/prompt-cogger/tw-update-oneline-status.sh</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>WatchPaths</key>
+	<array>
+		<string>/Users/rcogley/dev/taskwarrior/.task</string>
+	</array>
+	<key>WorkingDirectory</key>
+	<string>/Users/rcogley</string>
+</dict>
+</plist>
