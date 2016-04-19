@@ -256,6 +256,15 @@ alias twork="task rc.context=work"
 alias thome="task rc.context=home"
 alias tgoto="task rc.context=goto"
 
+# tw status one-liner
+
+tw_get_status_line () {
+    echo "TW Done:$(task count end.after:today) Due:$(task count +DUE) Overdue:$(task count +OVERDUE) Next:$(task count +next)"
+}
+
+alias tws=tw_get_status_line
+
+# BROWSER
 open_by_browser(){ open -a $1 $2}
 alias firefox='open_by_browser firefox'
 alias chrome='open_by_browser "Google Chrome"'
