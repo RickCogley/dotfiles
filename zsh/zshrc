@@ -281,8 +281,14 @@ brew_reinstall_head_apps (){
 }
 alias brrehead=brew_reinstall_head_apps
 
+# Upgrade pip and easy_install
+pipup (){
+    pip install --upgrade pip setuptools
+    pip3 install --upgrade pip setuptools
+}
+
 # zsh (prezto voodoo is that you need to put these here in zshrc at the bottom)
 export HISTSIZE="1000000"
-export SAVEHIST="500000"
+export SAVEHIST="1000000"
 export HISTFILE=$HOME/.zsh_history
 
