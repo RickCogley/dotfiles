@@ -36,6 +36,12 @@ fi
 # BREW RECOMMENDED
 fpath=(/usr/local/share/zsh-completions $fpath)
 
+# Zsh
+# Show functions
+function lsfunc () {
+    print -l ${(ok)functions}
+}
+
 # TOO MANY OPEN FILES ERROR
 # sudo nano /etc/sysctl.conf
 #   kern.maxfiles=24576
@@ -263,6 +269,20 @@ tw_get_status_line () {
 }
 
 alias tws=tw_get_status_line
+
+tw_task_push_pull () {
+    task $1 modify due:due$2 scheduled:scheduled$2 wait:wait$2
+}
+
+alias tpp=tw_task_push_pull
+
+# tw find tasks with due before wait
+#
+tw_find_due_before_wait () {
+    task due.before:wait all
+}
+
+alias tdb4w=tw_find_due_before_wait
 
 # BROWSER
 open_by_browser(){ open -a $1 $2}
