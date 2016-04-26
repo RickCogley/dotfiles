@@ -50,7 +50,9 @@
   call dein#add('AndrewRadev/switch.vim')
   call dein#add('christoomey/vim-tmux-navigator')
   call dein#add('tmux-plugins/vim-tmux-focus-events')
-  call dein#add('vim-airline/vim-airline')
+  call dein#add('vim-airline/vim-airline') 
+  call dein#add('vim-airline/vim-airline-themes')
+  
   call dein#add('tpope/vim-surround')
   call dein#add('tomtom/tcomment_vim')
   call dein#add('mattn/emmet-vim', {'on_ft': 'html'})
@@ -516,7 +518,10 @@ nnoremap <silent> <Leader>g :Unite -direction=botright -silent -buffer-name=git 
   set hidden
   let g:airline#extensions#tabline#fnamemod = ':t'
   let g:airline#extensions#tabline#show_tab_nr = 1
+  set guifont=Pragmata\ Pro:h15
+  set encoding=utf-8
   let g:airline_powerline_fonts = 1
+  let g:Powerline_symbols='unicode'
   let g:airline_theme='oceanicnext'
   " let g:airline_theme='base16_solarized'
   cnoreabbrev <expr> x getcmdtype() == ":" && getcmdline() == 'x' ? 'Sayonara' : 'x'
