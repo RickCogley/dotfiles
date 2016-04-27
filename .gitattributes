@@ -1,9 +1,9 @@
-# Set default behaviour for text files, in case users don't have core.autocrlf set. 
+# Set default behaviour for text files, in case users don't have core.autocrlf set.
 # This handles all files not specified.
 
 * text=auto eol=lf
 
-# Explicitly declare text files we want to always be normalized and converted 
+# Explicitly declare text files we want to always be normalized and converted
 # to native line endings on checkout.
 
 *.c text
@@ -67,3 +67,5 @@
 *.EOT binary
 *.otf binary
 *.OTF binary
+*.gpg binary
+*.GPG binary
