@@ -1,5 +1,21 @@
 # dotfiles
-Rick Cogley's dotfiles, managed by [Homemaker](https://github.com/FooSoft/homemaker).
+Rick Cogley's dotfiles, in the future managed by [Homemaker](https://github.com/FooSoft/homemaker).
+Now, managed manually after ``git clone`` to ``~/dev/``: 
+
+```bash
+# In ~
+~/.vim -> dev/dotfiles/nvim
+~/.vimrc -> dev/dotfiles/nvim/init.vim
+~/.zlogin -> dev/dotfiles/zsh/zlogin
+~/.zlogout -> dev/dotfiles/zsh/zlogout
+~/.zpreztorc -> dev/dotfiles/zsh/zpreztorc
+~/.zprofile -> dev/dotfiles/zsh/zprofile
+~/.zshenv -> dev/dotfiles/zsh/zshenv
+~/.zshrc -> dev/dotfiles/zsh/zshrc
+~/.config/nvim/init.vim -> dev/dotfiles/nvim/init.vim
+~/.tmux.conf -> dev/dotfiles/tmux/tmux.conf 
+~/.config/tmux/tmux-status.conf -> dev/dotfiles/tmux/tmux-status.conf
+```
 
 ## Introduction
 
