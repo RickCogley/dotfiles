@@ -518,7 +518,7 @@ nnoremap <silent> <Leader>g :Unite -direction=botright -silent -buffer-name=git 
   set hidden
   let g:airline#extensions#tabline#fnamemod = ':t'
   let g:airline#extensions#tabline#show_tab_nr = 1
-  set guifont=Pragmata\ Pro:h15
+  set guifont=PragmataPro\ Nerd\ Font:h15
   set encoding=utf-8
   let g:airline_powerline_fonts = 1
   let g:Powerline_symbols='unicode'
