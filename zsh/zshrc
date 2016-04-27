@@ -298,6 +298,7 @@ alias lsregister='/System/Library/Frameworks/CoreServices.framework/Frameworks/L
 brew_reinstall_head_apps (){
     brew reinstall --HEAD neovim
     brew reinstall --HEAD fzf
+    brew reinstall --HEAD tmux
 }
 alias brrehead=brew_reinstall_head_apps
 
