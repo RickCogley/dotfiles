@@ -88,6 +88,7 @@
   call dein#add('troydm/asyncfinder.vim')
   call dein#add('nelstrom/vim-markdown-folding')
   call dein#add('tyru/markdown-codehl-onthefly.vim')
+  call dein#add('itspriddle/vim-marked')
   call dein#add('ryanoasis/vim-devicons')
 
   if dein#check_install()
