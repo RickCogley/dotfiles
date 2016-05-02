@@ -223,7 +223,7 @@ function pgp2clipboard {
 ### TaskWarrior ###
 # Alias for quick add to inbox 
 
-alias in='task add +inbox'
+alias in='task add +in'
 
 # Tickle task into inbox
 
