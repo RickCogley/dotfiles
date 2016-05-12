@@ -5,7 +5,7 @@
 " Mike Hartington's: https://github.com/mhartington/dotfiles/
 "
 
-" Setup NeoBundle  ----------------------------------------------------------{{{
+" Setup NeoBundle dein -------------------------------------------------------{{{
   if (!isdirectory(expand("$HOME/.config/nvim/repos/github.com/Shougo/dein.vim")))
     call system(expand("mkdir -p $HOME/.config/nvim/repos/github.com"))
     call system(expand("git clone https://github.com/Shougo/dein.vim $HOME/.config/nvim/repos/github.com/Shougo/dein.vim"))
@@ -16,7 +16,11 @@
   call dein#begin(expand('~/.config/nvim'))
 
   call dein#add('Shougo/dein.vim')
-" syntax
+
+" Infra
+  call dein#add('Shougo/vimproc.vim', {'build' : 'make'})
+
+" Syntax
   call dein#add('sheerun/vim-polyglot')
   " call dein#add('othree/yajs.vim', {'on_ft': 'javascript'})
   " call dein#add('othree/jsdoc-syntax.vim', {'on_ft':['javascript', 'typescript']})
@@ -25,14 +29,28 @@
   " call dein#add('kchmck/vim-coffee-script', {'on_ft': 'coffee'})
   " call dein#add('hail2u/vim-css3-syntax', {'on_ft':['css','scss']})
   call dein#add('elzr/vim-json', {'on_ft': 'json'})
+
+" Markdown
   " call dein#add('tpope/vim-markdown', {'on_ft': 'markdown'})
   call dein#add('dhruvasagar/vim-table-mode')
-  call dein#add('suan/vim-instant-markdown', {'on_ft': 'markdown'})
-  call dein#add('tmhedberg/SimpylFold', {'on_ft': 'python'})
+  " call dein#add('suan/vim-instant-markdown', {'on_ft': 'markdown'})
   " call dein#add('HerringtonDarkholme/yats.vim', {'on_ft': 'typescript'})
-  call dein#add('Quramy/tsuquyomi')
+  call dein#add('nelstrom/vim-markdown-folding')
+  call dein#add('tyru/markdown-codehl-onthefly.vim')
+  call dein#add('itspriddle/vim-marked')
 
+" Typescript 
+  " call dein#add('Quramy/tsuquyomi')
+
+" Folding
+  call dein#add('tmhedberg/SimpylFold', {'on_ft': 'python'})
+  call dein#add('Konfekt/FastFold')
+ 
+" Cosmetic
   call dein#add('mhartington/oceanic-next')
+  call dein#add('ryanoasis/vim-devicons')
+ 
+" Edit assist 
   call dein#add('Yggdroot/indentLine')
   call dein#add('Raimondi/delimitMate', {'on_ft': ['javascript', 'typescript', 'css', 'scss']})
   call dein#add('valloric/MatchTagAlways', {'on_ft': 'html'})
@@ -62,7 +80,6 @@
   call dein#add('Shougo/unite-outline')
   call dein#add('ujihisa/unite-colorscheme')
   call dein#add('junkblocker/unite-codesearch')
-  call dein#add('Shougo/vimproc.vim', {'build' : 'make'})
   call dein#add('Shougo/deoplete.nvim')
   call dein#add('carlitux/deoplete-ternjs')
   " call dein#add('mhartington/deoplete-typescript')
@@ -70,7 +87,6 @@
   call dein#add('Shougo/neoinclude.vim')
   call dein#add('ujihisa/neco-look', {'on_ft': ['markdown','text','html']})
   call dein#add('zchee/deoplete-jedi')
-  call dein#add('Konfekt/FastFold')
   call dein#add('Shougo/neosnippet.vim')
   call dein#add('Shougo/neosnippet-snippets')
   call dein#add('honza/vim-snippets')
@@ -86,10 +102,6 @@
   " call dein#add('zchee/deoplete-go', {'build': 'make'})
   call dein#add('rhysd/nyaovim-popup-tooltip')
   call dein#add('troydm/asyncfinder.vim')
-  call dein#add('nelstrom/vim-markdown-folding')
-  call dein#add('tyru/markdown-codehl-onthefly.vim')
-  call dein#add('itspriddle/vim-marked')
-  call dein#add('ryanoasis/vim-devicons')
 
   if dein#check_install()
     call dein#install()
@@ -149,6 +161,8 @@
   let g:deoplete#sources#go = 'vim-go'
   let g:unite_source_codesearch_command = '$HOME/bin/csearch'
   let g:table_mode_corner="|"
+  let g:python_host_prog = '/usr/local/bin/python' 
+  let g:python3_host_prog = '/usr/local/bin/python3' 
 " }}}
 
 " System mappings  ----------------------------------------------------------{{{
@@ -245,7 +259,7 @@
   " turn on spelling for markdown files
   autocmd FileType markdown,text,html setlocal spell complete+=kspell
   " highlight bad words in red
-  autocmd FileType markdown,text,html hi SpellBad guibg=#ff2929 guifg=#ffffff" ctermbg=224
+  " autocmd FileType markdown,text,html hi SpellBad guibg=#ff2929 guifg=#ffffff" ctermbg=224
   " disable markdown auto-preview. Gets annoying
   let g:instant_markdown_autostart = 0
   " Keep my termo window open when I navigate away
@@ -376,7 +390,7 @@
   call NERDTreeHighlightFile('gitignore', 'Gray', 'none', '#7F7F7F', 'none')
 "}}}
 
-" Snipppets -----------------------------------------------------------------{{{
+" Snippets -----------------------------------------------------------------{{{
 
 " Enable snipMate compatibility feature.
   let g:neosnippet#enable_snipmate_compatibility = 1
