@@ -17,10 +17,19 @@
 
   call dein#add('Shougo/dein.vim')
 
+" --------------
 " Infra
+" --------------
   call dein#add('Shougo/vimproc.vim', {'build' : 'make'})
 
+" --------------
+" Finding
+" --------------
+  call dein#add('scrooloose/nerdtree')
+
+" --------------
 " Syntax
+" --------------
   call dein#add('sheerun/vim-polyglot')
   " call dein#add('othree/yajs.vim', {'on_ft': 'javascript'})
   " call dein#add('othree/jsdoc-syntax.vim', {'on_ft':['javascript', 'typescript']})
@@ -30,7 +39,9 @@
   " call dein#add('hail2u/vim-css3-syntax', {'on_ft':['css','scss']})
   call dein#add('elzr/vim-json', {'on_ft': 'json'})
 
+" --------------
 " Markdown
+" --------------
   " call dein#add('tpope/vim-markdown', {'on_ft': 'markdown'})
   call dein#add('dhruvasagar/vim-table-mode')
   " call dein#add('suan/vim-instant-markdown', {'on_ft': 'markdown'})
@@ -39,38 +50,49 @@
   call dein#add('tyru/markdown-codehl-onthefly.vim')
   call dein#add('itspriddle/vim-marked')
 
+" --------------
 " Typescript 
-  " call dein#add('Quramy/tsuquyomi')
+" --------------
+" call dein#add('Quramy/tsuquyomi')
+" call dein#add('mhartington/deoplete-typescript')
 
+" --------------
 " Folding
+" --------------
   call dein#add('tmhedberg/SimpylFold', {'on_ft': 'python'})
   call dein#add('Konfekt/FastFold')
  
+" -------------- 
 " Cosmetic
+" -------------- 
   call dein#add('mhartington/oceanic-next')
   call dein#add('ryanoasis/vim-devicons')
- 
+  call dein#add('vim-airline/vim-airline') 
+  call dein#add('vim-airline/vim-airline-themes')
+
+" -------------- 
 " Edit assist 
+" -------------- 
   call dein#add('Yggdroot/indentLine')
   call dein#add('Raimondi/delimitMate', {'on_ft': ['javascript', 'typescript', 'css', 'scss']})
   call dein#add('valloric/MatchTagAlways', {'on_ft': 'html'})
 
+" --------------
+"  Git 
+" --------------
   call dein#add('tpope/vim-fugitive')
-  call dein#add('jreybert/vimagit')
   call dein#add('mhinz/vim-signify')
+  call dein#add('jreybert/vimagit')
   call dein#add('Xuyuanp/nerdtree-git-plugin')
   call dein#add('https://github.com/jaxbot/github-issues.vim')
 
   call dein#add('tpope/vim-repeat')
   call dein#add('benekastah/neomake')
   call dein#add('editorconfig/editorconfig-vim')
-  call dein#add('scrooloose/nerdtree')
   call dein#add('AndrewRadev/switch.vim')
   call dein#add('christoomey/vim-tmux-navigator')
   call dein#add('tmux-plugins/vim-tmux-focus-events')
-  call dein#add('vim-airline/vim-airline') 
-  call dein#add('vim-airline/vim-airline-themes')
-  
+
   call dein#add('tpope/vim-surround')
   call dein#add('tomtom/tcomment_vim')
   call dein#add('mattn/emmet-vim', {'on_ft': 'html'})
@@ -82,7 +104,6 @@
   call dein#add('junkblocker/unite-codesearch')
   call dein#add('Shougo/deoplete.nvim')
   call dein#add('carlitux/deoplete-ternjs')
-  " call dein#add('mhartington/deoplete-typescript')
   call dein#add('Shougo/neco-vim', {'on_ft': 'vim'})
   call dein#add('Shougo/neoinclude.vim')
   call dein#add('ujihisa/neco-look', {'on_ft': ['markdown','text','html']})
