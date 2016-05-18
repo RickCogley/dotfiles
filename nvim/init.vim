@@ -76,6 +76,7 @@
   call dein#add('Yggdroot/indentLine')
   call dein#add('Raimondi/delimitMate', {'on_ft': ['javascript', 'typescript', 'css', 'scss']})
   call dein#add('valloric/MatchTagAlways', {'on_ft': 'html'})
+  call dein#add('tpope/vim-repeat')
 
 " --------------
 "  Git 
@@ -86,8 +87,13 @@
   call dein#add('Xuyuanp/nerdtree-git-plugin')
   call dein#add('https://github.com/jaxbot/github-issues.vim')
 
-  call dein#add('tpope/vim-repeat')
+" --------------
+"  IDE-ish 
+" --------------
   call dein#add('benekastah/neomake')
+
+  
+  
   call dein#add('editorconfig/editorconfig-vim')
   call dein#add('AndrewRadev/switch.vim')
   call dein#add('christoomey/vim-tmux-navigator')
