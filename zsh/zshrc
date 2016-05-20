@@ -313,3 +313,8 @@ export HISTSIZE="1000000"
 export SAVEHIST="1000000"
 export HISTFILE=$HOME/.zsh_history
 
+# make notes
+
+note (){
+     nvim "$HOME/Dropbox/!Notes/$1 - $(date +"%Y%m%d").md"
+}
