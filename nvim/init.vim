@@ -21,11 +21,14 @@
 " Infra
 " --------------
   call dein#add('Shougo/vimproc.vim', {'build' : 'make'})
+  call dein#add('benekastah/neomake')
 
 " --------------
 " Finding
 " --------------
   call dein#add('scrooloose/nerdtree')
+  call dein#add('Chiel92/vim-autoformat')
+  call dein#add('Shougo/unite.vim')
 
 " --------------
 " Syntax
@@ -69,6 +72,7 @@
   call dein#add('ryanoasis/vim-devicons')
   call dein#add('vim-airline/vim-airline') 
   call dein#add('vim-airline/vim-airline-themes')
+  call dein#add('ap/vim-css-color')
 
 " -------------- 
 " Edit assist 
@@ -88,23 +92,25 @@
   call dein#add('https://github.com/jaxbot/github-issues.vim')
 
 " --------------
-"  IDE-ish 
+"  tmux 
 " --------------
-  call dein#add('benekastah/neomake')
-
-  
-  
-  call dein#add('editorconfig/editorconfig-vim')
-  call dein#add('AndrewRadev/switch.vim')
   call dein#add('christoomey/vim-tmux-navigator')
   call dein#add('tmux-plugins/vim-tmux-focus-events')
 
+
+
+" settings  
+  call dein#add('editorconfig/editorconfig-vim')
+" swap text with snippet 
+  call dein#add('AndrewRadev/switch.vim')
+" surrounding text changes 
   call dein#add('tpope/vim-surround')
+" commenting
   call dein#add('tomtom/tcomment_vim')
+" expand abbreviation  
   call dein#add('mattn/emmet-vim', {'on_ft': 'html'})
+" autoformatting or beautification 
   call dein#add('Chiel92/vim-autoformat')
-  call dein#add('ap/vim-css-color')
-  call dein#add('Shougo/unite.vim')
   call dein#add('Shougo/unite-outline')
   call dein#add('ujihisa/unite-colorscheme')
   call dein#add('junkblocker/unite-codesearch')
