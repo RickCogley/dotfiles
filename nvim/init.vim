@@ -29,6 +29,9 @@
   call dein#add('scrooloose/nerdtree')
   call dein#add('Chiel92/vim-autoformat')
   call dein#add('Shougo/unite.vim')
+  call dein#add('Shougo/unite-outline')
+  call dein#add('ujihisa/unite-colorscheme')
+  call dein#add('junkblocker/unite-codesearch')
 
 " --------------
 " Syntax
@@ -111,9 +114,7 @@
   call dein#add('mattn/emmet-vim', {'on_ft': 'html'})
 " autoformatting or beautification 
   call dein#add('Chiel92/vim-autoformat')
-  call dein#add('Shougo/unite-outline')
-  call dein#add('ujihisa/unite-colorscheme')
-  call dein#add('junkblocker/unite-codesearch')
+" autocomplete
   call dein#add('Shougo/deoplete.nvim')
   call dein#add('carlitux/deoplete-ternjs')
   call dein#add('Shougo/neco-vim', {'on_ft': 'vim'})
