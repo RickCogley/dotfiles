@@ -301,6 +301,7 @@ brew_reinstall_head_apps (){
     brew reinstall --HEAD tmux
 }
 alias brrehead=brew_reinstall_head_apps
+alias brewhaha='brew update && brew upgrade --all; brew cleanup; brew cask cleanup; brew doctor'
 
 # Upgrade pip and easy_install
 pipup (){
