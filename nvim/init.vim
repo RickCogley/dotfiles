@@ -116,7 +116,7 @@
   call dein#add('Chiel92/vim-autoformat')
 " autocomplete
   call dein#add('Shougo/deoplete.nvim')
-  call dein#add('carlitux/deoplete-ternjs')
+"  call dein#add('carlitux/deoplete-ternjs')
   call dein#add('Shougo/neco-vim', {'on_ft': 'vim'})
   call dein#add('Shougo/neoinclude.vim')
   call dein#add('ujihisa/neco-look', {'on_ft': ['markdown','text','html']})
@@ -150,7 +150,10 @@
 
   source ~/.local.vim
 " Neovim Settings
-  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+" let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+  if (has("termguicolors"))
+   set termguicolors
+  endif
   let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
   let $NEOVIM_JS_DEBUG='nvimjs.log'
   set clipboard+=unnamedplus
@@ -284,7 +287,7 @@
 
 " Themes, Commands, etc  ----------------------------------------------------{{{
 " Theme
-  syntax on
+  syntax enable
   colorscheme OceanicNext
   set background=dark
   " set background=light
