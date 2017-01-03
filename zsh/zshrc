@@ -86,6 +86,14 @@ function tdbackup-jrc {
     /usr/local/bin/mono tdbackup.exe
 }
 
+# function to deploy vector
+
+function vectordeploy {
+    cd /Users/rcogley/dev/vector-web/ 
+    chmod -R 755 /Users/rcogley/dev/vector-web/vector/
+    /usr/local/bin/rsync -avz -L --delete --iconv=UTF-8-MAC,UTF-8 /Users/rcogley/dev/vector-web/vector/ rcogley@cogley.info:/home/rcogley/webapps/es_chat01
+}
+
 # function to deploy hugo, had --force and --progress on rsync, maybe Apple's is old?
 function hugodeploy-rcc {
     cd /Users/rcogley/dev/RCC-Hugo2015
@@ -306,7 +314,9 @@ alias brewhaha='brew update && brew upgrade --all; brew cleanup; brew cask clean
 # Upgrade pip and easy_install
 pipup (){
     pip install --upgrade pip setuptools
+    pip install --upgrade neovim
     pip3 install --upgrade pip setuptools
+    pip3 install --upgrade neovim
 }
 
 # zsh (prezto voodoo is that you need to put these here in zshrc at the bottom)
@@ -319,3 +329,18 @@ export HISTFILE=$HOME/.zsh_history
 note (){
      nvim "$HOME/Dropbox/Notes/$1 - $(date +"%Y%m%d").md"
 }
+
+# check PROdb backup 
+#
+
+confirmprodbbackup (){
+    echo Confirming local PROdb backup ...
+    ls -la ~/Google\ Drive/\!Backups/PROdb/15331-eSolia-DB-2016/
+    echo Confirming webfaction PROdb backup ...
+    ssh rcogley@cogley.info ls -la /home/rcogley/webapps/es_dbflexbackup01/15331-eSolia-DB-2016
+}
+
+# flush dns
+#
+alias flushdns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder; say dns can sod off'
+
