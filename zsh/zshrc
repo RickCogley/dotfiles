@@ -335,9 +335,9 @@ note (){
 
 confirmprodbbackup (){
     echo Confirming local PROdb backup ...
-    ls -la ~/Google\ Drive/\!Backups/PROdb/15331-eSolia-DB-2017/
+    ls -la ~/Google\ Drive/\!Backups/PROdb/15331-eSolia-DB-$(date +'%Y')/
     echo Confirming webfaction PROdb backup ...
-    ssh rcogley@cogley.info ls -la /home/rcogley/webapps/es_dbflexbackup01/15331-eSolia-DB-2017
+    ssh rcogley@cogley.info ls -la /home/rcogley/webapps/es_dbflexbackup01/15331-eSolia-DB-$(date +'%Y')
 }
 
 # flush dns
