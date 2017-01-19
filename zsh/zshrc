@@ -89,9 +89,9 @@ function tdbackup-jrc {
 # function to deploy vector
 
 function vectordeploy {
-    cd /Users/rcogley/dev/vector-web/ 
-    chmod -R 755 /Users/rcogley/dev/vector-web/vector/
-    /usr/local/bin/rsync -avz -L --delete --iconv=UTF-8-MAC,UTF-8 /Users/rcogley/dev/vector-web/vector/ rcogley@cogley.info:/home/rcogley/webapps/es_chat01
+    cd /Users/rcogley/dev/riot/ 
+    chmod -R 755 /Users/rcogley/dev/riot/riot/
+    /usr/local/bin/rsync -avz -L --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /Users/rcogley/dev/riot/riot/ rcogley@cogley.info:/home/rcogley/webapps/es_chat01
 }
 
 # function to deploy hugo, had --force and --progress on rsync, maybe Apple's is old?
@@ -107,7 +107,7 @@ function hugodeploy-rcc {
     export LIGHTRCCJS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/RCC-Hugo2015/static/js/lightbox.min.js)"
     chmod -R 775 /Users/rcogley/dev/RCC-Hugo2015/static/
     hugo --config="/Users/rcogley/dev/RCC-Hugo2015/config.toml" -s /Users/rcogley/dev/RCC-Hugo2015/ -d /tmp/rick.cogley.info
-    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 /tmp/rick.cogley.info/ rcogley@cogley.info:/home/rcogley/webapps/rick_hugo01
+    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/rick.cogley.info/ rcogley@cogley.info:/home/rcogley/webapps/rick_hugo01
 }
 
 function hugodeploy-esoliapro {
@@ -123,7 +123,7 @@ function hugodeploy-esoliapro {
     export LATESTSHA="$(git rev-parse master)"
     chmod -R 775 /Users/rcogley/dev/eSolia.pro/static/
     hugo --config="/Users/rcogley/dev/eSolia.pro/config.toml" -s /Users/rcogley/dev/eSolia.pro/ -d /tmp/esolia.pro
-    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 /tmp/esolia.pro/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_pro_01
+    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia.pro/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_pro_01
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA.PRO+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia.pro%2Fcommit%2F$LATESTSHA&chat_tags=esolia.pro&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
 
@@ -140,7 +140,7 @@ function hugodeploy-esoliacom {
     export LATESTSHA="$(git rev-parse master)"
     chmod -R 775 /Users/rcogley/dev/eSolia/static/
     hugo --config="/Users/rcogley/dev/eSolia/config_en.toml" -s /Users/rcogley/dev/eSolia/ -d /tmp/esolia.com
-    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 /tmp/esolia.com/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_com_01
+    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia.com/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_com_01
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA.COM+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esolia.com&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
 
@@ -157,7 +157,7 @@ function hugodeploy-esoliacojp {
     export LATESTSHA="$(git rev-parse master)"
     chmod -R 775 /Users/rcogley/dev/eSolia/static/
     hugo --config="/Users/rcogley/dev/eSolia/config_ja.toml" -s /Users/rcogley/dev/eSolia/ -d /tmp/esolia.co.jp
-    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 /tmp/esolia.co.jp/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_co_jp_01
+    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia.co.jp/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_co_jp_01
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA.CO.JP+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esolia.co.jp&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
 
