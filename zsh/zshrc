@@ -313,9 +313,9 @@ alias brewhaha='brew update && brew upgrade --all; brew cleanup; brew cask clean
 
 # Upgrade pip and easy_install
 pipup (){
-    pip install --upgrade pip setuptools
+    pip install --upgrade pip setuptools wheel
     pip install --upgrade neovim
-    pip3 install --upgrade pip setuptools
+    pip3 install --upgrade pip setuptools wheel
     pip3 install --upgrade neovim
 }
 
