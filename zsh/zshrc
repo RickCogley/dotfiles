@@ -161,6 +161,26 @@ function hugodeploy-esoliacojp {
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA.CO.JP+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esolia.co.jp&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
 
+function hugodeploy-RCClive {
+    cd /Users/rcogley/dev/RCC-live/
+    rm -rf /tmp/live.cogley.info
+    rm -rf /tmp/tilde.town.rickcogley 
+    rm -rf /tmp/ctrl-c.club.rickcogley 
+    chmod -R 775 /Users/rcogley/dev/RCC-live/static/
+    echo "Generating live.cogley.info"
+    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="http://live.cogley.info" -s /Users/rcogley/dev/RCC-live/ -d /tmp/live.cogley.info
+    echo "Syncing live.cogley.info"
+    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/live.cogley.info/ rcogley@cogley.info:/home/rcogley/webapps/rick_live01
+    echo "Generating tilde.town"
+    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="http://tilde.town/~rickcogley" -s /Users/rcogley/dev/RCC-live/ -d /tmp/tilde.town.rickcogley
+    echo "Syncing tilde.town"
+    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/tilde.town.rickcogley/ rickcogley@tilde.town:/home/rickcogley/public_html 
+    echo "Generating ctrl-c.club"
+    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="http://ctrl-c.club/~rickcogley" -s /Users/rcogley/dev/RCC-live/ -d /tmp/ctrl-c.club.rickcogley
+    echo "Syncing ctrl-c.club"
+    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/ctrl-c.club.rickcogley/ rickcogley@ctrl-c.club:/home/rickcogley/public_html 
+}
+
 # function to run hugo server
 
 function hugoserver-esoliacom {
@@ -191,6 +211,37 @@ function hugoserver-esoliapro {
 function hugoserver-rcc {
     cd /Users/rcogley/dev/RCC-Hugo2015
     hugo server --buildDrafts --watch --verbose --source="/Users/rcogley/dev/RCC-Hugo2015" --config="/Users/rcogley/dev/RCC-Hugo2015/config.toml" --port=1313
+}
+
+function hugoserver-rcclive {
+    cd /Users/rcogley/dev/RCC-live
+    hugo server --buildDrafts --watch --verbose --source="/Users/rcogley/dev/RCC-live" --config="/Users/rcogley/dev/RCC-live/config.toml" --port=1314
+}
+
+# Function for creating posts
+
+function hugogenpost-live {
+if [[ -z $1 ]]; then
+    echo "A double-quoted post title is required"
+    exit 1
+fi
+
+_hugobin="$HOME/gocode/bin/hugo"
+_workingdir="$HOME/dev/RCC-Live"
+_contentdir="${_workingdir}/content/post"
+_hytitle=$(echo $1 | tr ' ' '-')
+_hytitlelower=$(echo ${_hytitle} | tr "[:upper:]" "[:lower:]")
+_hytitlelowerquoted=$(echo \"$_hytitlelower\")
+_date=$(date +'%Y-%m-%d')
+_datetime=$(date +'%Y-%m-%d %H:%M:%S')
+_contentfile="${_date}-${_hytitle}.md"
+
+cd ${_workingdir}
+${_hugobin} new post/${_hytitle}.md
+mv ${_contentdir}/${_hytitle}.md ${_contentdir}/${_contentfile}
+# sed -i 's/slug = ""/slug = '"${_hytitlelowerquoted}"'/g' ${_contentdir}/${_contentfile}
+echo ${_hytitlelowerquoted} >> ${_contentdir}/${_contentfile}
+$EDITOR ${_contentdir}/${_contentfile}
 }
 
 # function to output hugo config
@@ -344,3 +395,4 @@ confirmprodbbackup (){
 #
 alias flushdns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder; say dns can sod off'
 
+export PATH="/usr/local/opt/sqlite/bin:$PATH"
