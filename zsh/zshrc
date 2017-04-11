@@ -244,6 +244,26 @@ echo ${_hytitlelowerquoted} >> ${_contentdir}/${_contentfile}
 $EDITOR ${_contentdir}/${_contentfile}
 }
 
+# Function for pinging after posting
+
+function ping-rcclive {
+echo "Hitting ping-o-matic"
+curl "https://pingomatic.com/ping/?title=Rick+Cogley+Live&blogurl=http%3A%2F%2Flive.cogley.info&rssurl=http%3A%2F%2Flive.cogley.info%2Findex.xml&chk_weblogscom=on&chk_blogs=on&chk_feedburner=on&chk_newsgator=on&chk_myyahoo=on&chk_pubsubcom=on&chk_blogdigger=on&chk_weblogalot=on&chk_newsisfree=on&chk_topicexchange=on&chk_google=on&chk_tailrank=on&chk_skygrid=on&chk_collecta=on&chk_superfeedr=on"
+echo "Hitting google sitemap submit"
+curl "http://www.google.com/webmasters/tools/ping?sitemap=http%3A%2F%2Flive.cogley.info%2Fsitemap.xml"
+echo "Hitting bing sitemap submit"
+curl "http://www.bing.com/webmaster/ping.aspx?siteMap=http%3A%2F%2Flive.cogley.info%2Fsitemap.xml"
+}
+
+function ping-rccmain {
+echo "Hitting ping-o-matic"
+curl "https://pingomatic.com/ping/?title=Rick+Cogley+Central&blogurl=https%3A%2F%2Frick.cogley.info&rssurl=https%3A%2F%2Frick.cogley.info%2Findex.xml&chk_weblogscom=on&chk_blogs=on&chk_feedburner=on&chk_newsgator=on&chk_myyahoo=on&chk_pubsubcom=on&chk_blogdigger=on&chk_weblogalot=on&chk_newsisfree=on&chk_topicexchange=on&chk_google=on&chk_tailrank=on&chk_skygrid=on&chk_collecta=on&chk_superfeedr=on"
+echo "Hitting google sitemap submit"
+curl "http://www.google.com/webmasters/tools/ping?sitemap=https%3A%2F%2Frick.cogley.info%2Fsitemap.xml"
+echo "Hitting bing sitemap submit"
+curl "http://www.bing.com/webmaster/ping.aspx?siteMap=https%3A%2F%2Frick.cogley.info%2Fsitemap.xml"
+}
+
 # function to output hugo config
 
 function hugoconfig-esoliacom {
@@ -394,5 +414,32 @@ confirmprodbbackup (){
 # flush dns
 #
 alias flushdns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder; say dns can sod off'
+
+# update hugo
+
+hugodevinstall (){
+  cd $HOME
+  echo "==Move current hugo to hugo-prev in case of need to revert=="
+  mv $HOME/gocode/bin/hugo $HOME/gocode/bin/hugo-prev
+  echo "==Upgrading Hugo Source==" 
+  go get -u -v github.com/spf13/hugo
+  echo "==Get newly installed hugo version=="
+  $HOME/gocode/bin/hugo version
+  echo "==Compile new hugo=="
+  cd $HOME/gocode/src/github.com/spf13/hugo/
+  make hugo
+  echo "==Get version string and move hugo into position=="
+  _newhugoverstr=$($HOME/gocode/src/github.com/spf13/hugo/hugo version | awk -F ' ' '{ print $5 }')
+  mv $HOME/gocode/src/github.com/spf13/hugo/hugo $HOME/gocode/bin/hugo-${_newhugoverstr}
+  cd $HOME/gocode/bin
+  ln -sf $HOME/gocode/bin/hugo-${_newhugoverstr} hugo
+  cd $HOME
+  echo "==Sanity check - compare versions=="
+  echo "Expecting: ${_newhugoverstr}"
+  echo "Actual: "
+  hugo version
+}
+
+
 
 export PATH="/usr/local/opt/sqlite/bin:$PATH"
