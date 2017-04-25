@@ -4,11 +4,11 @@
 # Authors:
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
 #
-# This file is sourced by interactive shells. It should define aliases, 
+# This file is sourced by interactive shells. It should define aliases,
 # functions, shell options, and key bindings.
-# 
+#
 # The configuration files are read in the following order:
-# 
+#
 # /etc/zshenv
 #~/.zshenv
 #/etc/zprofile
@@ -89,7 +89,7 @@ function tdbackup-jrc {
 # function to deploy vector
 
 function vectordeploy {
-    cd /Users/rcogley/dev/riot/ 
+    cd /Users/rcogley/dev/riot/
     chmod -R 755 /Users/rcogley/dev/riot/riot/
     /usr/local/bin/rsync -avz -L --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /Users/rcogley/dev/riot/riot/ rcogley@cogley.info:/home/rcogley/webapps/es_chat01
 }
@@ -164,21 +164,21 @@ function hugodeploy-esoliacojp {
 function hugodeploy-RCClive {
     cd /Users/rcogley/dev/RCC-live/
     rm -rf /tmp/live.cogley.info
-    rm -rf /tmp/tilde.town.rickcogley 
-    rm -rf /tmp/ctrl-c.club.rickcogley 
+    rm -rf /tmp/tilde.town.rickcogley
+    rm -rf /tmp/ctrl-c.club.rickcogley
     chmod -R 775 /Users/rcogley/dev/RCC-live/static/
     echo "Generating live.cogley.info"
-    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="http://live.cogley.info" -s /Users/rcogley/dev/RCC-live/ -d /tmp/live.cogley.info
+    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="//live.cogley.info" -s /Users/rcogley/dev/RCC-live/ -d /tmp/live.cogley.info
     echo "Syncing live.cogley.info"
     /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/live.cogley.info/ rcogley@cogley.info:/home/rcogley/webapps/rick_live01
     echo "Generating tilde.town"
-    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="http://tilde.town/~rickcogley" -s /Users/rcogley/dev/RCC-live/ -d /tmp/tilde.town.rickcogley
+    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="//tilde.town/~rickcogley" -s /Users/rcogley/dev/RCC-live/ -d /tmp/tilde.town.rickcogley
     echo "Syncing tilde.town"
-    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/tilde.town.rickcogley/ rickcogley@tilde.town:/home/rickcogley/public_html 
+    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/tilde.town.rickcogley/ rickcogley@tilde.town:/home/rickcogley/public_html
     echo "Generating ctrl-c.club"
-    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="http://ctrl-c.club/~rickcogley" -s /Users/rcogley/dev/RCC-live/ -d /tmp/ctrl-c.club.rickcogley
+    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="//ctrl-c.club/~rickcogley" -s /Users/rcogley/dev/RCC-live/ -d /tmp/ctrl-c.club.rickcogley
     echo "Syncing ctrl-c.club"
-    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/ctrl-c.club.rickcogley/ rickcogley@ctrl-c.club:/home/rickcogley/public_html 
+    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/ctrl-c.club.rickcogley/ rickcogley@ctrl-c.club:/home/rickcogley/public_html
 }
 
 # function to run hugo server
@@ -300,7 +300,7 @@ function pgp2clipboard {
 }
 
 ### TaskWarrior ###
-# Alias for quick add to inbox 
+# Alias for quick add to inbox
 
 alias in='task add +in'
 
@@ -333,7 +333,7 @@ read_and_review (){
 
 alias rnr=read_and_review
 
-# tw context 
+# tw context
 
 alias tc="task context"
 alias tt="task rc.context=none"
@@ -401,7 +401,7 @@ note (){
      nvim "$HOME/Dropbox/Notes/$1 - $(date +"%Y%m%d").md"
 }
 
-# check PROdb backup 
+# check PROdb backup
 #
 
 confirmprodbbackup (){
@@ -421,7 +421,7 @@ hugodevinstall (){
   cd $HOME
   echo "==Move current hugo to hugo-prev in case of need to revert=="
   mv $HOME/gocode/bin/hugo $HOME/gocode/bin/hugo-prev
-  echo "==Upgrading Hugo Source==" 
+  echo "==Upgrading Hugo Source=="
   go get -u -v github.com/spf13/hugo
   echo "==Get newly installed hugo version=="
   $HOME/gocode/bin/hugo version
