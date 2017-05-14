@@ -31,6 +31,7 @@ export PATH="/Users/rcogley/gocode:/Users/rcogley/gocode/bin:/usr/local/sbin:/us
 export PATH=$PATH:/usr/local/opt/go/libexec/bin
 export PATH=/usr/local/bin:$PATH
 # export MANPATH="/usr/local/man:$MANPATH"
+export MANPAGER="nvim -c 'set ft=man' -"
 
 # Python
 # brew says not needed export PATH=/usr/local/share/python:$PATh
