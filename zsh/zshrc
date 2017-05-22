@@ -380,14 +380,29 @@ brew_reinstall_head_apps (){
     brew reinstall --HEAD tmux
 }
 alias brrehead=brew_reinstall_head_apps
-alias brewhaha='brew update && brew upgrade --all; brew cleanup; brew cask cleanup; brew doctor'
+alias brewhaha='echo "Updating brew various...";brew update && brew upgrade; brew cleanup; brew cask cleanup; brew doctor'
+
+# Upgrade nvim plugs
+
+vimplugup (){
+    echo "Updating dein plugins..."
+    nvim -c ':silent call dein#update()' -c quitall
+}
 
 # Upgrade pip and easy_install
 pipup (){
+    echo "Updating pip setuptools and neovim..."
     pip install --upgrade pip setuptools wheel
     pip install --upgrade neovim
+    echo "Updating pip3 setuptools and neovim..."
     pip3 install --upgrade pip setuptools wheel
     pip3 install --upgrade neovim
+}
+
+allup (){
+    pipup
+    vimplugup
+    brewhaha 
 }
 
 # zsh (prezto voodoo is that you need to put these here in zshrc at the bottom)
@@ -418,16 +433,51 @@ alias flushdns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder; s
 # update hugo
 
 hugodevinstall (){
-  cd $HOME
+  echo "==Do setup=="
+  _wherewasi=$(pwd)
+  _package="github.com/spf13/hugo"
+  _builddate=$(date +%FT%T%z)
+  export CGO_ENABLED=0
+  export GO_EXTLINK_ENABLED=0
+  
+  echo "==Install govendor if it isn't=="
+  if ! hash govendor 2>/dev/null
+  then
+    go get -u -v github.com/kardianos/govendor
+  fi
+
+  echo "==Install hugo if it isn't=="
+  if ! hash hugo 2>/dev/null
+  then
+    go get -u -v ${_package}
+  fi
+
   echo "==Move current hugo to hugo-prev in case of need to revert=="
-  mv $HOME/gocode/bin/hugo $HOME/gocode/bin/hugo-prev
-  echo "==Upgrading Hugo Source=="
-  go get -u -v github.com/spf13/hugo
+  mv ${GOPATH}/bin/hugo ${GOPATH}/bin/hugo-prev 
+  
+  echo "==Update to hugo master branch=="
+  cd ${GOPATH}/src/${_package}
+  git fetch --all # fetch new branch names if any
+  git checkout master
+  # Force update the vendor file in case it got changed
+  git reset --hard origin/master
+  
+  echo "==Sync dependent packages per the updated vendor file=="
+  govendor sync
+
+  echo "==Update goorgeous package to master for orgmode=="
+  govendor fetch github.com/chaseadamsio/goorgeous
+
+  echo "==Build latest hugo=="
+  _commithash=$(git rev-parse --short HEAD 2>/dev/null)
+  go install -v \
+   -ldflags "-X ${_package}/hugolib.CommitHash=${_commithash} \
+             -X ${_package}/hugolib.BuildDate=${_builddate}" \
+   ${_package}
+  hugo version
+
   echo "==Get newly installed hugo version=="
   $HOME/gocode/bin/hugo version
-  echo "==Compile new hugo=="
-  cd $HOME/gocode/src/github.com/spf13/hugo/
-  make hugo
   echo "==Get version string and move hugo into position=="
   _newhugoverstr=$($HOME/gocode/src/github.com/spf13/hugo/hugo version | awk -F ' ' '{ print $5 }')
   mv $HOME/gocode/src/github.com/spf13/hugo/hugo $HOME/gocode/bin/hugo-${_newhugoverstr}
@@ -438,8 +488,7 @@ hugodevinstall (){
   echo "Expecting: ${_newhugoverstr}"
   echo "Actual: "
   hugo version
+  cd ${_wherewasi}
 }
-
-
 
 export PATH="/usr/local/opt/sqlite/bin:$PATH"
