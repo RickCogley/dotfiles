@@ -168,15 +168,15 @@ function hugodeploy-RCClive {
     rm -rf /tmp/ctrl-c.club.rickcogley
     chmod -R 775 /Users/rcogley/dev/RCC-live/static/
     echo "Generating live.cogley.info"
-    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="//live.cogley.info" -s /Users/rcogley/dev/RCC-live/ -d /tmp/live.cogley.info
+    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="http://live.cogley.info" -s /Users/rcogley/dev/RCC-live/ -d /tmp/live.cogley.info
     echo "Syncing live.cogley.info"
     /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/live.cogley.info/ rcogley@cogley.info:/home/rcogley/webapps/rick_live01
     echo "Generating tilde.town"
-    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="//tilde.town/~rickcogley" -s /Users/rcogley/dev/RCC-live/ -d /tmp/tilde.town.rickcogley
+    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="http://tilde.town/~rickcogley" -s /Users/rcogley/dev/RCC-live/ -d /tmp/tilde.town.rickcogley
     echo "Syncing tilde.town"
     /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/tilde.town.rickcogley/ rickcogley@tilde.town:/home/rickcogley/public_html
     echo "Generating ctrl-c.club"
-    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="//ctrl-c.club/~rickcogley" -s /Users/rcogley/dev/RCC-live/ -d /tmp/ctrl-c.club.rickcogley
+    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="http://ctrl-c.club/~rickcogley" -s /Users/rcogley/dev/RCC-live/ -d /tmp/ctrl-c.club.rickcogley
     echo "Syncing ctrl-c.club"
     /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/ctrl-c.club.rickcogley/ rickcogley@ctrl-c.club:/home/rickcogley/public_html
 }
