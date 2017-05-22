@@ -474,20 +474,21 @@ hugodevinstall (){
    -ldflags "-X ${_package}/hugolib.CommitHash=${_commithash} \
              -X ${_package}/hugolib.BuildDate=${_builddate}" \
    ${_package}
-  hugo version
 
-  echo "==Get newly installed hugo version=="
-  $HOME/gocode/bin/hugo version
-  echo "==Get version string and move hugo into position=="
-  _newhugoverstr=$($HOME/gocode/src/github.com/spf13/hugo/hugo version | awk -F ' ' '{ print $5 }')
-  mv $HOME/gocode/src/github.com/spf13/hugo/hugo $HOME/gocode/bin/hugo-${_newhugoverstr}
-  cd $HOME/gocode/bin
-  ln -sf $HOME/gocode/bin/hugo-${_newhugoverstr} hugo
+  echo "==Prep hugo with version string=="
+  cd ${GOPATH}/bin 
+  _newhugoverstr=$($GOPATH/bin/hugo version | awk -F ' ' '{ print $5 }')
+  mv $GOPATH/bin/hugo $GOPATH/bin/hugo-${_newhugoverstr}
+  ln -sf $GOPATH/bin/hugo-${_newhugoverstr} hugo 
+
   cd $HOME
-  echo "==Sanity check - compare versions=="
+  echo "==Sanity check - compare versions from home folder =="
   echo "Expecting: ${_newhugoverstr}"
   echo "Actual: "
   hugo version
+  echo "Previous: "
+  hugo-prev version 
+
   cd ${_wherewasi}
 }
 
