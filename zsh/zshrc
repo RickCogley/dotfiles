@@ -215,7 +215,7 @@ function hugoserver-rcc {
 
 function hugoserver-rcclive {
     cd /Users/rcogley/dev/RCC-live
-    hugo server --buildDrafts --watch --verbose --source="/Users/rcogley/dev/RCC-live" --config="/Users/rcogley/dev/RCC-live/config.toml" --port=1314
+    hugo server --buildDrafts --watch --verbose --source="/Users/rcogley/dev/RCC-live" --config="/Users/rcogley/dev/RCC-live/config.toml" --port=1314 --enableGitInfo
 }
 
 # Function for creating posts
@@ -435,7 +435,7 @@ alias flushdns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder; s
 hugodevinstall (){
   echo "==Do setup=="
   _wherewasi=$(pwd)
-  _package="github.com/spf13/hugo"
+  _package="github.com/gohugoio/hugo"
   _builddate=$(date +%FT%T%z)
   export CGO_ENABLED=0
   export GO_EXTLINK_ENABLED=0
@@ -447,7 +447,7 @@ hugodevinstall (){
   fi
 
   echo "==Install hugo if it isn't=="
-  if ! hash hugo 2>/dev/null
+  if [[ ! -d "${GOPATH}/src/${_package}" ]] || ( ! hash hugo 2>/dev/null )
   then
     go get -u -v ${_package}
   fi
@@ -456,7 +456,7 @@ hugodevinstall (){
   mv ${GOPATH}/bin/hugo ${GOPATH}/bin/hugo-prev 
   
   echo "==Update to hugo master branch=="
-  cd ${GOPATH}/src/${_package}
+  cd ${GOPATH}/src/${_package} || exit
   git fetch --all # fetch new branch names if any
   git checkout master
   # Force update the vendor file in case it got changed
@@ -489,7 +489,7 @@ hugodevinstall (){
   echo "Previous: "
   hugo-prev version 
 
-  cd ${_wherewasi}
+  cd "${_wherewasi}" || exit
 }
 
 export PATH="/usr/local/opt/sqlite/bin:$PATH"
