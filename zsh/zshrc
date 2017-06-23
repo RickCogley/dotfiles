@@ -240,7 +240,7 @@ cd ${_workingdir}
 ${_hugobin} new post/${_hytitle}.md
 mv ${_contentdir}/${_hytitle}.md ${_contentdir}/${_contentfile}
 # sed -i 's/slug = ""/slug = '"${_hytitlelowerquoted}"'/g' ${_contentdir}/${_contentfile}
-echo ${_hytitlelowerquoted} >> ${_contentdir}/${_contentfile}
+# echo ${_hytitlelowerquoted} >> ${_contentdir}/${_contentfile}
 $EDITOR ${_contentdir}/${_contentfile}
 }
 
