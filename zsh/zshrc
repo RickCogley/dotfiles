@@ -181,11 +181,26 @@ function hugodeploy-RCClive {
     /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/ctrl-c.club.rickcogley/ rickcogley@ctrl-c.club:/home/rickcogley/public_html
 }
 
+function hugodeploy-devjpvad {
+    _hugobin="$HOME/gocode/bin/hugo"
+    _rsyncbin="/usr/local/bin/rsync"
+    _sshlogin="pvad@j-pvad.jp"
+    _srvtargetdir="/home/pvad/webapps/jpvad_jp"
+    _workingdir="/Users/rcogley/dev/abmd-j-pvad"
+    # Trailing Slash Required
+    _tmpdir="/tmp/dev.j-pvad.jp/"
+    cd ${_workingdir}
+    rm -rf ${_tmpdir}
+    chmod -R 775 ${_workingdir}/static/
+    ${_hugobin} --config="${_workingdir}/config.toml" -s ${_workingdir} -d ${_tmpdir}
+    ${_rsyncbin} -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' ${_tmpdir} ${_sshlogin}:${_srvtargetdir}
+}
+
 # function to run hugo server
 
 function hugoserver-esoliacom {
     cd /Users/rcogley/dev/eSolia
-    hugo server --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_en.toml" --port=1377
+    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_en.toml" --port=1377
 }
 
 function hugoserver-stable-esoliacom {
@@ -195,7 +210,7 @@ function hugoserver-stable-esoliacom {
 
 function hugoserver-esoliacojp {
     cd /Users/rcogley/dev/eSolia
-    hugo server --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_ja.toml" --port=1399
+    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_ja.toml" --port=1399
 }
 
 function hugoserver-stable-esoliacojp {
@@ -205,17 +220,17 @@ function hugoserver-stable-esoliacojp {
 
 function hugoserver-esoliapro {
     cd /Users/rcogley/dev/eSolia.pro
-    hugo server --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia.pro" --config="/Users/rcogley/dev/eSolia.pro/config.toml" --port=1388
+    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia.pro" --config="/Users/rcogley/dev/eSolia.pro/config.toml" --port=1388
 }
 
 function hugoserver-rcc {
     cd /Users/rcogley/dev/RCC-Hugo2015
-    hugo server --buildDrafts --watch --verbose --source="/Users/rcogley/dev/RCC-Hugo2015" --config="/Users/rcogley/dev/RCC-Hugo2015/config.toml" --port=1313
+    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/RCC-Hugo2015" --config="/Users/rcogley/dev/RCC-Hugo2015/config.toml" --port=1313
 }
 
 function hugoserver-rcclive {
     cd /Users/rcogley/dev/RCC-live
-    hugo server --buildDrafts --watch --verbose --source="/Users/rcogley/dev/RCC-live" --config="/Users/rcogley/dev/RCC-live/config.toml" --port=1314 --enableGitInfo
+    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/RCC-live" --config="/Users/rcogley/dev/RCC-live/config.toml" --port=1314 --enableGitInfo
 }
 
 # Function for creating posts
@@ -402,7 +417,7 @@ pipup (){
 allup (){
     pipup
     vimplugup
-    brewhaha 
+    brewhaha
 }
 
 # zsh (prezto voodoo is that you need to put these here in zshrc at the bottom)
@@ -439,7 +454,7 @@ hugodevinstall (){
   _builddate=$(date +%FT%T%z)
   export CGO_ENABLED=0
   export GO_EXTLINK_ENABLED=0
-  
+
   echo "==Install govendor if it isn't=="
   if ! hash govendor 2>/dev/null
   then
@@ -453,15 +468,15 @@ hugodevinstall (){
   fi
 
   echo "==Move current hugo to hugo-prev in case of need to revert=="
-  mv ${GOPATH}/bin/hugo ${GOPATH}/bin/hugo-prev 
-  
+  mv ${GOPATH}/bin/hugo ${GOPATH}/bin/hugo-prev
+
   echo "==Update to hugo master branch=="
   cd ${GOPATH}/src/${_package} || exit
   git fetch --all # fetch new branch names if any
   git checkout master
   # Force update the vendor file in case it got changed
   git reset --hard origin/master
-  
+
   echo "==Sync dependent packages per the updated vendor file=="
   govendor sync
 
@@ -476,10 +491,10 @@ hugodevinstall (){
    ${_package}
 
   echo "==Prep hugo with version string=="
-  cd ${GOPATH}/bin 
+  cd ${GOPATH}/bin
   _newhugoverstr=$($GOPATH/bin/hugo version | awk -F ' ' '{ print $5 }')
   mv $GOPATH/bin/hugo $GOPATH/bin/hugo-${_newhugoverstr}
-  ln -sf $GOPATH/bin/hugo-${_newhugoverstr} hugo 
+  ln -sf $GOPATH/bin/hugo-${_newhugoverstr} hugo
 
   cd $HOME
   echo "==Sanity check - compare versions from home folder =="
@@ -487,7 +502,7 @@ hugodevinstall (){
   echo "Actual: "
   hugo version
   echo "Previous: "
-  hugo-prev version 
+  hugo-prev version
 
   cd "${_wherewasi}" || exit
 }
