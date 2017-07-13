@@ -181,7 +181,7 @@ function hugodeploy-RCClive {
     /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/ctrl-c.club.rickcogley/ rickcogley@ctrl-c.club:/home/rickcogley/public_html
 }
 
-function hugodeploy-devjpvad {
+function hugodeploy-jpvad {
     _hugobin="$HOME/gocode/bin/hugo"
     _rsyncbin="/usr/local/bin/rsync"
     _sshlogin="pvad@j-pvad.jp"
