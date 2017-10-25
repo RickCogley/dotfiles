@@ -1,6 +1,6 @@
 " Rick's nvimrc
 "
-" Inspirations: 
+" Inspirations:
 "
 " Mike Hartington's: https://github.com/mhartington/dotfiles/
 "
@@ -57,7 +57,7 @@
   call dein#add('itspriddle/vim-marked')
 
 " --------------
-" Typescript 
+" Typescript
 " --------------
 " call dein#add('Quramy/tsuquyomi')
 " call dein#add('mhartington/deoplete-typescript')
@@ -67,26 +67,26 @@
 " --------------
   call dein#add('tmhedberg/SimpylFold', {'on_ft': 'python'})
   call dein#add('Konfekt/FastFold')
- 
-" -------------- 
+
+" --------------
 " Cosmetic
-" -------------- 
+" --------------
   call dein#add('mhartington/oceanic-next')
   call dein#add('ryanoasis/vim-devicons')
-  call dein#add('vim-airline/vim-airline') 
+  call dein#add('vim-airline/vim-airline')
   call dein#add('vim-airline/vim-airline-themes')
   call dein#add('ap/vim-css-color')
 
-" -------------- 
-" Edit assist 
-" -------------- 
+" --------------
+" Edit assist
+" --------------
   call dein#add('Yggdroot/indentLine')
   call dein#add('Raimondi/delimitMate', {'on_ft': ['javascript', 'typescript', 'css', 'scss']})
   call dein#add('valloric/MatchTagAlways', {'on_ft': 'html'})
   call dein#add('tpope/vim-repeat')
 
 " --------------
-"  Git 
+"  Git
 " --------------
   call dein#add('tpope/vim-fugitive')
   call dein#add('mhinz/vim-signify')
@@ -95,24 +95,29 @@
   call dein#add('https://github.com/jaxbot/github-issues.vim')
 
 " --------------
-"  tmux 
+"  tmux
 " --------------
   call dein#add('christoomey/vim-tmux-navigator')
   call dein#add('tmux-plugins/vim-tmux-focus-events')
 
+" --------------
+"  notational-fzf-vim
+" --------------
+  call dein#add('Alok/notational-fzf-vim')
+  call dein#add('Alok/notational-fzf-vim')
 
 
-" settings  
+" settings
   call dein#add('editorconfig/editorconfig-vim')
-" swap text with snippet 
+" swap text with snippet
   call dein#add('AndrewRadev/switch.vim')
-" surrounding text changes 
+" surrounding text changes
   call dein#add('tpope/vim-surround')
 " commenting
   call dein#add('tomtom/tcomment_vim')
-" expand abbreviation  
+" expand abbreviation
   call dein#add('mattn/emmet-vim', {'on_ft': 'html'})
-" autoformatting or beautification 
+" autoformatting or beautification
   call dein#add('Chiel92/vim-autoformat')
 " autocomplete
   call dein#add('Shougo/deoplete.nvim')
@@ -198,8 +203,8 @@
   let g:deoplete#sources#go = 'vim-go'
   let g:unite_source_codesearch_command = '$HOME/bin/csearch'
   let g:table_mode_corner="|"
-  let g:python_host_prog = '/usr/local/bin/python' 
-  let g:python3_host_prog = '/usr/local/bin/python3' 
+  let g:python_host_prog = '/usr/local/bin/python'
+  let g:python3_host_prog = '/usr/local/bin/python3'
 " }}}
 
 " System mappings  ----------------------------------------------------------{{{
@@ -636,3 +641,12 @@ nnoremap <silent> <Leader>g :Unite -direction=botright -silent -buffer-name=git 
   command JscsFix :call JscsFix()
   noremap <leader>j :JscsFix<CR>
 "}}}
+
+" Notational FZF Vim ---------------------------------------------------------{{{
+
+   let g:nv_directories = ['~/Dropbox/Notes', '~/dev']
+
+"}}}
+
+
+
