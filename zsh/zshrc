@@ -489,11 +489,11 @@ hugodevinstall (){
   export CGO_ENABLED=0
   export GO_EXTLINK_ENABLED=0
 
-  echo "==Install govendor if it isn't=="
-  if ! hash govendor 2>/dev/null
-  then
-    go get -u -v github.com/kardianos/govendor
-  fi
+  # echo "==Install govendor if it isn't=="
+  # if ! hash govendor 2>/dev/null
+  # then
+  #  go get -u -v github.com/kardianos/govendor
+  # fi
 
   echo "==Install hugo if it isn't=="
   if [[ ! -d "${GOPATH}/src/${_package}" ]] || ( ! hash hugo 2>/dev/null )
@@ -511,11 +511,11 @@ hugodevinstall (){
   # Force update the vendor file in case it got changed
   git reset --hard origin/master
 
-  echo "==Sync dependent packages per the updated vendor file=="
-  govendor sync
+  # echo "==Sync dependent packages per the updated vendor file=="
+  # govendor sync
 
-  echo "==Update goorgeous package to master for orgmode=="
-  govendor fetch github.com/chaseadamsio/goorgeous
+  # echo "==Update goorgeous package to master for orgmode=="
+  # govendor fetch github.com/chaseadamsio/goorgeous
 
   echo "==Build latest hugo=="
   _commithash=$(git rev-parse --short HEAD 2>/dev/null)
