@@ -213,6 +213,11 @@ function hugodeploy-jvad {
 
 # function to run hugo server
 
+function hugoserver-esolia {
+    cd /Users/rcogley/dev/eSolia
+    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config.toml" --port=1366
+}
+
 function hugoserver-esoliacom {
     cd /Users/rcogley/dev/eSolia
     hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_en.toml" --port=1377
