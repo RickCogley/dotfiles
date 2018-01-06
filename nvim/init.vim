@@ -644,7 +644,7 @@ nnoremap <silent> <Leader>g :Unite -direction=botright -silent -buffer-name=git 
 
 " Notational FZF Vim ---------------------------------------------------------{{{
 
-   let g:nv_directories = ['~/Dropbox/Notes', '~/dev']
+   let g:nv_search_paths = ['~/Dropbox/Notes', '~/dev']
 
 "}}}
 
