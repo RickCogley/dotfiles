@@ -188,6 +188,21 @@ function hugodeploy-jpvad {
     _srvtargetdir="/home/pvad/webapps/jpvad_jp"
     _workingdir="/Users/rcogley/dev/abmd-j-pvad"
     # Trailing Slash Required
+    _tmpdir="/tmp/j-pvad.jp/"
+    cd ${_workingdir}
+    rm -rf ${_tmpdir}
+    chmod -R 775 ${_workingdir}/static/
+    ${_hugobin} --config="${_workingdir}/config.toml" -s ${_workingdir} -d ${_tmpdir}
+    ${_rsyncbin} -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' ${_tmpdir} ${_sshlogin}:${_srvtargetdir}
+}
+
+function hugodeploy-dev-jpvad {
+    _hugobin="$HOME/gocode/bin/hugo"
+    _rsyncbin="/usr/local/bin/rsync"
+    _sshlogin="pvad@j-pvad.jp"
+    _srvtargetdir="/home/pvad/webapps/jpvad_jp_dev"
+    _workingdir="/Users/rcogley/dev/abmd-j-pvad"
+    # Trailing Slash Required
     _tmpdir="/tmp/dev.j-pvad.jp/"
     cd ${_workingdir}
     rm -rf ${_tmpdir}
