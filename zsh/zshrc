@@ -304,6 +304,30 @@ mv ${_contentdir}/${_hytitle}.md ${_contentdir}/${_contentfile}
 $EDITOR ${_contentdir}/${_contentfile}
 }
 
+# Function for Hugo bundle conversion thanks to @onedrawingperday
+
+function hugo-all-md2bundle {
+for FILE in *.md
+do
+  # remove the last dot and subsequent chars to name the folder from the .md
+  DIR="${FILE%.*}"
+  mkdir -p "$DIR"
+  mv "$FILE" "$DIR"
+done
+find ./ -iname '*.md' -execdir mv -i '{}' index.md \;
+}
+
+function hugo-md2bundle {
+for FILE in $1
+do
+  # remove the last dot and subsequent chars to name the folder from the .md
+  DIR="${FILE%.*}"
+  mkdir -p "$DIR"
+  mv "$FILE" "$DIR"
+done
+find ./ -iname '*.md' -execdir mv -i '{}' index.md \;
+}
+
 # Function for pinging after posting
 
 function ping-rcclive {
