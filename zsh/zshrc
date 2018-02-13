@@ -207,7 +207,7 @@ function hugodeploy-dev-jpvad {
     cd ${_workingdir}
     rm -rf ${_tmpdir}
     chmod -R 775 ${_workingdir}/static/
-    ${_hugobin} --config="${_workingdir}/config.toml" -s ${_workingdir} -d ${_tmpdir}
+    ${_hugobin} --config="${_workingdir}/config.toml" -s ${_workingdir} -d ${_tmpdir} --baseURL="http://dev.j-pvad.jp"
     ${_rsyncbin} -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' ${_tmpdir} ${_sshlogin}:${_srvtargetdir}
 }
 
