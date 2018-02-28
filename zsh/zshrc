@@ -304,6 +304,31 @@ mv ${_contentdir}/${_hytitle}.md ${_contentdir}/${_contentfile}
 $EDITOR ${_contentdir}/${_contentfile}
 }
 
+# Set date in markdown file
+
+function crapsetdate {
+  sed -i "/^date/d" $1;
+  sed -i "3idate = \"$(date +%Y-%m-%dT%H:%M:%S%:z)\"" $1;
+}
+
+function setdate() {
+  file=$1
+  now=$(date "+%Y-%m-%dT%H:%M:%S%z" | sed -e 's/00$/:00/')
+  if [ -f $file ]; then
+      mv $file $file-
+      # sed -e 's/^date *= *"20.*"$/date = "'$now'"/' -e 's/^draft *= *true//' < $file- > $file
+      sed -e 's/^date *= *"20.*"$/date = "'$now'"/' < $file- > $file
+  else
+      echo "$file not found"
+      exit 1
+  fi
+  exit 0
+}
+
+function date3339() {
+   gdate --rfc-3339=seconds | sed 's/ /T/'
+}
+
 # Function for Hugo bundle conversion thanks to @onedrawingperday
 
 function hugo-all-md2bundle {
