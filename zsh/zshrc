@@ -161,6 +161,18 @@ function hugodeploy-esoliacojp {
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA.CO.JP+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esolia.co.jp&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
 
+function hugodeploy-esolia {
+    cd /Users/rcogley/dev/eSolia_2018/
+    rm -rf /tmp/esolia.com
+    rm -rf /tmp/esolia.co.jp
+    rm -rf /tmp/esolia
+    chmod -R 775 /Users/rcogley/dev/eSolia_2018/static/
+    hugo --gc --config="/Users/rcogley/dev/eSolia_2018/config.toml" -s /Users/rcogley/dev/eSolia_2018/ -d /tmp/esolia
+    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia/ja/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_co_jp_01
+    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia/en/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_com_01
+    curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esoliawebsite&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
+}
+
 function hugodeploy-RCClive {
     cd /Users/rcogley/dev/RCC-live/
     rm -rf /tmp/live.cogley.info
@@ -229,8 +241,8 @@ function hugodeploy-jvad {
 # function to run hugo server
 
 function hugoserver-esolia {
-    cd /Users/rcogley/dev/eSolia
-    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config.toml" --port=1366
+    cd /Users/rcogley/dev/eSolia_2018
+    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia_2018" --config="/Users/rcogley/dev/eSolia_2018/config.toml" --port=1366
 }
 
 function hugoserver-esoliacom {
