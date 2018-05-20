@@ -161,7 +161,7 @@ function hugodeploy-esoliacojp {
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA.CO.JP+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esolia.co.jp&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
 
-function hugodeploy-esolia {
+function XXhugodeploy-esolia {
     hugogetjson-esolia
     cd /Users/rcogley/dev/eSolia_2018/
     rm -rf /tmp/esolia.com
@@ -189,7 +189,7 @@ function hugodeploys3-esolia {
     chmod -R 775 /Users/rcogley/dev/eSolia_2018/static/
     hugo --gc --config="/Users/rcogley/dev/eSolia_2018/config.toml" -s /Users/rcogley/dev/eSolia_2018/ -d /tmp/esolia
     /Users/rcogley/gocode/bin/s3deploy -source=/tmp/esolia/en/ -region=us-east-1 -bucket=esolia.com-cdn
-    # /Users/rcogley/gocode/bin/s3deploy -source=/tmp/esolia/ja/ -region=us-east-1 -bucket=esolia.co.jp-cdn
+    /Users/rcogley/gocode/bin/s3deploy -source=/tmp/esolia/ja/ -region=us-east-1 -bucket=esolia.co.jp-cdn
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esoliawebsite&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
 
