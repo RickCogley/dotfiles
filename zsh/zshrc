@@ -185,6 +185,8 @@ function hugodeploys3-esolia {
     rm -rf /tmp/esolia
     export MAINCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia_2018/static/css/main.min.css)"
     export MAINJS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia_2018/static/js/main.min.js)"
+    export BUCAJS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia_2018/static/js/bulma-carousel.min.js)"
+    export BUSTJS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia_2018/static/js/bulma-steps.min.js)"
     export LATESTSHA="$(git rev-parse master)"
     chmod -R 775 /Users/rcogley/dev/eSolia_2018/static/
     hugo --gc --config="/Users/rcogley/dev/eSolia_2018/config.toml" -s /Users/rcogley/dev/eSolia_2018/ -d /tmp/esolia
@@ -192,6 +194,16 @@ function hugodeploys3-esolia {
     /Users/rcogley/gocode/bin/s3deploy -source=/tmp/esolia/ja/ -region=us-east-1 -bucket=esolia.co.jp-cdn
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esoliawebsite&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
+
+function aws-cfclear-esoliacom {
+   echo "Invalidating aws cloudfront objects for esolia.com before expiration"
+   aws cloudfront create-invalidation --distribution-id E276HZ5CIRLAB3 --paths "/*"
+}
+function aws-cfclear-esoliacojp {
+   echo "Invalidating aws cloudfront objects for esolia.co.jp before expiration"
+   aws cloudfront create-invalidation --distribution-id E1PV56T4OOCLME --paths "/*"
+}
+
 
 function hugodeploy-RCClive {
     cd /Users/rcogley/dev/RCC-live/
