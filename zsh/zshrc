@@ -162,14 +162,34 @@ function hugodeploy-esoliacojp {
 }
 
 function hugodeploy-esolia {
+    hugogetjson-esolia
     cd /Users/rcogley/dev/eSolia_2018/
     rm -rf /tmp/esolia.com
     rm -rf /tmp/esolia.co.jp
     rm -rf /tmp/esolia
+    export MAINCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia_2018/static/css/main.min.css)"
+    export MAINJS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia_2018/static/js/main.min.js)"
+    export LATESTSHA="$(git rev-parse master)"
     chmod -R 775 /Users/rcogley/dev/eSolia_2018/static/
     hugo --gc --config="/Users/rcogley/dev/eSolia_2018/config.toml" -s /Users/rcogley/dev/eSolia_2018/ -d /tmp/esolia
     /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia/ja/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_co_jp_01
     /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia/en/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_com_01
+    curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esoliawebsite&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
+}
+
+function hugodeploys3-esolia {
+    hugogetjson-esolia
+    cd /Users/rcogley/dev/eSolia_2018/
+    rm -rf /tmp/esolia.com
+    rm -rf /tmp/esolia.co.jp
+    rm -rf /tmp/esolia
+    export MAINCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia_2018/static/css/main.min.css)"
+    export MAINJS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia_2018/static/js/main.min.js)"
+    export LATESTSHA="$(git rev-parse master)"
+    chmod -R 775 /Users/rcogley/dev/eSolia_2018/static/
+    hugo --gc --config="/Users/rcogley/dev/eSolia_2018/config.toml" -s /Users/rcogley/dev/eSolia_2018/ -d /tmp/esolia
+    /Users/rcogley/gocode/bin/s3deploy -source=/tmp/esolia/en/ -region=us-east-1 -bucket=esolia.com-cdn
+    # /Users/rcogley/gocode/bin/s3deploy -source=/tmp/esolia/ja/ -region=us-east-1 -bucket=esolia.co.jp-cdn
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esoliawebsite&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
 
@@ -221,6 +241,16 @@ function hugodeploy-dev-jpvad {
     chmod -R 775 ${_workingdir}/static/
     ${_hugobin} --config="${_workingdir}/config.toml" -s ${_workingdir} -d ${_tmpdir} --baseURL="http://dev.j-pvad.jp"
     ${_rsyncbin} -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' ${_tmpdir} ${_sshlogin}:${_srvtargetdir}
+}
+
+function hugogetjson-jvad {
+    rm -rf /Users/rcogley/dev/j-vad/data/seminars.json
+    curl -k "https://pro.dbflex.net/secure/api/v2/55317/7E69ADDF820E45ECB88DBE77AE69649B/Seminar/List%20All%20for%20JSON/select.json" | /usr/local/bin/jq '.' > /Users/rcogley/dev/j-vad/data/seminars.json
+}
+
+function hugogetjson-esolia {
+    rm -rf /Users/rcogley/dev/eSolia_2018/data/success.json
+    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Project/List%20All%20for%20JSON/select.json" | /usr/local/bin/jq '.' > /Users/rcogley/dev/eSolia_2018/data/success.json
 }
 
 function hugodeploy-jvad {
