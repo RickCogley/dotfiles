@@ -206,6 +206,12 @@ function aws-cfclear-esoliacojp {
    echo "Invalidating aws cloudfront objects for esolia.co.jp before expiration"
    aws cloudfront create-invalidation --distribution-id E1PV56T4OOCLME --paths "/*"
 }
+function aws-cfclear {
+   echo "Invalidating aws cloudfront objects for esolia sites for specific path:"
+   echo $1
+   aws cloudfront create-invalidation --distribution-id E276HZ5CIRLAB3 --paths "/$1/*"
+   aws cloudfront create-invalidation --distribution-id E1PV56T4OOCLME --paths "/$1/*"
+}
 
 
 function hugodeploy-RCClive {
