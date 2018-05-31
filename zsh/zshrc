@@ -272,6 +272,8 @@ function hugogetjson-jvad {
 function hugogetjson-esolia {
     rm -rf /Users/rcogley/dev/eSolia_2018/data/success.json
     curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Project/List%20All%20for%20JSON/select.json" | /usr/local/bin/jq '.' > /Users/rcogley/dev/eSolia_2018/data/success.json
+    rm -rf /Users/rcogley/dev/eSolia_2018/data/info.json
+    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Information/List%20All%20on%20Website/select.json"  | /usr/local/bin/jq '.' > /Users/rcogley/dev/eSolia_2018/data/info.json
 }
 
 function hugodeploy-jvad {
@@ -292,6 +294,7 @@ function hugodeploy-jvad {
 # function to run hugo server
 
 function hugoserver-esolia {
+    hugogetjson-esolia
     cd /Users/rcogley/dev/eSolia_2018
     hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia_2018" --config="/Users/rcogley/dev/eSolia_2018/config.toml" --port=1366
 }
@@ -332,6 +335,7 @@ function hugoserver-rcclive {
 }
 
 function hugoserver-jvad {
+    hugogetjson-jvad
     cd /Users/rcogley/dev/j-vad
     hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/j-vad" --config="/Users/rcogley/dev/j-vad/config.toml" --port=1315 --enableGitInfo
 }
@@ -455,6 +459,22 @@ curl "http://www.google.com/webmasters/tools/ping?sitemap=https%3A%2F%2Fj-pvad.j
 echo "Hitting bing sitemap submit"
 curl "http://www.bing.com/webmaster/ping.aspx?siteMap=https%3A%2F%2Fj-pvad.jp%2Fsitemap.xml"
 }
+
+function ping-esolia {
+echo "Hitting ping-o-matic"
+curl -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Safari/604.1.38" "http://pingomatic.com/ping/?title=イソリア+バイリンガル+IT+アウトソーシング&blogurl=https%3A%2F%2Fesolia.co.jp&rssurl=https%3A%2F%2Fesolia.co.jp%2Findex.xml&chk_weblogscom=on&chk_blogs=on&chk_feedburner=on&chk_newsgator=on&chk_myyahoo=on&chk_pubsubcom=on&chk_blogdigger=on&chk_weblogalot=on&chk_newsisfree=on&chk_topicexchange=on&chk_google=on&chk_tailrank=on&chk_skygrid=on&chk_collecta=on&chk_superfeedr=on"
+echo "Hitting google sitemap submit"
+curl "http://www.google.com/webmasters/tools/ping?sitemap=https%3A%2F%2Fesolia.co.jp%2Fsitemap.xml"
+echo "Hitting bing sitemap submit"
+curl "http://www.bing.com/webmaster/ping.aspx?siteMap=https%3A%2F%2Fesolia.co.jp%2Fsitemap.xml"
+echo "Hitting ping-o-matic"
+curl -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Safari/604.1.38" "http://pingomatic.com/ping/?title=eSolia+Bilingual+IT+Outsourcing&blogurl=https%3A%2F%2Fesolia.com&rssurl=https%3A%2F%2Fesolia.com%2Findex.xml&chk_weblogscom=on&chk_blogs=on&chk_feedburner=on&chk_newsgator=on&chk_myyahoo=on&chk_pubsubcom=on&chk_blogdigger=on&chk_weblogalot=on&chk_newsisfree=on&chk_topicexchange=on&chk_google=on&chk_tailrank=on&chk_skygrid=on&chk_collecta=on&chk_superfeedr=on"
+echo "Hitting google sitemap submit"
+curl "http://www.google.com/webmasters/tools/ping?sitemap=https%3A%2F%2Fesolia.com%2Fsitemap.xml"
+echo "Hitting bing sitemap submit"
+curl "http://www.bing.com/webmaster/ping.aspx?siteMap=https%3A%2F%2Fesolia.com%2Fsitemap.xml"
+}
+
 
 # function to output hugo config
 
