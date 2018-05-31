@@ -44,6 +44,9 @@ zstyle ':prezto:load' pmodule \
   'fasd' \
   'syntax-highlighting' \
   'history-substring-search' \
+  'archive' \
+  'rsync' \
+  'screen' \
   'prompt'
 
 #
