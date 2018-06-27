@@ -190,8 +190,8 @@ function hugodeploys3-esolia {
     export LATESTSHA="$(git rev-parse master)"
     chmod -R 775 /Users/rcogley/dev/eSolia_2018/static/
     hugo --gc --config="/Users/rcogley/dev/eSolia_2018/config.toml" -s /Users/rcogley/dev/eSolia_2018/ -d /tmp/esolia
-    /Users/rcogley/gocode/bin/s3deploy -source=/tmp/esolia/en/ -region=us-east-1 -bucket=esolia.com-cdn
-    /Users/rcogley/gocode/bin/s3deploy -source=/tmp/esolia/ja/ -region=us-east-1 -bucket=esolia.co.jp-cdn
+    /Users/rcogley/gocode/bin/s3deploy -source=/tmp/esolia/en/ -region=us-east-1 -bucket=esolia.com-cdn $1
+    /Users/rcogley/gocode/bin/s3deploy -source=/tmp/esolia/ja/ -region=us-east-1 -bucket=esolia.co.jp-cdn $1
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esoliawebsite&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
     /usr/local/bin/aws cloudfront create-invalidation --distribution-id E276HZ5CIRLAB3 --paths "/index.html" "/" "/page/*" "/post/*" "/sitemap/*" "/404/*" "/tags/*" "/topics/*"
     /usr/local/bin/aws cloudfront create-invalidation --distribution-id E1PV56T4OOCLME --paths "/index.html" "/" "/page/*" "/post/*" "/sitemap/*" "/404/*" "/tags/*" "/topics/*"
@@ -274,6 +274,12 @@ function hugogetjson-esolia {
     curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Project/List%20All%20for%20JSON/select.json" | /usr/local/bin/jq '.' > /Users/rcogley/dev/eSolia_2018/data/success.json
     rm -rf /Users/rcogley/dev/eSolia_2018/data/info.json
     curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Information/List%20All%20on%20Website/select.json"  | /usr/local/bin/jq '.' > /Users/rcogley/dev/eSolia_2018/data/info.json
+    rm -rf /Users/rcogley/dev/eSolia_2018/data/japancontact.json
+    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact/API%20List%20All/select.json" | /usr/local/bin/jq '.' > /Users/rcogley/dev/eSolia_2018/data/japancontact.json
+    rm -rf /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.en.csv
+    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact/API%20List%20for%20CSV/select.csv" -o /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.en.csv
+    rm -rf /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.ja.csv
+    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact/API%20List%20for%20CSV%E2%80%A1/select.csv" -o /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.ja.csv
 }
 
 function hugodeploy-jvad {
@@ -296,53 +302,53 @@ function hugodeploy-jvad {
 function hugoserver-esolia {
     hugogetjson-esolia
     cd /Users/rcogley/dev/eSolia_2018
-    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia_2018" --config="/Users/rcogley/dev/eSolia_2018/config.toml" --port=1366
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/eSolia_2018" --config="/Users/rcogley/dev/eSolia_2018/config.toml" --port=1366
 }
 
 function hugoserver-esoliacom {
     cd /Users/rcogley/dev/eSolia
-    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_en.toml" --port=1377
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_en.toml" --port=1377
 }
 
 function hugoserver-stable-esoliacom {
     cd /Users/rcogley/dev/eSolia
-    /usr/local/Cellar/hugo/0.14/bin/hugo server --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_en.toml" --port=1377
+    /usr/local/Cellar/hugo/0.14/bin/hugo server --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_en.toml" --port=1377
 }
 
 function hugoserver-esoliacojp {
     cd /Users/rcogley/dev/eSolia
-    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_ja.toml" --port=1399
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_ja.toml" --port=1399
 }
 
 function hugoserver-stable-esoliacojp {
     cd /Users/rcogley/dev/eSolia
-    /usr/local/Cellar/hugo/0.14/bin/hugo server --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_ja.toml" --port=1399
+    /usr/local/Cellar/hugo/0.14/bin/hugo server --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_ja.toml" --port=1399
 }
 
 function hugoserver-esoliapro {
     cd /Users/rcogley/dev/eSolia.pro
-    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/eSolia.pro" --config="/Users/rcogley/dev/eSolia.pro/config.toml" --port=1388
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/eSolia.pro" --config="/Users/rcogley/dev/eSolia.pro/config.toml" --port=1388
 }
 
 function hugoserver-rcc {
     cd /Users/rcogley/dev/RCC-Hugo2015
-    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/RCC-Hugo2015" --config="/Users/rcogley/dev/RCC-Hugo2015/config.toml" --port=1313
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/RCC-Hugo2015" --config="/Users/rcogley/dev/RCC-Hugo2015/config.toml" --port=1313
 }
 
 function hugoserver-rcclive {
     cd /Users/rcogley/dev/RCC-live
-    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/RCC-live" --config="/Users/rcogley/dev/RCC-live/config.toml" --port=1314 --enableGitInfo
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/RCC-live" --config="/Users/rcogley/dev/RCC-live/config.toml" --port=1314 --enableGitInfo
 }
 
 function hugoserver-jvad {
     hugogetjson-jvad
     cd /Users/rcogley/dev/j-vad
-    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/j-vad" --config="/Users/rcogley/dev/j-vad/config.toml" --port=1315 --enableGitInfo
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/j-vad" --config="/Users/rcogley/dev/j-vad/config.toml" --port=1315 --enableGitInfo
 }
 
 function hugoserver-jpvad {
     cd /Users/rcogley/dev/abmd-j-pvad
-    hugo server --navigateToChanged --buildDrafts --watch --verbose --source="/Users/rcogley/dev/abmd-j-pvad" --config="/Users/rcogley/dev/abmd-j-pvad/config.toml" --port=1316 --enableGitInfo
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/abmd-j-pvad" --config="/Users/rcogley/dev/abmd-j-pvad/config.toml" --port=1316 --enableGitInfo
 }
 
 # Function for creating posts
