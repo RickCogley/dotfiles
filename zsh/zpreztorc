@@ -22,7 +22,7 @@ zstyle ':prezto:load' zmodule 'attr' 'stat'
 zstyle ':prezto:load' zfunction 'zargs' 'zmv'
 
 # Set the Prezto modules to load (browse modules).
-# The order matters.
+# The order matters. prompt is last. Syntax-highlighting has to be before history-substring-search and both are before prompt. 
 # JRC: also want to try - gpg, ssh, node
 
 zstyle ':prezto:load' pmodule \
