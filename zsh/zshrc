@@ -655,8 +655,8 @@ hugodevinstall (){
   _wherewasi=$(pwd)
   _package="github.com/gohugoio/hugo"
   _builddate=$(date +%FT%T%z)
-  export CGO_ENABLED=0
-  export GO_EXTLINK_ENABLED=0
+  export CGO_ENABLED=1
+  export GO_EXTLINK_ENABLED=1
 
   # echo "==Install govendor if it isn't=="
   # if ! hash govendor 2>/dev/null
@@ -667,13 +667,20 @@ hugodevinstall (){
   echo "==Install hugo if it isn't=="
   if [[ ! -d "${GOPATH}/src/${_package}" ]] || ( ! hash hugo 2>/dev/null )
   then
-    go get -u -v ${_package}
+    go get -u -v -d ${_package}
   fi
+
+  echo "==Install mage if it isn't=="
+  if [[ ! -d "${GOPATH}/src/github.com/magefile/mage" ]] || ( ! hash mage 2>/dev/null )
+  then
+    go get github.com/magefile/mage
+  fi  
 
   echo "==Move current hugo to hugo-prev in case of need to revert=="
   mv ${GOPATH}/bin/hugo ${GOPATH}/bin/hugo-prev
 
   echo "==Update to hugo master branch=="
+  # Mage must be run from the hugo source directory
   cd ${GOPATH}/src/${_package} || exit
   git fetch --all # fetch new branch names if any
   git checkout master
@@ -686,18 +693,28 @@ hugodevinstall (){
   # echo "==Update goorgeous package to master for orgmode=="
   # govendor fetch github.com/chaseadamsio/goorgeous
 
-  echo "==Build latest hugo=="
+  # Fetch dependencies
+  echo "==Fetch dependencies=="
+  mage vendor
+
+  echo "==Build, install and test latest hugo=="
   _commithash=$(git rev-parse --short HEAD 2>/dev/null)
-  go install -v \
-   -ldflags "-X ${_package}/hugolib.CommitHash=${_commithash} \
-             -X ${_package}/hugolib.BuildDate=${_builddate}" \
-   ${_package}
+  mage hugo
+  HUGO_BUILD_TAGS=extended mage install
+  # Test but it needs CGO_ENABLED 1
+  # mage hugoRace
+  # mage -v check
+
+  # go install -v \
+  # -ldflags "-X ${_package}/hugolib.CommitHash=${_commithash} \
+  #           -X ${_package}/hugolib.BuildDate=${_builddate}" \
+  # ${_package}
 
   echo "==Prep hugo with version string=="
   cd ${GOPATH}/bin
   _newhugoverstr=$($GOPATH/bin/hugo version | awk -F ' ' '{ print $5 }')
-  mv $GOPATH/bin/hugo $GOPATH/bin/hugo-${_newhugoverstr}
-  ln -sf $GOPATH/bin/hugo-${_newhugoverstr} hugo
+  mv $GOPATH/bin/hugo $GOPATH/bin/hugo-${_newhugoverstr}mage
+  ln -sf $GOPATH/bin/hugo-${_newhugoverstr}mage hugo
 
   cd $HOME
   echo "==Sanity check - compare versions from home folder =="
