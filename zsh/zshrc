@@ -727,5 +727,44 @@ hugodevinstall (){
   cd "${_wherewasi}" || exit
 }
 
+hugoprodinstall (){
+  echo "==Set vars, get latest release via github api...=="
+  _wherewasi=$(pwd)
+  # Assumes jq installed
+  _latestver=$(curl --silent "https://api.github.com/repos/gohugoio/hugo/tags" | jq -r '.[0].name' | tr -d v)
+
+  echo "==Move current hugo symlink to hugo-prev in case of need to revert...=="
+  cd ${GOPATH}/bin/
+  mv ${GOPATH}/bin/hugo ${GOPATH}/bin/hugo-prev
+
+  echo "==Download and unzip latest Mac extended release...=="
+  mkdir tmp
+  cd tmp
+  # Need -L on curl because it's redirecting, and that in turn means you need to redirect to a file.
+  curl -L "https://github.com/gohugoio/hugo/releases/download/v${_latestver}/hugo_extended_${_latestver}_macOS-64bit.tar.gz" > hugo_extended_${_latestver}_macOS-64bit.tar.gz
+  tar xvfz hugo_extended_${_latestver}_macOS-64bit.tar.gz
+  
+  echo "==Move hugo into position...=="
+  cd ${GOPATH}/bin
+  mv ${GOPATH}/bin/tmp/hugo ${GOPATH}/bin/
+  rm -rf tmp/
+
+  echo "==Prep hugo copy with version string, in case reversion needed, and symlink it...=="
+  # Fragile because it's based on hugo std-out output
+  _newhugoverstr=$($GOPATH/bin/hugo version | awk -F ' ' '{ print $5 }' | tr / -)
+  mv ${GOPATH}/bin/hugo $GOPATH/bin/hugo-${_newhugoverstr}
+  ln -sf ${GOPATH}/bin/hugo-${_newhugoverstr} hugo
+
+  cd $HOME
+  echo "==Sanity check - compare versions...=="
+  echo "Expecting: ${_newhugoverstr}"
+  echo "Actual: "
+  hugo version
+  echo "Previous: "
+  hugo-prev version
+
+  cd "${_wherewasi}" || exit
+}
+
 # Use latest brew sqlite not the one from Apple:
 export PATH="/usr/local/opt/sqlite/bin:$PATH"
