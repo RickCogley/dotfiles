@@ -598,7 +598,7 @@ brew_reinstall_head_apps (){
     brew reinstall --HEAD tmux
 }
 alias brrehead=brew_reinstall_head_apps
-alias brewhaha='echo "Updating brew various...";brew update && brew upgrade; brew cleanup; brew cask cleanup; brew doctor'
+alias brewhaha='echo "Updating brew various...";brew update && brew upgrade; brew cleanup; brew doctor'
 
 # Upgrade nvim plugs
 
@@ -771,3 +771,12 @@ hugoprodinstall (){
 
 # Use latest brew sqlite not the one from Apple:
 export PATH="/usr/local/opt/sqlite/bin:$PATH"
+
+makevcard (){
+  echo "Creates support vcard to attach to PROdb Client record."
+  echo "Usage: makevcard ACME \"Acme Japan\""
+  _tmpl=$HOME/dev/eSolia-Snippets/ESOLIA/esolia-support-contacts-vcard-template.txt
+  sed "s/CLIENTCODE/${1:l}/g" <${_tmpl} >eSolia-${1}-Support.vcf
+  sed -i '' "s/CLIENTNAME/${2}/g" eSolia-${1}-Support.vcf
+  cat eSolia-${1}-Support.vcf 
+}
