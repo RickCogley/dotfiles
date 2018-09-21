@@ -275,12 +275,14 @@ function hugogetjson-esolia {
     rm -rf /Users/rcogley/dev/eSolia_2018/data/info.json
     curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Information/List%20All%20on%20Website/select.json"  | /usr/local/bin/jq '.' > /Users/rcogley/dev/eSolia_2018/data/info.json
     rm -rf /Users/rcogley/dev/eSolia_2018/data/japancontact.json
-    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact/API%20List%20All/select.json" | /usr/local/bin/jq '.' > /Users/rcogley/dev/eSolia_2018/data/japancontact.json
+    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact%20and%20App/API%20List%20All/select.json" | /usr/local/bin/jq '.' > /Users/rcogley/dev/eSolia_2018/data/japancontact.json
+    rm -rf /Users/rcogley/dev/eSolia_2018/data/japanapp.json
+    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact%20and%20App/API%20List%20All%20Apps/select.json" | /usr/local/bin/jq '.' > /Users/rcogley/dev/eSolia_2018/data/japanapp.json
     rm -rf /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.en.csv
-    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact/API%20List%20for%20CSV/select.csv" -o /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.en.csv
+    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact%20and%20App/API%20List%20for%20CSV/select.csv" -o /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.en.csv
     rm -rf /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.ja.csv
-    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact/API%20List%20for%20CSV%E2%80%A1/select.csv" -o /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.ja.csv
-}
+    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact%20and%20App/API%20List%20for%20CSV%E2%80%A1/select.csv" -o /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.ja.csv
+} 
 
 function hugodeploy-jvad {
     _hugobin="$HOME/gocode/bin/hugo"
