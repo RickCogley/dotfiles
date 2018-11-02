@@ -91,7 +91,7 @@ function tdbackup-jrc {
 function vectordeploy {
     cd /Users/rcogley/dev/riot/
     chmod -R 755 /Users/rcogley/dev/riot/riot/
-    /usr/local/bin/rsync -avz -L --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /Users/rcogley/dev/riot/riot/ rcogley@cogley.info:/home/rcogley/webapps/es_chat01
+    /usr/local/bin/rsync -avz -L --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /Users/rcogley/dev/riot/riot/ rcogley@cogley.info:/home/rcogley/webapps/es_chat01
 }
 
 # function to deploy hugo, had --force and --progress on rsync, maybe Apple's is old?
@@ -107,7 +107,7 @@ function hugodeploy-rcc {
     export LIGHTRCCJS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/RCC-Hugo2015/static/js/lightbox.min.js)"
     chmod -R 775 /Users/rcogley/dev/RCC-Hugo2015/static/
     hugo --config="/Users/rcogley/dev/RCC-Hugo2015/config.toml" -s /Users/rcogley/dev/RCC-Hugo2015/ -d /tmp/rick.cogley.info
-    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/rick.cogley.info/ rcogley@cogley.info:/home/rcogley/webapps/rick_hugo01
+    /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/rick.cogley.info/ rcogley@cogley.info:/home/rcogley/webapps/rick_hugo01
 }
 
 function hugodeploy-esoliapro {
@@ -123,7 +123,7 @@ function hugodeploy-esoliapro {
     export LATESTSHA="$(git rev-parse master)"
     chmod -R 775 /Users/rcogley/dev/eSolia.pro/static/
     hugo --config="/Users/rcogley/dev/eSolia.pro/config.toml" -s /Users/rcogley/dev/eSolia.pro/ -d /tmp/esolia.pro
-    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia.pro/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_pro_01
+    /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia.pro/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_pro_01
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA.PRO+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia.pro%2Fcommit%2F$LATESTSHA&chat_tags=esolia.pro&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
 
@@ -140,7 +140,7 @@ function hugodeploy-esoliacom {
     export LATESTSHA="$(git rev-parse master)"
     chmod -R 775 /Users/rcogley/dev/eSolia/static/
     hugo --config="/Users/rcogley/dev/eSolia/config_en.toml" -s /Users/rcogley/dev/eSolia/ -d /tmp/esolia.com
-    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia.com/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_com_01
+    /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia.com/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_com_01
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA.COM+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esolia.com&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
 
@@ -157,7 +157,7 @@ function hugodeploy-esoliacojp {
     export LATESTSHA="$(git rev-parse master)"
     chmod -R 775 /Users/rcogley/dev/eSolia/static/
     hugo --config="/Users/rcogley/dev/eSolia/config_ja.toml" -s /Users/rcogley/dev/eSolia/ -d /tmp/esolia.co.jp
-    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia.co.jp/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_co_jp_01
+    /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia.co.jp/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_co_jp_01
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA.CO.JP+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esolia.co.jp&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
 
@@ -172,8 +172,8 @@ function XXhugodeploy-esolia {
     export LATESTSHA="$(git rev-parse master)"
     chmod -R 775 /Users/rcogley/dev/eSolia_2018/static/
     hugo --gc --config="/Users/rcogley/dev/eSolia_2018/config.toml" -s /Users/rcogley/dev/eSolia_2018/ -d /tmp/esolia
-    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia/ja/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_co_jp_01
-    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia/en/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_com_01
+    /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia/ja/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_co_jp_01
+    /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia/en/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_com_01
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esoliawebsite&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
 
@@ -223,15 +223,15 @@ function hugodeploy-RCClive {
     echo "Generating live.cogley.info"
     hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="http://live.cogley.info" -s /Users/rcogley/dev/RCC-live/ -d /tmp/live.cogley.info
     echo "Syncing live.cogley.info"
-    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/live.cogley.info/ rcogley@cogley.info:/home/rcogley/webapps/rick_live01
+    /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/live.cogley.info/ rcogley@cogley.info:/home/rcogley/webapps/rick_live01
     echo "Generating tilde.town"
     hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="http://tilde.town/~rickcogley" -s /Users/rcogley/dev/RCC-live/ -d /tmp/tilde.town.rickcogley
     echo "Syncing tilde.town"
-    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/tilde.town.rickcogley/ rickcogley@tilde.town:/home/rickcogley/public_html
+    /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/tilde.town.rickcogley/ rickcogley@tilde.town:/home/rickcogley/public_html
     echo "Generating ctrl-c.club"
     hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="http://ctrl-c.club/~rickcogley" -s /Users/rcogley/dev/RCC-live/ -d /tmp/ctrl-c.club.rickcogley
     echo "Syncing ctrl-c.club"
-    /usr/local/bin/rsync -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/ctrl-c.club.rickcogley/ rickcogley@ctrl-c.club:/home/rickcogley/public_html
+    /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/ctrl-c.club.rickcogley/ rickcogley@ctrl-c.club:/home/rickcogley/public_html
 }
 
 function hugodeploy-jpvad {
@@ -246,7 +246,7 @@ function hugodeploy-jpvad {
     rm -rf ${_tmpdir}
     chmod -R 775 ${_workingdir}/static/
     ${_hugobin} --config="${_workingdir}/config.toml" -s ${_workingdir} -d ${_tmpdir}
-    ${_rsyncbin} -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' ${_tmpdir} ${_sshlogin}:${_srvtargetdir}
+    ${_rsyncbin} -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' ${_tmpdir} ${_sshlogin}:${_srvtargetdir}
 }
 
 function hugodeploy-dev-jpvad {
@@ -261,7 +261,7 @@ function hugodeploy-dev-jpvad {
     rm -rf ${_tmpdir}
     chmod -R 775 ${_workingdir}/static/
     ${_hugobin} --config="${_workingdir}/config.toml" -s ${_workingdir} -d ${_tmpdir} --baseURL="http://dev.j-pvad.jp"
-    ${_rsyncbin} -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' ${_tmpdir} ${_sshlogin}:${_srvtargetdir}
+    ${_rsyncbin} -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' ${_tmpdir} ${_sshlogin}:${_srvtargetdir}
 }
 
 function hugogetjson-jvad {
@@ -296,7 +296,7 @@ function hugodeploy-jvad {
     rm -rf ${_tmpdir}
     chmod -R 775 ${_workingdir}/static/
     ${_hugobin} --config="${_workingdir}/config.toml" -s ${_workingdir} -d ${_tmpdir}
-    ${_rsyncbin} -avz --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' ${_tmpdir} ${_sshlogin}:${_srvtargetdir}
+    ${_rsyncbin} -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' ${_tmpdir} ${_sshlogin}:${_srvtargetdir}
 }
 
 # function to run hugo server
