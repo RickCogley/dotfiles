@@ -282,7 +282,7 @@ function hugogetjson-esolia {
     curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact%20and%20App/API%20List%20for%20CSV/select.csv" -o /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.en.csv
     rm -rf /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.ja.csv
     curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact%20and%20App/API%20List%20for%20CSV%E2%80%A1/select.csv" -o /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.ja.csv
-} 
+}
 
 function hugodeploy-jvad {
     _hugobin="$HOME/gocode/bin/hugo"
@@ -351,6 +351,11 @@ function hugoserver-jvad {
 function hugoserver-jpvad {
     cd /Users/rcogley/dev/abmd-j-pvad
     hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/abmd-j-pvad" --config="/Users/rcogley/dev/abmd-j-pvad/config.toml" --port=1316 --enableGitInfo
+}
+
+function hugoserver-esoliauploader {
+    cd /Users/rcogley/dev/eSolia-Uploader
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/eSolia-Uploader" --config="/Users/rcogley/dev/eSolia-Uploader/config.toml" --port=1317 --enableGitInfo
 }
 
 # Function for creating posts
@@ -676,7 +681,7 @@ hugodevinstall (){
   if [[ ! -d "${GOPATH}/src/github.com/magefile/mage" ]] || ( ! hash mage 2>/dev/null )
   then
     go get github.com/magefile/mage
-  fi  
+  fi
 
   echo "==Move current hugo to hugo-prev in case of need to revert=="
   mv ${GOPATH}/bin/hugo ${GOPATH}/bin/hugo-prev
@@ -746,7 +751,7 @@ hugoprodinstall (){
   echo "Downloading hugo v${_latestver}"
   curl -L "https://github.com/gohugoio/hugo/releases/download/v${_latestver}/hugo_extended_${_latestver}_macOS-64bit.tar.gz" > hugo_extended_${_latestver}_macOS-64bit.tar.gz
   tar xvfz hugo_extended_${_latestver}_macOS-64bit.tar.gz
-  
+
   echo "==Move hugo into position...=="
   cd ${GOPATH}/bin
   mv ${GOPATH}/bin/tmp/hugo ${GOPATH}/bin/
@@ -780,5 +785,5 @@ makevcard (){
   _tmpl=$HOME/dev/eSolia-Snippets/ESOLIA/esolia-support-contacts-vcard-template.txt
   sed "s/CLIENTCODE/${1:l}/g" <${_tmpl} >eSolia-${1}-Support.vcf
   sed -i '' "s/CLIENTNAME/${2}/g" eSolia-${1}-Support.vcf
-  cat eSolia-${1}-Support.vcf 
+  cat eSolia-${1}-Support.vcf
 }
