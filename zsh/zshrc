@@ -299,6 +299,21 @@ function hugodeploy-jvad {
     ${_rsyncbin} -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' ${_tmpdir} ${_sshlogin}:${_srvtargetdir}
 }
 
+function hugodeploy-esoliauploader {
+    _hugobin="$HOME/gocode/bin/hugo"
+    _rsyncbin="/usr/local/bin/rsync"
+    _sshlogin="rcogley@cogley.info"
+    _srvtargetdir="/home/rcogley/webapps/es_files01"
+    _workingdir="/Users/rcogley/dev/eSolia-Uploader"
+    # Trailing Slash Required
+    _tmpdir="/tmp/files.esolia.com/"
+    cd ${_workingdir}
+    rm -rf ${_tmpdir}
+    chmod -R 775 ${_workingdir}/static/
+    ${_hugobin} --config="${_workingdir}/config.toml" -s ${_workingdir} -d ${_tmpdir}
+    ${_rsyncbin} -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' ${_tmpdir} ${_sshlogin}:${_srvtargetdir}
+}
+
 # function to run hugo server
 
 function hugoserver-esolia {
