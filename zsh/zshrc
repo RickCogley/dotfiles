@@ -399,6 +399,19 @@ mv ${_contentdir}/${_hytitle}.md ${_contentdir}/${_contentfile}
 $EDITOR ${_contentdir}/${_contentfile}
 }
 
+function hugogenpost-logr {
+
+_hugobin="$HOME/gocode/bin/hugo"
+_workingdir="$HOME/dev/logr.cogley.info"
+_contentdir="${_workingdir}/content/post"
+_datetime=$(date +'%Y%m%d-%H%M%S')
+_hytitle=RC-Logr-${_datetime}
+
+cd ${_workingdir}
+${_hugobin} new post/${_hytitle}.md
+$EDITOR ${_contentdir}/${_hytitle}.md
+}
+
 # Set date in markdown file
 
 function crapsetdate {

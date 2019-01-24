@@ -611,27 +611,7 @@ nnoremap <silent> <Leader>g :Unite -direction=botright -silent -buffer-name=git 
 
 " Linting -------------------------------------------------------------------{{{
 
-  let g:neomake_javascript_enabled_makers = ['eslint']
-  function! neomake#makers#ft#javascript#eslint()
-      return {
-          \ 'args': ['-f', 'compact'],
-          \ 'errorformat': '%E%f: line %l\, col %c\, Error - %m,' .
-          \ '%W%f: line %l\, col %c\, Warning - %m'
-          \ }
-  endfunction
-  function! neomake#makers#ft#typescript#tsc()
-      return {
-          \ 'args': [
-              \ '-m', 'commonjs', '--noEmit','-t','ES5', '--emitDecoratorMetadata', '--experimentalDecorators'
-          \ ],
-          \ 'errorformat':
-              \ '%E%f %#(%l\,%c): error %m,' .
-              \ '%E%f %#(%l\,%c): %m,' .
-              \ '%Eerror %m,' .
-              \ '%C%\s%\+%m'
-          \ }
-  endfunction
-  autocmd! BufWritePost * Neomake
+  
 
   function! JscsFix()
       let l:winview = winsaveview()
