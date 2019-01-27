@@ -611,7 +611,7 @@ nnoremap <silent> <Leader>g :Unite -direction=botright -silent -buffer-name=git 
 
 " Linting -------------------------------------------------------------------{{{
 
-  
+
 
   function! JscsFix()
       let l:winview = winsaveview()
