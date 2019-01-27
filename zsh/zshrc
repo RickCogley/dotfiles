@@ -400,16 +400,17 @@ $EDITOR ${_contentdir}/${_contentfile}
 }
 
 function hugogenpost-logr {
-
 _hugobin="$HOME/gocode/bin/hugo"
+_vscodebin="/usr/local/bin/code"
+_gitbin="/usr/local/bin/git"
 _workingdir="$HOME/dev/logr.cogley.info"
-_contentdir="${_workingdir}/content/post"
+_contentdir="${_workingdir}/content/posts"
 _datetime=$(date +'%Y%m%d-%H%M%S')
 _hytitle=RC-Logr-${_datetime}
 
 cd ${_workingdir}
-${_hugobin} new post/${_hytitle}.md
-$EDITOR ${_contentdir}/${_hytitle}.md
+${_hugobin} new posts/${_hytitle}.md
+${_vscodebin} ${_contentdir}/${_hytitle}.md && ${_gitbin} add * . && ${_gitbin} commit -m "Logr update ${_datetime}" && ${_gitbin} push origin master
 }
 
 # Set date in markdown file
