@@ -673,10 +673,18 @@ pipup (){
     pip3 install --upgrade neovim
 }
 
+keyboardioup (){
+  cd /Users/rcogley/Documents/Arduino/Model01-Firmware
+  git fetch upstream master
+  cd /Users/rcogley/Documents/Arduino/hardware/keyboardio
+  make maintainer-update-submodules
+}
+
 allup (){
     pipup
     vimplugup
     brewhaha
+    keyboardioup
 }
 
 # zsh (prezto voodoo is that you need to put these here in zshrc at the bottom)
