@@ -57,4 +57,5 @@ export WW_SERVICE_SECRET="NcI9WXmdmQDL3Ho8a7o9GFvlLQ5QQvCdjfmizZFr1KcSuddqBfhNRq
 export PATH=/Users/rcogley/.nimble/bin:$PATH
 
 # ruby
-eval "$(rbenv init -)"
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init - zsh)"
