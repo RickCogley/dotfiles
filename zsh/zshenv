@@ -27,7 +27,7 @@ if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
 fi
 
 # General path settings
-export PATH="/Users/rcogley/gocode:/Users/rcogley/gocode/bin:/usr/local/sbin:/usr/local/bin:/usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/Users/rcogley/.rvm/gems/ruby-1.9.3-p362/bin:/Users/rcogley/.rvm/gems/ruby-1.9.3-p362@global/bin:/Users/rcogley/.rvm/rubies/ruby-1.9.3-p362/bin:/Users/rcogley/.rvm/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/git/bin:/usr/local/go/bin:/Users/rcogley/.rvm/bin"
+export PATH="/Users/rcogley/gocode:/Users/rcogley/gocode/bin:/usr/local/sbin:/usr/local/bin:/opt/local/bin:/opt/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/git/bin:/usr/local/go/bin"
 export PATH=$PATH:/usr/local/opt/go/libexec/bin
 export PATH=/usr/local/bin:$PATH
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -55,3 +55,6 @@ export WW_SERVICE_SECRET="NcI9WXmdmQDL3Ho8a7o9GFvlLQ5QQvCdjfmizZFr1KcSuddqBfhNRq
 
 # nim
 export PATH=/Users/rcogley/.nimble/bin:$PATH
+
+# ruby
+eval "$(rbenv init -)"
