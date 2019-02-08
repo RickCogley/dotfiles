@@ -431,6 +431,7 @@ ${_gitbin} commit -m "Logr update post ${_datetime}"
 ${_gitbin} push origin master
 ${_hugobin} --minify
 ${_rsyncbin} --verbose --compress --archive --recursive --partial --progress --checksum --delete --exclude '.git' ${_workingdir}/public/ ${_targetdir}
+ping-rcclogr
 }
 
 # Set date in markdown file
@@ -493,6 +494,24 @@ echo "Hitting google sitemap submit"
 curl "http://www.google.com/webmasters/tools/ping?sitemap=http%3A%2F%2Flive.cogley.info%2Fsitemap.xml"
 echo "Hitting bing sitemap submit"
 curl "http://www.bing.com/webmaster/ping.aspx?siteMap=http%3A%2F%2Flive.cogley.info%2Fsitemap.xml"
+}
+
+function ping-rcclogr {
+echo "Hitting ping-o-matic"
+curl -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Safari/604.1.38" "https://pingomatic.com/ping/?title=Rick+Cogley+Logr&blogurl=http%3A%2F%2Flogr.cogley.info&rssurl=http%3A%2F%2Flogr.cogley.info%2Findex.xml&chk_weblogscom=on&chk_blogs=on&chk_feedburner=on&chk_newsgator=on&chk_myyahoo=on&chk_pubsubcom=on&chk_blogdigger=on&chk_weblogalot=on&chk_newsisfree=on&chk_topicexchange=on&chk_google=on&chk_tailrank=on&chk_skygrid=on&chk_collecta=on&chk_superfeedr=on"
+echo "Hitting google sitemap submit"
+curl "http://www.google.com/webmasters/tools/ping?sitemap=http%3A%2F%2Flogr.cogley.info%2Fsitemap.xml"
+echo "Hitting bing sitemap submit"
+curl "http://www.bing.com/webmaster/ping.aspx?siteMap=http%3A%2F%2Flogr.cogley.info%2Fsitemap.xml"
+}
+
+function ping-rcclistr {
+echo "Hitting ping-o-matic"
+curl -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Safari/604.1.38" "https://pingomatic.com/ping/?title=Rick+Cogley+Listr&blogurl=http%3A%2F%2Flistr.cogley.info&rssurl=http%3A%2F%2Flistr.cogley.info%2Findex.xml&chk_weblogscom=on&chk_blogs=on&chk_feedburner=on&chk_newsgator=on&chk_myyahoo=on&chk_pubsubcom=on&chk_blogdigger=on&chk_weblogalot=on&chk_newsisfree=on&chk_topicexchange=on&chk_google=on&chk_tailrank=on&chk_skygrid=on&chk_collecta=on&chk_superfeedr=on"
+echo "Hitting google sitemap submit"
+curl "http://www.google.com/webmasters/tools/ping?sitemap=http%3A%2F%2Flistr.cogley.info%2Fsitemap.xml"
+echo "Hitting bing sitemap submit"
+curl "http://www.bing.com/webmaster/ping.aspx?siteMap=http%3A%2F%2Flistr.cogley.info%2Fsitemap.xml"
 }
 
 function ping-rccmain {
