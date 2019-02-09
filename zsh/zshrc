@@ -432,6 +432,26 @@ ${_gitbin} push origin master
 ${_hugobin} --minify
 ${_rsyncbin} --verbose --compress --archive --recursive --partial --progress --checksum --delete --exclude '.git' ${_workingdir}/public/ ${_targetdir}
 ping-rcclogr
+sleep 30
+logrtweet 0
+}
+
+function logrtweet {
+  : ${1?Call with int val for arg one to pull from index dot json}
+  _twurlbin="$HOME/.rbenv/shims/twurl"
+  _jqbin="/usr/local/bin/jq"
+  _hugobin="$HOME/gocode/bin/hugo"
+  _workingdir="$HOME/dev/logr.cogley.info"
+  _targetdir="/tmp/logr.cogley.info"
+
+  rm -rf ${_targetdir}
+  cd ${_workingdir}
+  ${_hugobin} -d ${_targetdir}
+
+  _tweetdata=$(cat ${_targetdir}/index.json | ${_jqbin} --arg recindex $1 --raw-output '.[$recindex|tonumber] | "RC Logr–"+.content[:75]+"... "+.ref')
+  _twurldata="status=${_tweetdata}"
+  # echo ${_twurldata}
+  ${_twurlbin} -d "${_twurldata}" /1.1/statuses/update.json
 }
 
 # Set date in markdown file
