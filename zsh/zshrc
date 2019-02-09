@@ -448,7 +448,7 @@ function logrtweet {
   cd ${_workingdir}
   ${_hugobin} -d ${_targetdir}
 
-  _tweetdata=$(cat ${_targetdir}/index.json | ${_jqbin} --arg recindex $1 --raw-output '.[$recindex|tonumber] | "RC Logr–"+.content[:75]+"... "+.ref')
+  _tweetdata=$(cat ${_targetdir}/index.json | ${_jqbin} --arg recindex $1 --raw-output '.[$recindex|tonumber] | "RC Logr–"+.content[:128]+"... "+.ref')
   _twurldata="status=${_tweetdata}"
   # echo ${_twurldata}
   ${_twurlbin} -d "${_twurldata}" /1.1/statuses/update.json
