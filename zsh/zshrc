@@ -436,6 +436,22 @@ sleep 30
 logrtweet 0
 }
 
+function hugoretry-logr {
+_hugobin="$HOME/gocode/bin/hugo"
+_gitbin="/usr/local/bin/git"
+_rsyncbin="/usr/bin/rsync"
+_workingdir="$HOME/dev/logr.cogley.info"
+_targetdir="/keybase/public/rickcogley/sites/logr_cogley_info/"
+_datetime=$(date +'%Y%m%d-%H%M%S')
+
+cd ${_workingdir}
+${_gitbin} add *
+${_gitbin} commit -m "Logr update post ${_datetime}"
+${_gitbin} push origin master
+${_hugobin} --minify
+${_rsyncbin} --verbose --compress --archive --recursive --partial --progress --checksum --delete --exclude '.git' ${_workingdir}/public/ ${_targetdir}
+}
+
 function logrtweet {
   : ${1?Call with int val for arg one to pull from index dot json}
   _twurlbin="$HOME/.rbenv/shims/twurl"
@@ -448,10 +464,10 @@ function logrtweet {
   cd ${_workingdir}
   ${_hugobin} -d ${_targetdir}
 
-  _tweetdata=$(cat ${_targetdir}/index.json | ${_jqbin} --arg recindex $1 --raw-output '.[$recindex|tonumber] | "RC Logr–"+.content[:128]+"... "+.ref')
-  _twurldata="status=${_tweetdata}"
+  _tweetdata=$(cat ${_targetdir}/index.json | ${_jqbin} --arg recindex $1 --raw-output '.[$recindex|tonumber] | "RC Logr– "+.content[:200]+"... "+.ref')
+  # _twurldata="status=${_tweetdata}"
   # echo ${_twurldata}
-  ${_twurlbin} -d "${_twurldata}" /1.1/statuses/update.json
+  ${_twurlbin} -d "status=${_tweetdata}" /1.1/statuses/update.json
 }
 
 # Set date in markdown file
