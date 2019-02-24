@@ -899,3 +899,4 @@ makevcard (){
   sed -i '' "s/CLIENTNAME/${2}/g" eSolia-${1}-Support.vcf
   cat eSolia-${1}-Support.vcf
 }
+export PATH="/usr/local/opt/libressl/bin:$PATH"
