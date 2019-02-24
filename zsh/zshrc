@@ -83,6 +83,9 @@ export PATH="/usr/local/opt/sqlite/bin:$PATH"
 # use the latest brew libressl not the Apple one:
 export PATH="/usr/local/opt/libressl/bin:$PATH"
 
+# use latest curl not the Apple one
+export PATH="/usr/local/opt/curl/bin:$PATH"
+
 # functions to manually backup PROdb or dbflex
 
 function tdbackup-esolia {
@@ -915,4 +918,3 @@ makevcard (){
   sed -i '' "s/CLIENTNAME/${2}/g" eSolia-${1}-Support.vcf
   cat eSolia-${1}-Support.vcf
 }
-

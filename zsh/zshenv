@@ -48,11 +48,3 @@ export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 # Zsh
 export HELPDIR=/usr/local/share/zsh/help
 export REPORTTIME=1
-
-# For compilers to find libressl you may need to set:
-export LDFLAGS="-L/usr/local/opt/libressl/lib"
-export CPPFLAGS="-I/usr/local/opt/libressl/include"
-
-# For pkg-config to find libressl you may need to set:
-export PKG_CONFIG_PATH="/usr/local/opt/libressl/lib/pkgconfig"
-
