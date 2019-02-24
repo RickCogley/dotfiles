@@ -49,17 +49,6 @@ export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 export HELPDIR=/usr/local/share/zsh/help
 export REPORTTIME=1
 
-# workwell
-export WW_SERVICE_ID="esolia"
-export WW_SERVICE_SECRET="NcI9WXmdmQDL3Ho8a7o9GFvlLQ5QQvCdjfmizZFr1KcSuddqBfhNRq"
-
-# nim
-export PATH=/Users/rcogley/.nimble/bin:$PATH
-
-# ruby
-export PATH="$HOME/.rbenv/bin:$PATH"
-eval "$(rbenv init - zsh)"
-
 # For compilers to find libressl you may need to set:
 export LDFLAGS="-L/usr/local/opt/libressl/lib"
 export CPPFLAGS="-I/usr/local/opt/libressl/include"
@@ -67,8 +56,3 @@ export CPPFLAGS="-I/usr/local/opt/libressl/include"
 # For pkg-config to find libressl you may need to set:
 export PKG_CONFIG_PATH="/usr/local/opt/libressl/lib/pkgconfig"
 
-# Use latest brew sqlite not the one from Apple:
-export PATH="/usr/local/opt/sqlite/bin:$PATH"
-
-# use the latest brew libressl not the Apple one:
-export PATH="/usr/local/opt/libressl/bin:$PATH"
