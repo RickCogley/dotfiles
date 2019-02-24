@@ -888,9 +888,6 @@ hugoprodinstall (){
   cd "${_wherewasi}" || exit
 }
 
-# Use latest brew sqlite not the one from Apple:
-export PATH="/usr/local/opt/sqlite/bin:$PATH"
-
 makevcard (){
   echo "Creates support vcard to attach to PROdb Client record."
   echo "Usage: makevcard ACME \"Acme Japan\""
@@ -899,4 +896,4 @@ makevcard (){
   sed -i '' "s/CLIENTNAME/${2}/g" eSolia-${1}-Support.vcf
   cat eSolia-${1}-Support.vcf
 }
-export PATH="/usr/local/opt/libressl/bin:$PATH"
+

@@ -59,3 +59,16 @@ export PATH=/Users/rcogley/.nimble/bin:$PATH
 # ruby
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init - zsh)"
+
+# For compilers to find libressl you may need to set:
+export LDFLAGS="-L/usr/local/opt/libressl/lib"
+export CPPFLAGS="-I/usr/local/opt/libressl/include"
+
+# For pkg-config to find libressl you may need to set:
+export PKG_CONFIG_PATH="/usr/local/opt/libressl/lib/pkgconfig"
+
+# Use latest brew sqlite not the one from Apple:
+export PATH="/usr/local/opt/sqlite/bin:$PATH"
+
+# use the latest brew libressl not the Apple one:
+export PATH="/usr/local/opt/libressl/bin:$PATH"
