@@ -86,6 +86,12 @@ export PATH="/usr/local/opt/libressl/bin:$PATH"
 # use latest curl not the Apple one
 export PATH="/usr/local/opt/curl/bin:$PATH"
 
+# function to reload shell
+
+function relogin {
+  exec $SHELL --login
+}
+
 # functions to manually backup PROdb or dbflex
 
 function tdbackup-esolia {
