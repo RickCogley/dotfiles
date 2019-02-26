@@ -29,6 +29,9 @@ fi
 
 # Customize to your needs...
 
+# use vim keybindings
+bindkey -v
+
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
