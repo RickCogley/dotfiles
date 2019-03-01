@@ -71,7 +71,7 @@ export WW_SERVICE_ID="esolia"
 export WW_SERVICE_SECRET="NcI9WXmdmQDL3Ho8a7o9GFvlLQ5QQvCdjfmizZFr1KcSuddqBfhNRq"
 
 # nim related
-export PATH=/Users/rcogley/.nimble/bin:$PATH
+export PATH=$HOME/.nimble/bin:$PATH
 
 # ruby related
 export PATH="$HOME/.rbenv/bin:$PATH"
@@ -98,111 +98,111 @@ function relogin {
 # functions to manually backup PROdb or dbflex
 
 function tdbackup-esolia {
-    cd /Users/rcogley/Google\ Drive/\!Backups/PROdb/15331
+    cd $HOME/Google\ Drive/\!Backups/PROdb/15331
     /usr/local/bin/mono tdbackup.exe
 }
 
 function tdbackup-cookjp {
-      cd /Users/rcogley/Google\ Drive/\!Backups/PROdb/15361
+      cd $HOME/Google\ Drive/\!Backups/PROdb/15361
     /usr/local/bin/mono tdbackup.exe
 }
 
 function tdbackup-cookap {
-      cd /Users/rcogley/Google\ Drive/\!Backups/PROdb/25822
+      cd $HOME/Google\ Drive/\!Backups/PROdb/25822
     /usr/local/bin/mono tdbackup.exe
 }
 
 function tdbackup-jrc {
-      cd /Users/rcogley/Google\ Drive/\!Backups/PROdb/26644
+      cd $HOME/Google\ Drive/\!Backups/PROdb/26644
     /usr/local/bin/mono tdbackup.exe
 }
 
 # function to deploy vector
 
 function vectordeploy {
-    cd /Users/rcogley/dev/riot/
-    chmod -R 755 /Users/rcogley/dev/riot/riot/
-    /usr/local/bin/rsync -avz -L --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /Users/rcogley/dev/riot/riot/ rcogley@cogley.info:/home/rcogley/webapps/es_chat01
+    cd $HOME/dev/riot/
+    chmod -R 755 $HOME/dev/riot/riot/
+    /usr/local/bin/rsync -avz -L --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' $HOME/dev/riot/riot/ rcogley@cogley.info:/home/rcogley/webapps/es_chat01
 }
 
 # function to deploy hugo, had --force and --progress on rsync, maybe Apple's is old?
 function hugodeploy-rcc {
-    cd /Users/rcogley/dev/RCC-Hugo2015
+    cd $HOME/dev/RCC-Hugo2015
     :>| ~/dev/RCC-Hugo2015/data/postgitinfo.yaml && for f in ~/dev/RCC-Hugo2015/content/post/*.md; do echo "$(cat $f|grep slug|sed 's/slug: //'): $(git log --pretty="%h %s" -1 $f)" >> ~/dev/RCC-Hugo2015/data/postgitinfo.yaml; done
     rm -rf /tmp/rick.cogley.info
-    # export RCCCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/RCC-Hugo2015/static/bundle/bundle.css)"
-    # export TOPICSRCCCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/RCC-Hugo2015/static/css/topics.min.css)"
-    # export PRISMRCCCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/RCC-Hugo2015/static/css/prism.min.css)"
-    export PRISMRCCJS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/RCC-Hugo2015/static/js/prism.min.js)"
-    export LIGHTRCCCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/RCC-Hugo2015/static/css/lightbox.min.css)"
-    export LIGHTRCCJS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/RCC-Hugo2015/static/js/lightbox.min.js)"
-    chmod -R 775 /Users/rcogley/dev/RCC-Hugo2015/static/
-    hugo --config="/Users/rcogley/dev/RCC-Hugo2015/config.toml" -s /Users/rcogley/dev/RCC-Hugo2015/ -d /tmp/rick.cogley.info
+    # export RCCCSS_HASH="$(git log -1 --format='%h' $HOME/dev/RCC-Hugo2015/static/bundle/bundle.css)"
+    # export TOPICSRCCCSS_HASH="$(git log -1 --format='%h' $HOME/dev/RCC-Hugo2015/static/css/topics.min.css)"
+    # export PRISMRCCCSS_HASH="$(git log -1 --format='%h' $HOME/dev/RCC-Hugo2015/static/css/prism.min.css)"
+    export PRISMRCCJS_HASH="$(git log -1 --format='%h' $HOME/dev/RCC-Hugo2015/static/js/prism.min.js)"
+    export LIGHTRCCCSS_HASH="$(git log -1 --format='%h' $HOME/dev/RCC-Hugo2015/static/css/lightbox.min.css)"
+    export LIGHTRCCJS_HASH="$(git log -1 --format='%h' $HOME/dev/RCC-Hugo2015/static/js/lightbox.min.js)"
+    chmod -R 775 $HOME/dev/RCC-Hugo2015/static/
+    hugo --config="$HOME/dev/RCC-Hugo2015/config.toml" -s $HOME/dev/RCC-Hugo2015/ -d /tmp/rick.cogley.info
     /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/rick.cogley.info/ rcogley@cogley.info:/home/rcogley/webapps/rick_hugo01
 }
 
 function hugodeploy-esoliapro {
-    cd /Users/rcogley/dev/eSolia.pro
+    cd $HOME/dev/eSolia.pro
     rm -rf /tmp/esolia.pro
-    export STYLECSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia.pro/static/css/style.css)"
-    export FEEDEKCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia.pro/static/css/FeedEk-2.0.min.css)"
-    export FONTELLOCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia.pro/static/css/fontello.min.css)"
-    export GHPMATCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia.pro/static/css/ghpages-materialize.min.css)"
-    export MATCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia.pro/static/css/materialize.min.css)"
-    export PRISMCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia.pro/static/css/prism.min.css)"
-    export TYPOCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia.pro/static/css/typography.min.css)"
+    export STYLECSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia.pro/static/css/style.css)"
+    export FEEDEKCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia.pro/static/css/FeedEk-2.0.min.css)"
+    export FONTELLOCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia.pro/static/css/fontello.min.css)"
+    export GHPMATCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia.pro/static/css/ghpages-materialize.min.css)"
+    export MATCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia.pro/static/css/materialize.min.css)"
+    export PRISMCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia.pro/static/css/prism.min.css)"
+    export TYPOCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia.pro/static/css/typography.min.css)"
     export LATESTSHA="$(git rev-parse master)"
-    chmod -R 775 /Users/rcogley/dev/eSolia.pro/static/
-    hugo --config="/Users/rcogley/dev/eSolia.pro/config.toml" -s /Users/rcogley/dev/eSolia.pro/ -d /tmp/esolia.pro
+    chmod -R 775 $HOME/dev/eSolia.pro/static/
+    hugo --config="$HOME/dev/eSolia.pro/config.toml" -s $HOME/dev/eSolia.pro/ -d /tmp/esolia.pro
     /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia.pro/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_pro_01
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA.PRO+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia.pro%2Fcommit%2F$LATESTSHA&chat_tags=esolia.pro&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
 
 function hugodeploy-esoliacom {
-    cd /Users/rcogley/dev/eSolia
+    cd $HOME/dev/eSolia
     rm -rf /tmp/esolia.com
-    export STYLECSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia/static/css/style.css)"
-    export FEEDEKCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia/static/css/FeedEk-2.0.min.css)"
-    export FONTELLOCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia/static/css/fontello.min.css)"
-    export GHPMATCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia/static/css/ghpages-materialize.min.css)"
-    export MATCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia/static/css/materialize.min.css)"
-    export PRISMCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia/static/css/prism.min.css)"
-    export TYPOCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia/static/css/typography.min.css)"
+    export STYLECSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia/static/css/style.css)"
+    export FEEDEKCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia/static/css/FeedEk-2.0.min.css)"
+    export FONTELLOCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia/static/css/fontello.min.css)"
+    export GHPMATCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia/static/css/ghpages-materialize.min.css)"
+    export MATCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia/static/css/materialize.min.css)"
+    export PRISMCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia/static/css/prism.min.css)"
+    export TYPOCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia/static/css/typography.min.css)"
     export LATESTSHA="$(git rev-parse master)"
-    chmod -R 775 /Users/rcogley/dev/eSolia/static/
-    hugo --config="/Users/rcogley/dev/eSolia/config_en.toml" -s /Users/rcogley/dev/eSolia/ -d /tmp/esolia.com
+    chmod -R 775 $HOME/dev/eSolia/static/
+    hugo --config="$HOME/dev/eSolia/config_en.toml" -s $HOME/dev/eSolia/ -d /tmp/esolia.com
     /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia.com/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_com_01
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA.COM+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esolia.com&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
 
 function hugodeploy-esoliacojp {
-    cd /Users/rcogley/dev/eSolia
+    cd $HOME/dev/eSolia
     rm -rf /tmp/esolia.co.jp
-    export STYLECSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia/static/css/style.css)"
-    export FEEDEKCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia/static/css/FeedEk-2.0.min.css)"
-    export FONTELLOCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia/static/css/fontello.min.css)"
-    export GHPMATCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia/static/css/ghpages-materialize.min.css)"
-    export MATCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia/static/css/materialize.min.css)"
-    export PRISMCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia/static/css/prism.min.css)"
-    export TYPOCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia/static/css/typography.min.css)"
+    export STYLECSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia/static/css/style.css)"
+    export FEEDEKCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia/static/css/FeedEk-2.0.min.css)"
+    export FONTELLOCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia/static/css/fontello.min.css)"
+    export GHPMATCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia/static/css/ghpages-materialize.min.css)"
+    export MATCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia/static/css/materialize.min.css)"
+    export PRISMCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia/static/css/prism.min.css)"
+    export TYPOCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia/static/css/typography.min.css)"
     export LATESTSHA="$(git rev-parse master)"
-    chmod -R 775 /Users/rcogley/dev/eSolia/static/
-    hugo --config="/Users/rcogley/dev/eSolia/config_ja.toml" -s /Users/rcogley/dev/eSolia/ -d /tmp/esolia.co.jp
+    chmod -R 775 $HOME/dev/eSolia/static/
+    hugo --config="$HOME/dev/eSolia/config_ja.toml" -s $HOME/dev/eSolia/ -d /tmp/esolia.co.jp
     /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia.co.jp/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_co_jp_01
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA.CO.JP+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esolia.co.jp&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
 }
 
 function XXhugodeploy-esolia {
     hugogetjson-esolia
-    cd /Users/rcogley/dev/eSolia_2018/
+    cd $HOME/dev/eSolia_2018/
     rm -rf /tmp/esolia.com
     rm -rf /tmp/esolia.co.jp
     rm -rf /tmp/esolia
-    export MAINCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia_2018/static/css/main.min.css)"
-    export MAINJS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia_2018/static/js/main.min.js)"
+    export MAINCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia_2018/static/css/main.min.css)"
+    export MAINJS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia_2018/static/js/main.min.js)"
     export LATESTSHA="$(git rev-parse master)"
-    chmod -R 775 /Users/rcogley/dev/eSolia_2018/static/
-    hugo --gc --config="/Users/rcogley/dev/eSolia_2018/config.toml" -s /Users/rcogley/dev/eSolia_2018/ -d /tmp/esolia
+    chmod -R 775 $HOME/dev/eSolia_2018/static/
+    hugo --gc --config="$HOME/dev/eSolia_2018/config.toml" -s $HOME/dev/eSolia_2018/ -d /tmp/esolia
     /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia/ja/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_co_jp_01
     /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/esolia/en/ rcogley@cogley.info:/home/rcogley/webapps/es_hugo_esolia_com_01
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esoliawebsite&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
@@ -210,19 +210,19 @@ function XXhugodeploy-esolia {
 
 function hugodeploys3-esolia {
     hugogetjson-esolia
-    cd /Users/rcogley/dev/eSolia_2018/
+    cd $HOME/dev/eSolia_2018/
     rm -rf /tmp/esolia.com
     rm -rf /tmp/esolia.co.jp
     rm -rf /tmp/esolia
-    export MAINCSS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia_2018/static/css/main.min.css)"
-    export MAINJS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia_2018/static/js/main.min.js)"
-    export BUCAJS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia_2018/static/js/bulma-carousel.min.js)"
-    export BUSTJS_HASH="$(git log -1 --format='%h' /Users/rcogley/dev/eSolia_2018/static/js/bulma-steps.min.js)"
+    export MAINCSS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia_2018/static/css/main.min.css)"
+    export MAINJS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia_2018/static/js/main.min.js)"
+    export BUCAJS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia_2018/static/js/bulma-carousel.min.js)"
+    export BUSTJS_HASH="$(git log -1 --format='%h' $HOME/dev/eSolia_2018/static/js/bulma-steps.min.js)"
     export LATESTSHA="$(git rev-parse master)"
-    chmod -R 775 /Users/rcogley/dev/eSolia_2018/static/
-    hugo --gc --config="/Users/rcogley/dev/eSolia_2018/config.toml" -s /Users/rcogley/dev/eSolia_2018/ -d /tmp/esolia
-    /Users/rcogley/gocode/bin/s3deploy -source=/tmp/esolia/en/ -region=us-east-1 -bucket=esolia.com-cdn $1
-    /Users/rcogley/gocode/bin/s3deploy -source=/tmp/esolia/ja/ -region=us-east-1 -bucket=esolia.co.jp-cdn $1
+    chmod -R 775 $HOME/dev/eSolia_2018/static/
+    hugo --gc --config="$HOME/dev/eSolia_2018/config.toml" -s $HOME/dev/eSolia_2018/ -d /tmp/esolia
+    $HOME/gocode/bin/s3deploy -source=/tmp/esolia/en/ -region=us-east-1 -bucket=esolia.com-cdn $1
+    $HOME/gocode/bin/s3deploy -source=/tmp/esolia/ja/ -region=us-east-1 -bucket=esolia.co.jp-cdn $1
     curl -X POST "http://util-02.esolia.com/flowdock/v2/flowdock.php?action=chat&chat_name=Auto-Script&chat_content=%40team%20Copied+files+to+ESOLIA+site+via+rsync+including+commit+https%3A%2F%2Fgithub.com%2FeSolia%2FeSolia%2Fcommit%2F$LATESTSHA&chat_tags=esoliawebsite&flowdock_api=73d6f7%3Df83ad24ab6628fda5ca2b18fff349a5877a928O7o799"
     /usr/local/bin/aws cloudfront create-invalidation --distribution-id E276HZ5CIRLAB3 --paths "/index.html" "/" "/page/*" "/post/*" "/sitemap/*" "/404/*" "/tags/*" "/topics/*"
     /usr/local/bin/aws cloudfront create-invalidation --distribution-id E1PV56T4OOCLME --paths "/index.html" "/" "/page/*" "/post/*" "/sitemap/*" "/404/*" "/tags/*" "/topics/*"
@@ -246,21 +246,21 @@ function aws-cfclear {
 
 
 function hugodeploy-RCClive {
-    cd /Users/rcogley/dev/RCC-live/
+    cd $HOME/dev/RCC-live/
     rm -rf /tmp/live.cogley.info
     rm -rf /tmp/tilde.town.rickcogley
     rm -rf /tmp/ctrl-c.club.rickcogley
-    chmod -R 775 /Users/rcogley/dev/RCC-live/static/
+    chmod -R 775 $HOME/dev/RCC-live/static/
     echo "Generating live.cogley.info"
-    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="http://live.cogley.info" -s /Users/rcogley/dev/RCC-live/ -d /tmp/live.cogley.info
+    hugo --config="$HOME/dev/RCC-live/config.toml" --baseURL="http://live.cogley.info" -s $HOME/dev/RCC-live/ -d /tmp/live.cogley.info
     echo "Syncing live.cogley.info"
     /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/live.cogley.info/ rcogley@cogley.info:/home/rcogley/webapps/rick_live01
     echo "Generating tilde.town"
-    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="http://tilde.town/~rickcogley" -s /Users/rcogley/dev/RCC-live/ -d /tmp/tilde.town.rickcogley
+    hugo --config="$HOME/dev/RCC-live/config.toml" --baseURL="http://tilde.town/~rickcogley" -s $HOME/dev/RCC-live/ -d /tmp/tilde.town.rickcogley
     echo "Syncing tilde.town"
     /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/tilde.town.rickcogley/ rickcogley@tilde.town:/home/rickcogley/public_html
     echo "Generating ctrl-c.club"
-    hugo --config="/Users/rcogley/dev/RCC-live/config.toml" --baseURL="http://ctrl-c.club/~rickcogley" -s /Users/rcogley/dev/RCC-live/ -d /tmp/ctrl-c.club.rickcogley
+    hugo --config="$HOME/dev/RCC-live/config.toml" --baseURL="http://ctrl-c.club/~rickcogley" -s $HOME/dev/RCC-live/ -d /tmp/ctrl-c.club.rickcogley
     echo "Syncing ctrl-c.club"
     /usr/local/bin/rsync -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' /tmp/ctrl-c.club.rickcogley/ rickcogley@ctrl-c.club:/home/rickcogley/public_html
 }
@@ -270,7 +270,7 @@ function hugodeploy-jpvad {
     _rsyncbin="/usr/local/bin/rsync"
     _sshlogin="pvad@j-pvad.jp"
     _srvtargetdir="/home/pvad/webapps/jpvad_jp"
-    _workingdir="/Users/rcogley/dev/abmd-j-pvad"
+    _workingdir="$HOME/dev/abmd-j-pvad"
     # Trailing Slash Required
     _tmpdir="/tmp/j-pvad.jp/"
     cd ${_workingdir}
@@ -285,7 +285,7 @@ function hugodeploy-dev-jpvad {
     _rsyncbin="/usr/local/bin/rsync"
     _sshlogin="pvad@j-pvad.jp"
     _srvtargetdir="/home/pvad/webapps/jpvad_jp_dev"
-    _workingdir="/Users/rcogley/dev/abmd-j-pvad"
+    _workingdir="$HOME/dev/abmd-j-pvad"
     # Trailing Slash Required
     _tmpdir="/tmp/dev.j-pvad.jp/"
     cd ${_workingdir}
@@ -296,23 +296,28 @@ function hugodeploy-dev-jpvad {
 }
 
 function hugogetjson-jvad {
-    rm -rf /Users/rcogley/dev/j-vad/data/seminars.json
-    curl -k "https://pro.dbflex.net/secure/api/v2/55317/7E69ADDF820E45ECB88DBE77AE69649B/Seminar/List%20All%20for%20JSON/select.json" | /usr/local/bin/jq '.' > /Users/rcogley/dev/j-vad/data/seminars.json
+    rm -rf $HOME/dev/j-vad/data/seminars.json
+    /usr/local/opt/curl/bin/curl --silent -k "https://pro.dbflex.net/secure/api/v2/55317/$(cat $HOME/.ssh/tokens/jvad-01)/Seminar/List%20All%20for%20JSON/select.json" | /usr/local/bin/jq '.' > $HOME/dev/j-vad/data/seminars.json
+}
+
+function hugogetjson-logr {
+   rm -rf $HOME/dev/logr.cogley.info/data/holidays.json 
+   /usr/local/opt/curl/bin/curl --silent "https://pro.dbflex.net/secure/api/v2/15331/$(cat $HOME/.ssh/tokens/prodb-01)/Work%20Holiday/API%20Holidays/select.json" | /usr/local/bin/jq '.' > $HOME/dev/logr.cogley.info/data/holidays.json
 }
 
 function hugogetjson-esolia {
-    rm -rf /Users/rcogley/dev/eSolia_2018/data/success.json
-    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Project/List%20All%20for%20JSON/select.json" | /usr/local/bin/jq '.' > /Users/rcogley/dev/eSolia_2018/data/success.json
-    rm -rf /Users/rcogley/dev/eSolia_2018/data/info.json
-    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Information/List%20All%20on%20Website/select.json"  | /usr/local/bin/jq '.' > /Users/rcogley/dev/eSolia_2018/data/info.json
-    rm -rf /Users/rcogley/dev/eSolia_2018/data/japancontact.json
-    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact%20and%20App/API%20List%20All/select.json" | /usr/local/bin/jq '.' > /Users/rcogley/dev/eSolia_2018/data/japancontact.json
-    rm -rf /Users/rcogley/dev/eSolia_2018/data/japanapp.json
-    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact%20and%20App/API%20List%20All%20Apps/select.json" | /usr/local/bin/jq '.' > /Users/rcogley/dev/eSolia_2018/data/japanapp.json
-    rm -rf /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.en.csv
-    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact%20and%20App/API%20List%20for%20CSV/select.csv" -o /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.en.csv
-    rm -rf /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.ja.csv
-    curl -k "https://pro.dbflex.net/secure/api/v2/15331/25ABDEE3357D416283C0D66B9C872076/Web%20Japan%20Contact%20and%20App/API%20List%20for%20CSV%E2%80%A1/select.csv" -o /Users/rcogley/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.ja.csv
+    rm -rf $HOME/dev/eSolia_2018/data/success.json
+    /usr/local/opt/curl/bin/curl --silent -k "https://pro.dbflex.net/secure/api/v2/15331/$(cat $HOME/.ssh/tokens/prodb-01)/Web%20Project/List%20All%20for%20JSON/select.json" | /usr/local/bin/jq '.' > $HOME/dev/eSolia_2018/data/success.json
+    rm -rf $HOME/dev/eSolia_2018/data/info.json
+    /usr/local/opt/curl/bin/curl --silent -k "https://pro.dbflex.net/secure/api/v2/15331/$(cat $HOME/.ssh/tokens/prodb-01)/Web%20Information/List%20All%20on%20Website/select.json"  | /usr/local/bin/jq '.' > $HOME/dev/eSolia_2018/data/info.json
+    rm -rf $HOME/dev/eSolia_2018/data/japancontact.json
+    /usr/local/opt/curl/bin/curl --silent -k "https://pro.dbflex.net/secure/api/v2/15331/$(cat $HOME/.ssh/tokens/prodb-01)/Web%20Japan%20Contact%20and%20App/API%20List%20All/select.json" | /usr/local/bin/jq '.' > $HOME/dev/eSolia_2018/data/japancontact.json
+    rm -rf $HOME/dev/eSolia_2018/data/japanapp.json
+    /usr/local/opt/curl/bin/curl --silent -k "https://pro.dbflex.net/secure/api/v2/15331/$(cat $HOME/.ssh/tokens/prodb-01)/Web%20Japan%20Contact%20and%20App/API%20List%20All%20Apps/select.json" | /usr/local/bin/jq '.' > $HOME/dev/eSolia_2018/data/japanapp.json
+    rm -rf $HOME/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.en.csv
+    /usr/local/opt/curl/bin/curl --silent -k "https://pro.dbflex.net/secure/api/v2/15331/$(cat $HOME/.ssh/tokens/prodb-01)/Web%20Japan%20Contact%20and%20App/API%20List%20for%20CSV/select.csv" -o $HOME/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.en.csv
+    rm -rf $HOME/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.ja.csv
+    /usr/local/opt/curl/bin/curl --silent -k "https://pro.dbflex.net/secure/api/v2/15331/$(cat $HOME/.ssh/tokens/prodb-01)/Web%20Japan%20Contact%20and%20App/API%20List%20for%20CSV%E2%80%A1/select.csv" -o $HOME/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.ja.csv
 }
 
 function hugodeploy-jvad {
@@ -320,7 +325,7 @@ function hugodeploy-jvad {
     _rsyncbin="/usr/local/bin/rsync"
     _sshlogin="jvad@j-vad.jp"
     _srvtargetdir="/home/jvad/webapps/jvad_jp"
-    _workingdir="/Users/rcogley/dev/j-vad"
+    _workingdir="$HOME/dev/j-vad"
     # Trailing Slash Required
     _tmpdir="/tmp/dev1.j-vad.jp/"
     cd ${_workingdir}
@@ -335,7 +340,7 @@ function hugodeploy-esoliauploader {
     _rsyncbin="/usr/local/bin/rsync"
     _sshlogin="rcogley@cogley.info"
     _srvtargetdir="/home/rcogley/webapps/es_files01"
-    _workingdir="/Users/rcogley/dev/eSolia-Uploader"
+    _workingdir="$HOME/dev/eSolia-Uploader"
     # Trailing Slash Required
     _tmpdir="/tmp/files.esolia.com/"
     cd ${_workingdir}
@@ -349,59 +354,59 @@ function hugodeploy-esoliauploader {
 
 function hugoserver-esolia {
     hugogetjson-esolia
-    cd /Users/rcogley/dev/eSolia_2018
-    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/eSolia_2018" --config="/Users/rcogley/dev/eSolia_2018/config.toml" --port=1366
+    cd $HOME/dev/eSolia_2018
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="$HOME/dev/eSolia_2018" --config="$HOME/dev/eSolia_2018/config.toml" --port=1366
 }
 
 function hugoserver-esoliacom {
-    cd /Users/rcogley/dev/eSolia
-    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_en.toml" --port=1377
+    cd $HOME/dev/eSolia
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="$HOME/dev/eSolia" --config="$HOME/dev/eSolia/config_en.toml" --port=1377
 }
 
 function hugoserver-stable-esoliacom {
-    cd /Users/rcogley/dev/eSolia
-    /usr/local/Cellar/hugo/0.14/bin/hugo server --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_en.toml" --port=1377
+    cd $HOME/dev/eSolia
+    /usr/local/Cellar/hugo/0.14/bin/hugo server --buildDrafts --buildFuture --watch --verbose --source="$HOME/dev/eSolia" --config="$HOME/dev/eSolia/config_en.toml" --port=1377
 }
 
 function hugoserver-esoliacojp {
-    cd /Users/rcogley/dev/eSolia
-    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_ja.toml" --port=1399
+    cd $HOME/dev/eSolia
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="$HOME/dev/eSolia" --config="$HOME/dev/eSolia/config_ja.toml" --port=1399
 }
 
 function hugoserver-stable-esoliacojp {
-    cd /Users/rcogley/dev/eSolia
-    /usr/local/Cellar/hugo/0.14/bin/hugo server --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/eSolia" --config="/Users/rcogley/dev/eSolia/config_ja.toml" --port=1399
+    cd $HOME/dev/eSolia
+    /usr/local/Cellar/hugo/0.14/bin/hugo server --buildDrafts --buildFuture --watch --verbose --source="$HOME/dev/eSolia" --config="$HOME/dev/eSolia/config_ja.toml" --port=1399
 }
 
 function hugoserver-esoliapro {
-    cd /Users/rcogley/dev/eSolia.pro
-    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/eSolia.pro" --config="/Users/rcogley/dev/eSolia.pro/config.toml" --port=1388
+    cd $HOME/dev/eSolia.pro
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="$HOME/dev/eSolia.pro" --config="$HOME/dev/eSolia.pro/config.toml" --port=1388
 }
 
 function hugoserver-rcc {
-    cd /Users/rcogley/dev/RCC-Hugo2015
-    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/RCC-Hugo2015" --config="/Users/rcogley/dev/RCC-Hugo2015/config.toml" --port=1313
+    cd $HOME/dev/RCC-Hugo2015
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="$HOME/dev/RCC-Hugo2015" --config="$HOME/dev/RCC-Hugo2015/config.toml" --port=1313
 }
 
 function hugoserver-rcclive {
-    cd /Users/rcogley/dev/RCC-live
-    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/RCC-live" --config="/Users/rcogley/dev/RCC-live/config.toml" --port=1314 --enableGitInfo
+    cd $HOME/dev/RCC-live
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="$HOME/dev/RCC-live" --config="$HOME/dev/RCC-live/config.toml" --port=1314 --enableGitInfo
 }
 
 function hugoserver-jvad {
     hugogetjson-jvad
-    cd /Users/rcogley/dev/j-vad
-    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/j-vad" --config="/Users/rcogley/dev/j-vad/config.toml" --port=1315 --enableGitInfo
+    cd $HOME/dev/j-vad
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="$HOME/dev/j-vad" --config="$HOME/dev/j-vad/config.toml" --port=1315 --enableGitInfo
 }
 
 function hugoserver-jpvad {
-    cd /Users/rcogley/dev/abmd-j-pvad
-    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/abmd-j-pvad" --config="/Users/rcogley/dev/abmd-j-pvad/config.toml" --port=1316 --enableGitInfo
+    cd $HOME/dev/abmd-j-pvad
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="$HOME/dev/abmd-j-pvad" --config="$HOME/dev/abmd-j-pvad/config.toml" --port=1316 --enableGitInfo
 }
 
 function hugoserver-esoliauploader {
-    cd /Users/rcogley/dev/eSolia-Uploader
-    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="/Users/rcogley/dev/eSolia-Uploader" --config="/Users/rcogley/dev/eSolia-Uploader/config.toml" --port=1317 --enableGitInfo
+    cd $HOME/dev/eSolia-Uploader
+    hugo server --navigateToChanged --buildDrafts --buildFuture --watch --verbose --source="$HOME/dev/eSolia-Uploader" --config="$HOME/dev/eSolia-Uploader/config.toml" --port=1317 --enableGitInfo
 }
 
 # Function for creating posts
@@ -449,6 +454,7 @@ ${_vscodebin} ${_contentdir}/${_hytitle}.md
 }
 
 function hugodeploy-logr {
+hugogetjson-logr
 _hugobin="$HOME/gocode/bin/hugo"
 _gitbin="/usr/local/bin/git"
 _rsyncbin="/usr/bin/rsync"
@@ -460,7 +466,7 @@ cd ${_workingdir}
 ${_gitbin} add *
 ${_gitbin} commit -m "Logr update post ${_datetime}"
 ${_gitbin} push origin master
-${_hugobin} --minify
+${_hugobin} --gc --minify
 ${_rsyncbin} --verbose --compress --archive --recursive --partial --progress --checksum --delete --exclude '.git' ${_workingdir}/public/ ${_targetdir}
 ping-rcclogr
 sleep 30
@@ -468,6 +474,7 @@ logrtweet 0
 }
 
 function hugoretry-logr {
+hugogetjson-logr
 _hugobin="$HOME/gocode/bin/hugo"
 _gitbin="/usr/local/bin/git"
 _rsyncbin="/usr/bin/rsync"
@@ -479,7 +486,7 @@ cd ${_workingdir}
 ${_gitbin} add *
 ${_gitbin} commit -m "Logr update post ${_datetime}"
 ${_gitbin} push origin master
-${_hugobin} --minify
+${_hugobin} --gc --minify
 ${_rsyncbin} --verbose --compress --archive --recursive --partial --progress --checksum --delete --exclude '.git' ${_workingdir}/public/ ${_targetdir}
 }
 
@@ -627,18 +634,18 @@ curl "http://www.bing.com/webmaster/ping.aspx?siteMap=https%3A%2F%2Fesolia.com%2
 # function to output hugo config
 
 function hugoconfig-esoliacom {
-	cd /Users/rcogley/dev/eSolia
-	hugo config --config="/Users/rcogley/dev/eSolia/config_en.toml" > /Users/rcogley/dev/eSolia/config_en.txt
+	cd $HOME/dev/eSolia
+	hugo config --config="$HOME/dev/eSolia/config_en.toml" > $HOME/dev/eSolia/config_en.txt
 }
 
 function hugoconfig-esoliacojp {
-	cd /Users/rcogley/dev/eSolia
-	hugo config --config="/Users/rcogley/dev/eSolia/config_ja.toml" > /Users/rcogley/dev/eSolia/config_ja.txt
+	cd $HOME/dev/eSolia
+	hugo config --config="$HOME/dev/eSolia/config_ja.toml" > $HOME/dev/eSolia/config_ja.txt
 }
 
 function hugoconfig-rcc {
-	cd /Users/rcogley/dev/RCC-Hugo2015
-	hugo config --config="/Users/rcogley/dev/RCC-Hugo2015/config.toml" > /Users/rcogley/dev/RCC-Hugo2015/config.txt
+	cd $HOME/dev/RCC-Hugo2015
+	hugo config --config="$HOME/dev/RCC-Hugo2015/config.toml" > $HOME/dev/RCC-Hugo2015/config.txt
 }
 
 function hugowatchesolias {
@@ -760,9 +767,9 @@ pipup (){
 }
 
 keyboardioup (){
-  cd /Users/rcogley/Documents/Arduino/Model01-Firmware
+  cd $HOME/Documents/Arduino/Model01-Firmware
   git fetch upstream master
-  cd /Users/rcogley/Documents/Arduino/hardware/keyboardio
+  cd $HOME/Documents/Arduino/hardware/keyboardio
   make maintainer-update-submodules
 }
 
