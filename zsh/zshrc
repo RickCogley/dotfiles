@@ -531,8 +531,8 @@ function setdate() {
 
 function date3339() {
    echo "Putting RFC3339 on Clipboard for Frontmatter"
-   gdate --rfc-3339=seconds | sed 's/ /T/' | pbcopy >&1
-   echo "Ok go ahead"
+   gdate --rfc-3339=seconds | sed 's/ /T/' | head -c -1 | pbcopy >&1
+   echo "Date in RFC 3339 format on clipboard. Paste away"
 }
 
 # Function for Hugo bundle conversion thanks to @onedrawingperday
