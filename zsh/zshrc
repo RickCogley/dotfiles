@@ -301,7 +301,7 @@ function hugogetjson-jvad {
 }
 
 function hugogetjson-logr {
-   rm -rf $HOME/dev/logr.cogley.info/data/holidays.json 
+   rm -rf $HOME/dev/logr.cogley.info/data/holidays.json
    /usr/local/opt/curl/bin/curl --silent "https://pro.dbflex.net/secure/api/v2/15331/$(cat $HOME/.ssh/tokens/prodb-01)/Work%20Holiday/API%20Holidays/select.json" | /usr/local/bin/jq '.' > $HOME/dev/logr.cogley.info/data/holidays.json
 }
 
@@ -331,7 +331,7 @@ function hugodeploy-jvad {
     cd ${_workingdir}
     rm -rf ${_tmpdir}
     chmod -R 775 ${_workingdir}/static/
-    ${_hugobin} --config="${_workingdir}/config.toml" -s ${_workingdir} -d ${_tmpdir}
+    ${_hugobin} --debug --config="${_workingdir}/config.toml" -s ${_workingdir} -d ${_tmpdir}
     ${_rsyncbin} -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' ${_tmpdir} ${_sshlogin}:${_srvtargetdir}
 }
 
@@ -459,7 +459,7 @@ _hugobin="$HOME/gocode/bin/hugo"
 _gitbin="/usr/local/bin/git"
 _rsyncbin="/usr/bin/rsync"
 _workingdir="$HOME/dev/logr.cogley.info"
-_targetdir="/keybase/public/rickcogley/sites/logr_cogley_info/"
+_targetdir="/Volumes/keybase/public/rickcogley/sites/logr_cogley_info/"
 _datetime=$(date +'%Y%m%d-%H%M%S')
 
 cd ${_workingdir}
@@ -479,7 +479,7 @@ _hugobin="$HOME/gocode/bin/hugo"
 _gitbin="/usr/local/bin/git"
 _rsyncbin="/usr/bin/rsync"
 _workingdir="$HOME/dev/logr.cogley.info"
-_targetdir="/keybase/public/rickcogley/sites/logr_cogley_info/"
+_targetdir="/Volumes/keybase/public/rickcogley/sites/logr_cogley_info/"
 _datetime=$(date +'%Y%m%d-%H%M%S')
 
 cd ${_workingdir}
