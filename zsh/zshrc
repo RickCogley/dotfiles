@@ -781,6 +781,10 @@ allup (){
     zprezto-update
 }
 
+brewcaskrelink (){
+ brew cask list -1 | while read line; do brew cask uninstall --force $line; brew cask install $line; done
+}
+
 # zsh (prezto voodoo is that you need to put these here in zshrc at the bottom)
 export HISTSIZE="1000000"
 export SAVEHIST="1000000"
