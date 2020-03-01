@@ -437,7 +437,7 @@ $EDITOR ${_contentdir}/${_contentfile}
 
 function hugogenpost-logr {
 _hugobin="$HOME/gocode/bin/hugo"
-_vscodebin="/usr/local/bin/code"
+_editbin="/usr/local/bin/nova"
 _gitbin="/usr/local/bin/git"
 _workingdir="$HOME/dev/logr.cogley.info"
 _contentdir="${_workingdir}/content/posts"
@@ -450,7 +450,7 @@ cd ${_workingdir}
 ${_gitbin} add *
 ${_gitbin} commit -m "Logr new post ${_datetime}"
 ${_gitbin} push origin master
-${_vscodebin} ${_contentdir}/${_hytitle}.md
+${_editbin} ${_contentdir}/${_hytitle}.md
 }
 
 function hugodeploy-logr {
@@ -758,12 +758,12 @@ vimplugup (){
 
 # Upgrade pip and easy_install
 pipup (){
-    echo "Updating pip setuptools and neovim..."
+    echo "Updating pip setuptools ..."
     pip install --upgrade pip setuptools wheel
-    pip install --upgrade neovim
-    echo "Updating pip3 setuptools and neovim..."
+    # pip install --upgrade neovim
+    echo "Updating pip3 setuptools ..."
     pip3 install --upgrade pip setuptools wheel
-    pip3 install --upgrade neovim
+    # pip3 install --upgrade neovim
 }
 
 keyboardioup (){
@@ -773,11 +773,10 @@ keyboardioup (){
   make maintainer-update-submodules
 }
 
+# Removed vimplugup keyboardioup
 allup (){
     pipup
-    vimplugup
     brewhaha
-    keyboardioup
     zprezto-update
 }
 
