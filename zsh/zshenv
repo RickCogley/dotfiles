@@ -48,3 +48,6 @@ export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 # Zsh
 export HELPDIR=/usr/local/share/zsh/help
 export REPORTTIME=1
+
+# Onivim2
+export ONI2_CONFIG_DIR=/Users/rcogley/.config/oni2/
