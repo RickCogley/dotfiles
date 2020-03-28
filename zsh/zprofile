@@ -82,3 +82,5 @@ export CPPFLAGS="-I/usr/local/opt/libressl/include"
 
 # For pkg-config to find libressl you may need to set:
 export PKG_CONFIG_PATH="/usr/local/opt/libressl/lib/pkgconfig"
+
+export GPG_TTY=$(tty)
