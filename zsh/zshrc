@@ -748,6 +748,7 @@ brew_reinstall_head_apps (){
 }
 alias brrehead=brew_reinstall_head_apps
 alias brewhaha='echo "Updating brew various...";brew update && brew upgrade; brew cleanup; brew doctor'
+alias brewcu='echo "Updating brew cask...";brew cu'
 
 # Upgrade nvim plugs
 
@@ -778,6 +779,7 @@ allup (){
     pipup
     brewhaha
     zprezto-update
+    brewcu
 }
 
 brewcaskrelink (){
