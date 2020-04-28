@@ -944,3 +944,5 @@ makevcard (){
 function fdleave {
     /usr/local/opt/curl/bin/curl --silent -k -X "POST" "https://api.flowdock.com/flows/esolia/$1/messages?content=%40team%20Migrating%20to%20Slack%20from%2018p%20today.%20Ok%20to%20use%20client%20flows%20from%20this%20evening.&event=message" -u '$(cat $HOME/.ssh/tokens/flowdock-01):dummy'
 }
+
+export GPG_TTY=`tty`
