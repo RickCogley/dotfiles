@@ -492,6 +492,24 @@ ${_rsyncbin} --verbose --compress --archive --recursive --partial --progress --c
 
 function logrtweet {
   : ${1?Call with int val for arg one to pull from index dot json}
+  _twtybin="$HOME/gocode/bin/twty"
+  _jqbin="/usr/local/bin/jq"
+  _hugobin="$HOME/gocode/bin/hugo"
+  _workingdir="$HOME/dev/logr.cogley.info"
+  _targetdir="/tmp/logr.cogley.info"
+
+  rm -rf ${_targetdir}
+  cd ${_workingdir}
+  ${_hugobin} -d ${_targetdir}
+
+  _tweetdata=$(cat ${_targetdir}/index.json | ${_jqbin} --arg recindex $1 --raw-output '.[$recindex|tonumber] | .content[:200]+"... #logr "+.ref')
+  # _twurldata="status=${_tweetdata}"
+  # echo ${_twurldata}
+  ${_twtybin} ${_tweetdata}
+}
+
+function logrtweet-1 {
+  : ${1?Call with int val for arg one to pull from index dot json}
   _twurlbin="$HOME/.rbenv/shims/twurl"
   _jqbin="/usr/local/bin/jq"
   _hugobin="$HOME/gocode/bin/hugo"
