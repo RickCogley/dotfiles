@@ -827,7 +827,15 @@ confirmprodbbackup (){
 
 # flush dns
 #
-alias flushdns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder; say dns can sod off'
+function flushdns (){
+  echo "Flushing DNS, enter your user password if prompted:"
+  sudo killall -HUP mDNSResponder
+  sudo killall mDNSResponderHelper
+  sudo dscacheutil -flushcache
+  say dns can sod off
+}
+
+
 
 # update hugo
 
