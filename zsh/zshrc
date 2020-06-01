@@ -967,12 +967,75 @@ makevcard (){
   cat eSolia-${1}-Support.vcf
 }
 
-function fdleave {
+function fdleave (){
     /usr/local/opt/curl/bin/curl --silent -k -X "POST" "https://api.flowdock.com/flows/esolia/$1/messages?content=%40team%20Migrating%20to%20Slack%20from%2018p%20today.%20Ok%20to%20use%20client%20flows%20from%20this%20evening.&event=message" -u '$(cat $HOME/.ssh/tokens/flowdock-01):dummy'
 }
 
-function serve-it {
+function serve-it (){
   php -S localhost:8080
 }
 
+function deploy-sendy-jtrans (){
+  echo "First arg is Sendy version"
+  _rsyncbin="/usr/local/bin/rsync"
+  # Trailing Slash Required
+  _workingdir="$HOME/dev/sendy-japanese-translation/$1/locale/ja_JP/LC_MESSAGES/"
+  _sshlogin="rcogley@cogley.info"
+  _srvtargetdir="/home/rcogley/webapps/es_send_esolia_pro_1/locale/ja_JP/LC_MESSAGES"
+  ${_rsyncbin} -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 ${_workingdir} ${_sshlogin}:${_srvtargetdir}
+}
+
+function deploy-sendy-etrans (){
+  echo "First arg is Sendy version"
+  _rsyncbin="/usr/local/bin/rsync"
+  # Trailing Slash Required
+  _workingdir="$HOME/dev/sendy-japanese-translation/$1/locale/en_US/LC_MESSAGES/"
+  _sshlogin="rcogley@cogley.info"
+  _srvtargetdir="/home/rcogley/webapps/es_send_esolia_pro_1/locale/en_US/LC_MESSAGES"
+  ${_rsyncbin} -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 ${_workingdir} ${_sshlogin}:${_srvtargetdir}
+}
+
+function aboptim (){
+  _arg1filename=${1%.*}
+  _arg1extension=${1##*.}
+  _fileprefix="abiomed-profed-"
+  _newwidth="231"
+  _newwidthsuffix="-${_newwidth}px"
+
+  # Clear two exif fields from original
+  exiftool -artist= $1
+  exiftool -ImageDescription= $1
+  # Make a copy
+  cp $1 ${_fileprefix}$1
+  # Resize down
+  magick convert ${_fileprefix}$1 -resize ${_newwidth}x ${_fileprefix}${_arg1filename}${_newwidthsuffix}.${_arg1extension}
+  # Run imageoptim
+  imageoptim ${_fileprefix}$1
+  imageoptim ${_fileprefix}${_arg1filename}${_newwidthsuffix}.${_arg1extension}
+  #Set exif
+  exiftool -artist="Abiomed Japan" -ImageDescription="Abiomed Japan Professional Education video screenshot processed by eSolia." ${_fileprefix}$1
+  exiftool -artist="Abiomed Japan" -ImageDescription="Abiomed Japan Professional Education video newsletter thumbnail processed by eSolia." ${_fileprefix}${_arg1filename}${_newwidthsuffix}.${_arg1extension}
+  rm -rf *.jpg_original
+
+  echo $1
+  echo ${_arg1filename}
+  echo ${_arg1extension}
+  echo ${_fileprefix}
+  echo ${_newwidthsuffix}
+
+  echo "Doing scp to assets. Enter the password for abmd at webfaction when prompted..."
+  scp ${_fileprefix}$1 abmd@abmd.webfactional.com:/home/abmd/webapps/ab_assets/profed
+  scp ${_fileprefix}${_arg1filename}${_newwidthsuffix}.${_arg1extension} abmd@abmd.webfactional.com:/home/abmd/webapps/ab_assets/profed
+}
+
+function lsabassets (){
+  echo "Use the webfaction abmd password and view what the file names look like"
+  ssh abmd@abmd.webfactional.com ls "webapps/ab_assets/profed/"
+}
+
+
+
+
+
 export GPG_TTY=`tty`
+
