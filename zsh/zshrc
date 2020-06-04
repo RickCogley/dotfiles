@@ -89,6 +89,9 @@ export PATH="/usr/local/opt/libressl/bin:$PATH"
 # use latest curl not the Apple one
 export PATH="/usr/local/opt/curl/bin:$PATH"
 
+# use latest brew php not the Apple one
+export PATH="/usr/local/opt/php/bin:$PATH"
+
 # function to reload shell
 
 function relogin {
