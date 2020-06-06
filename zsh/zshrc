@@ -92,6 +92,10 @@ export PATH="/usr/local/opt/curl/bin:$PATH"
 # use latest brew php not the Apple one
 export PATH="/usr/local/opt/php/bin:$PATH"
 
+# for php composer
+export PATH="$HOME/.composer/vendor/bin:$PATH"
+
+
 # function to reload shell
 
 function relogin {
