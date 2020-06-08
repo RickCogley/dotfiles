@@ -801,9 +801,15 @@ keyboardioup (){
 
 # Removed vimplugup keyboardioup
 allup (){
+    cd
+    echo "UPDATE NPM"
+    npm install -g npm
+    echo "UPDATE PIP"
     pipup
-    brewhaha
+    echo "UPDATE ZPREZTO"
     zprezto-update
+    echo "UPDATE BREW CLI and CASKS"
+    brewhaha
     brewcu
 }
 
