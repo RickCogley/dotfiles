@@ -20,8 +20,8 @@ fi
 # Editors
 #
 
-export EDITOR='nvim'
-export VISUAL='code'
+export EDITOR='nova'
+export VISUAL='nova'
 export PAGER='less'
 
 #
