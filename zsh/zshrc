@@ -1099,3 +1099,56 @@ function tput-colors (){
         echo $(tput sgr0)
     done
 }
+
+# print S3 bucket size and count
+# usage: bsize <bucket> [profile]
+function bsize() (
+  bucket=$1 profile=${2-default}
+
+  if [[ -z "$bucket" ]]; then
+    echo >&2 "bsize <bucket> [profile]"
+    return 1
+  fi
+
+  # ensure aws/jq/numfmt are installed
+  for bin in aws jq gnumfmt; do
+    if ! hash $bin 2> /dev/null; then
+      echo >&2 "Please install \"$_\" first!"
+      return 1
+    fi
+  done
+
+  # get bucket region
+  region=$(aws --profile $profile s3api get-bucket-location --bucket $bucket 2> /dev/null | jq -r '.LocationConstraint // "us-east-1"')
+  if [[ -z "$region" ]]; then
+    echo >&2 "Invalid bucket/profile name!"
+    return 1
+  fi
+
+  # get storage class (assumes
+  # all objects in same class)
+  sclass=$(aws --profile $profile s3api list-objects --bucket $bucket --max-items=1 2> /dev/null | jq -r '.Contents[].StorageClass // "STANDARD"')
+  case $sclass in
+    REDUCED_REDUNDANCY) sclass="ReducedRedundancyStorage" ;;
+    GLACIER)            sclass="GlacierStorage" ;;
+    DEEP_ARCHIVE)       sclass="DeepArchiveStorage" ;;
+    *)                  sclass="StandardStorage" ;;
+  esac
+
+  # _bsize <metric> <stype>
+  _bsize() {
+    metric=$1 stype=$2
+    utnow=$(date +%s)
+    aws --profile $profile cloudwatch get-metric-statistics --namespace AWS/S3 --start-time "$(echo "$utnow - 604800" | bc)" --end-time "$utnow" --period 604800 --statistics Average --region $region --metric-name $metric --dimensions Name=BucketName,Value="$bucket" Name=StorageType,Value="$stype" 2> /dev/null | jq -r '.Datapoints[].Average'
+  }
+
+  # _print <number> <units> <format> [suffix]
+  _print() {
+    number=$1 units=$2 format=$3 suffix=$4
+    if [[ -n "$number" ]]; then
+      numfmt --to="$units" --suffix="$suffix" --format="$format" $number | sed -En 's/([^0-9]+)$/ \1/p'
+    fi
+  }
+  _print "$(_bsize BucketSizeBytes $sclass)" iec-i "%10.2f" B
+  _print "$(_bsize NumberOfObjects AllStorageTypes)" si "%8.2f"
+)
