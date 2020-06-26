@@ -327,7 +327,7 @@ function hugogetjson-esolia {
     /usr/local/opt/curl/bin/curl --silent -k "https://pro.dbflex.net/secure/api/v2/15331/$(cat $HOME/.ssh/tokens/prodb-01)/Web%20Japan%20Contact%20and%20App/API%20List%20for%20CSV%E2%80%A1/select.csv" -o $HOME/dev/eSolia_2018/static/eSolia-Japan-Emergency-Contacts.ja.csv
 }
 
-function hugodeploy-jvad {
+function 444hugodeploy-jvad {
     _hugobin="$HOME/gocode/bin/hugo"
     _rsyncbin="/usr/local/bin/rsync"
     _sshlogin="jvad@j-vad.jp"
@@ -340,6 +340,13 @@ function hugodeploy-jvad {
     chmod -R 775 ${_workingdir}/static/
     ${_hugobin} --debug --config="${_workingdir}/config.toml" -s ${_workingdir} -d ${_tmpdir}
     ${_rsyncbin} -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' ${_tmpdir} ${_sshlogin}:${_srvtargetdir}
+}
+
+function hugodeploy-jvad (){
+    _hugobin="$HOME/gocode/bin/hugo"
+    _workingdir="$HOME/dev/j-vad"
+    cd ${_workingdir}
+    ${_hugobin} && ${_hugobin} deploy --invalidateCDN --target jvad --verbose
 }
 
 function hugodeploy-esoliauploader {
