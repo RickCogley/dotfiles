@@ -344,12 +344,13 @@ function 444hugodeploy-jvad {
 
 function hugodeploy-jvad (){
     _hugobin="$HOME/gocode/bin/hugo"
+    _awsbin="/usr/local/bin/aws"
     _workingdir="$HOME/dev/j-vad"
     _current_aws_profile="$AWS_PROFILE"
     cd ${_workingdir}
     export AWS_PROFILE="deploy-jvad"
-    echo "Confirm aws profile"
-    aws configure list
+    echo "Confirm aws profile via \"aws configure list\""
+    ${_awsbin} configure list
     echo "Deploy site"
     ${_hugobin} && ${_hugobin} deploy --invalidateCDN --target jvad --verbose
     [[ -z "$_current_aws_profile" ]] && unset AWS_PROFILE || export AWS_PROFILE=${_current_aws_profile}
