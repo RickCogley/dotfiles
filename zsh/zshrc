@@ -348,6 +348,9 @@ function hugodeploy-jvad (){
     _current_aws_profile="$AWS_PROFILE"
     cd ${_workingdir}
     export AWS_PROFILE="deploy-jvad"
+    echo "Confirm aws profile"
+    aws configure list
+    echo "Deploy site"
     ${_hugobin} && ${_hugobin} deploy --invalidateCDN --target jvad --verbose
     [[ -z "$_current_aws_profile" ]] && unset AWS_PROFILE || export AWS_PROFILE=${_current_aws_profile}
 }
