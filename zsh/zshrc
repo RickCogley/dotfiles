@@ -342,19 +342,28 @@ function 444hugodeploy-jvad {
     ${_rsyncbin} -avz --checksum --delete --iconv=UTF-8-MAC,UTF-8 --exclude '.well-known' ${_tmpdir} ${_sshlogin}:${_srvtargetdir}
 }
 
-function hugodeploy-jvad (){
-    echo "====== Deploy j-vad.jp site to AWS S3 ======"
+function hugodeploy (){
+    echo "====== Deploy $1 site to AWS S3 ======"
+    echo " "
+    echo "Usage: hugodeploy sitestring \/path\/from\/home"
     _hugobin="$HOME/gocode/bin/hugo"
     _awsbin="/usr/local/bin/aws"
-    _workingdir="$HOME/dev/j-vad"
+    _workingdir="$HOME$2"
     _current_aws_profile="$AWS_PROFILE"
     cd ${_workingdir}
-    export AWS_PROFILE="deploy-jvad"
+    export AWS_PROFILE="$1"
     echo "🍺 Confirm aws profile via \"aws configure list\""
     ${_awsbin} configure list
     echo "🍺 Build and deploy site"
-    ${_hugobin} && ${_hugobin} deploy --invalidateCDN --target jvad --verbose
+    ${_hugobin} && ${_hugobin} deploy --invalidateCDN --target $1 --verbose
     [[ -z "$_current_aws_profile" ]] && unset AWS_PROFILE || export AWS_PROFILE=${_current_aws_profile}
+}
+
+function testme (){
+  _teststring="$1"
+  _testpath="$HOME$2"
+  echo $_teststring
+  echo $_testpath
 }
 
 function hugodeploy-esoliauploader {
