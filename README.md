@@ -8,7 +8,6 @@ Now, managed manually after ``git clone`` to ``~/dev/``:
 ~/.vimrc -> dev/dotfiles/nvim/init.vim
 ~/.zlogin -> dev/dotfiles/zsh/zlogin
 ~/.zlogout -> dev/dotfiles/zsh/zlogout
-~/.zpreztorc -> dev/dotfiles/zsh/zpreztorc
 ~/.zprofile -> dev/dotfiles/zsh/zprofile
 ~/.zshenv -> dev/dotfiles/zsh/zshenv
 ~/.zshrc -> dev/dotfiles/zsh/zshrc
