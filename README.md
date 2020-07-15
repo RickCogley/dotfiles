@@ -1,62 +1,22 @@
-# dotfiles
-Rick Cogley's dotfiles, in the future managed by [Homemaker](https://github.com/FooSoft/homemaker).
-Now, managed manually after ``git clone`` to ``~/dev/``: 
+# Rick Cogley's dotfiles
 
-```bash
-# In ~
-~/.vim -> dev/dotfiles/nvim
-~/.vimrc -> dev/dotfiles/nvim/init.vim
-~/.zlogin -> dev/dotfiles/zsh/zlogin
-~/.zlogout -> dev/dotfiles/zsh/zlogout
-~/.zprofile -> dev/dotfiles/zsh/zprofile
-~/.zshenv -> dev/dotfiles/zsh/zshenv
-~/.zshrc -> dev/dotfiles/zsh/zshrc
-~/.config/nvim/init.vim -> dev/dotfiles/nvim/init.vim
-~/.tmux.conf -> dev/dotfiles/tmux/tmux.conf 
-~/.config/tmux/tmux-status.conf -> dev/dotfiles/tmux/tmux-status.conf
-```
+I've been trying various methods to manage my dotfiles and get them onto systems, but, it turns out that the easiest thing is to just use Gnu `stow`, with some shell scripts for non-dotfile system setup. There is a good reason to use something like [Homemaker](https://github.com/FooSoft/homemaker), written in Go, because it has no dependencies so you don't need elevated privileges to install it on any given system, and it can handle configuration, not just your dotfile linking. That said, for me it is not such a challenge so far, to install `git` and `stow` on any server I'm managing. If those are not present and I really need my dotfiles on a system, there's always `rsync`. Once they are linked in, just run a couple of scripts to install what you need. 
 
-## Introduction
+Here's what I do on a new system assuming `git` and `stow` are installed: 
 
-Homemaker is a lightweight, make-like utility written in golang by [Alex Yatskov](https://foosoft.net), used to manage your dotfiles, the ubiquitous configuration files present in the home folder of *nix and Mac systems (such as ``.bashrc``). The great thing about golang utilities is that they are a single binary that can simply be copied to and used on the target system, with no dependencies (_c.f._ ruby, perl). You can use homemaker to bootstrap a new system, installing packages, cloning repositories or running commands. 
+~~~~~
+% cd $HOME
+% git clone https://github.com/RickCogley/dotfiles.git .dotfiles
+% cd .dotfiles
+% stow zsh
+% stow vim
+% cd
+% ls -la #confirm .zshrc, .vimrc etc
+~~~~~
 
-See [the author's dotfiles](https://github.com/FooSoft/dotfiles) or [these](https://github.com/tdmanv/dotfiles) for examples. 
+The `stow zsh` for instance, just finds the folder `zsh`, and creates symbolic links to its contents in the _parent_ folder, even respecting subfolders. Because your dotfiles repo has been cloned into `$HOME/.dotfiles`, the symbolic links get created in your user folder, so everything just works as expected. Then you just edit and do your git operations on the files in `~/.dotfiles`, and the links will of course just reference those. 
 
-## Installing
-### Get this repo
+Additionally, I'm now using the excellent «[zsh for humans](https://github.com/romkatv/zsh4humans)» mainly for its ability to copy zsh and other config files (a v3 feature) up to a remote server just by doing `z4h ssh me@theserver.com`. Smart! Especially if you're mostly only ssh-ing to the server anyway. It also has "sane defaults" so, it's easy to get started with for beginners, though I've been using `zsh` for quite some time. 
 
-```
-cd ~/dev
-git clone git@github.com:rickcogley/dotfiles.git
-```
 
-### Install homemaker
 
-If go is installed and its environment variables properly set:
-
-```
-cd ~
-go get github.com/FooSoft/homemaker
-homemaker
-```
-
-... or use a pre-compiled binary (a good place on mac is e.g. ``/usr/local/opt``), linking it into your path: 
-
-```
-cd /usr/local/opt
-wget https://foosoft.net/projects/homemaker/dl/homemaker_darwin_amd64.tar.gz
-tar xvf ./homemaker_darwin_amd64.tar.gz
-cd /usr/local/bin
-ln -s /usr/local/opt/homemaker_darwin_amd64/homemaker
-```
-
-Substitute ``homemaker_linux_amd64.tar.gz`` and to different paths as needed. 
-
-### Install dotfiles via homemaker
-
-```
-cd ~/dev/dotfiles
-homemaker --verbose --task=bash --variant=mac config.toml .
-```
-
-Or, other tasks and variants. The ``config.toml`` is key. 
