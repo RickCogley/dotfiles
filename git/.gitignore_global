@@ -1,0 +1,15 @@
+*~
+.DS_Store
+public/
+log/*.log
+*.log
+*.markdown~
+*.md~
+.DS_Store
+src/scss/.sass-cache/
+node_modules/
+npm-debug.log
+bundle/
+.bundle
+db/*.sqlite3
+tmp/

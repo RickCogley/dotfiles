@@ -1,0 +1,82 @@
+[user]
+	name = Rick Cogley
+	email = rick.cogley@esolia.co.jp
+	signingkey = 53ED9480368C74EB7E73D8843793629D3346F03F
+[core]
+	autocrlf = input
+	safecrlf = true
+	editor = /usr/local/bin/code
+	excludesfile = /Users/rcogley/.gitignore_global
+	whitespace = trailing-space,space-before-tab
+	pager = cat
+[alias]
+  co = checkout
+  ci = commit
+  st = status
+  br = branch
+  hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+  type = cat-file -t
+  dump = cat-file -p
+[mergetool]
+	keepBackup = true
+	prompt = false
+[difftool "Kaleidoscope"]
+	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[diff]
+	tool = Kaleidoscope
+	renames = copies
+	mnemonicprefix = true
+[difftool]
+	prompt = false
+[mergetool "Kaleidoscope"]
+	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+	trustExitCode = true
+[merge]
+	tool = Kaleidoscope
+	stat = true
+[push]
+	default = tracking
+[filter "media"]
+	required = true
+	clean = git media clean %f
+	smudge = git media smudge %f
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	required = true
+	clean = git-lfs clean -- %f
+	process = git-lfs filter-process
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path =
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[color]
+	ui = auto
+[branch]
+	autosetupmerge = true
+[rerere]
+	enabled = true
+[github]
+	user = rickcogley
+[ghi]
+	token = !security find-internet-password -a rickcogley -s github.com -l 'ghi token' -w
+[credential]
+	helper = osxkeychain
+[gpg]
+	program = gpg2
+[commit]
+	gpgsign = true
+[url "https://"]
+	insteadOf = git://
+[sendemail]
+	smtpEncryption = tls
+	smtpServer = smtp.gmail.com
+	smtpUser = rick.cogley@esolia.co.jp
+	smtpServerPort = 587
+	smtppass = xotrctbssgobgxgk
+	multiEdit = true
+[protocol "keybase"]
+	allow = always
+[gc]
+	autoDetach = false
