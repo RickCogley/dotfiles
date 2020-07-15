@@ -1,11 +1,9 @@
 *~
-.DS_Store
 public/
 log/*.log
 *.log
 *.markdown~
 *.md~
-.DS_Store
 src/scss/.sass-cache/
 node_modules/
 npm-debug.log
@@ -13,3 +11,32 @@ bundle/
 .bundle
 db/*.sqlite3
 tmp/
+
+# From GitHub for Mac
+
+*.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
