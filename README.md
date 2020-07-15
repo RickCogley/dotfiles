@@ -16,7 +16,31 @@ Here's what I do on a new system assuming `git` and `stow` are installed:
 
 The `stow zsh` for instance, just finds the folder `zsh`, and creates symbolic links to its contents in the _parent_ folder, even respecting subfolders. Because your dotfiles repo has been cloned into `$HOME/.dotfiles`, the symbolic links get created in your user folder, so everything just works as expected. Then you just edit and do your git operations on the files in `~/.dotfiles`, and the links will of course just reference those. 
 
-Some files might contain secrets, so you can symmetrically encrypt those before committing, then decrypt after using stow. 
+Some files might contain secrets, so you can symmetrically encrypt those before committing, then decrypt after using stow. For example these files: 
+
+~~~~~
+.dotfiles/twty/.config/twty/settings.json.gpg
+.dotfiles/git/.gh.json.gpg
+.dotfiles/git/.gist-vim.gpg
+~~~~~
+
+Encrypted and decrypted like this: 
+
+~~~~~
+% cd .dotfiles
+% gpg --symmetric --cipher-algo TWOFISH twty/.config/twty/settings.json
+% gpg —output twty/.config/twty/settings.json —decrypt twty/.config/twty/settings.json.gpg
+~~~~~
+
+**IMPORTANT:** _Do not commit the unencrypted files._ If you commit a "dummy" version of the files, you can run `git update-index --assume-unchanged thefile` to prevent accidentally committing changes. However, in this case, since the plain-text version is never wanted, add them to `.gitignore`: 
+
+~~~~~
+...
+git/.gh.json
+git/.gist-vim.json
+twty/.config/twty/settings.json
+...
+~~~~~
 
 Additionally, I'm now using the excellent «[zsh for humans](https://github.com/romkatv/zsh4humans)» mainly for its ability to copy zsh and other config files (a v3 feature) up to a remote server just by doing `z4h ssh me@theserver.com`. Smart! Especially if you're mostly only ssh-ing to the server anyway. It also has "sane defaults" so, it's easy to get started with for beginners, though I've been using `zsh` for quite some time. 
 
