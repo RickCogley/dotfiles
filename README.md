@@ -16,6 +16,8 @@ Here's what I do on a new system assuming `git` and `stow` are installed:
 
 The `stow zsh` for instance, just finds the folder `zsh`, and creates symbolic links to its contents in the _parent_ folder, even respecting subfolders. Because your dotfiles repo has been cloned into `$HOME/.dotfiles`, the symbolic links get created in your user folder, so everything just works as expected. Then you just edit and do your git operations on the files in `~/.dotfiles`, and the links will of course just reference those. 
 
+Some files might contain secrets, so you can symmetrically encrypt those before committing, then decrypt after using stow. 
+
 Additionally, I'm now using the excellent «[zsh for humans](https://github.com/romkatv/zsh4humans)» mainly for its ability to copy zsh and other config files (a v3 feature) up to a remote server just by doing `z4h ssh me@theserver.com`. Smart! Especially if you're mostly only ssh-ing to the server anyway. It also has "sane defaults" so, it's easy to get started with for beginners, though I've been using `zsh` for quite some time. 
 
 
