@@ -16,3 +16,7 @@ bundle/
 
 valet/CA/
 valet/Certificates/
+
+git/.gh.json
+git/.gist-vim.json
+twty/.config/twty/settings.json
