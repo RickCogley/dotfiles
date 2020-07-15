@@ -13,3 +13,6 @@ src/scss/.sass-cache/
 node_modules/
 npm-debug.log
 bundle/
+
+valet/CA/
+valet/Certificates/
