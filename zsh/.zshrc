@@ -81,6 +81,7 @@ path=(/usr/local/MacGPG2/bin $path) # brew gpg
 path=(~/.composer/vendor/bin $path) # php composer
 path+=(~/.cargo/bin) #rust
 path+=(~/.rbenv/bin) #ruby
+eval "$(rbenv init - zsh)"
 path+=(~/.nimble/bin) #nim
 path=(/usr/local/sbin $path) #std
 path=(/opt/local/bin $path) #std
@@ -97,9 +98,6 @@ fpath=(/usr/local/share/zsh-completions $fpath) # brew recommended
 # export PATH and FPATH to sub-processes (make it inherited by child processes)
 export PATH
 export FPATH
-
-# ruby related
-eval "$(rbenv init - zsh)"
 
 # Use additional Git repositories pulled in with `z4h install`.
 #
