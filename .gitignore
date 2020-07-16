@@ -20,3 +20,5 @@ valet/Certificates/
 git/.gh.json
 git/.gist-vim.json
 twty/.config/twty/settings.json
+
+oni2/.config/oni2/store/
