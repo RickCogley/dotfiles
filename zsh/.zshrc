@@ -27,7 +27,8 @@ z4h install ohmyzsh/ohmyzsh || return
 z4h init || return
 
 # Export environment variables.
-export EDITOR=nano
+export LANG=ja_JP.UTF-8
+export EDITOR=nova
 export GPG_TTY=$TTY
 
 # Extend PATH.
@@ -60,6 +61,13 @@ zstyle ':fzf-tab:*'                              continuous-trigger tab
 
 # Autoload functions.
 autoload -Uz zmv
+
+# Brew site functions
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+  autoload -Uz compinit
+  compinit
+fi
 
 # Define functions and completions.
 function md() { [[ $# == 1 ]] && mkdir -p -- "$1" && cd -- "$1" }
