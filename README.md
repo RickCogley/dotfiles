@@ -44,5 +44,11 @@ twty/.config/twty/settings.json
 
 Additionally, I'm now using the excellent «[zsh for humans](https://github.com/romkatv/zsh4humans)» mainly for its ability to copy zsh and other config files (a v3 feature) up to a remote server just by doing `z4h ssh me@theserver.com`. Smart! Especially if you're mostly only ssh-ing to the server anyway. It also has "sane defaults" so, it's easy to get started with for beginners, though I've been using `zsh` for quite some time. 
 
+Regarding the `~/.ssh` folder, its permissions and those of the remote host need to be set up as such: 
+
+* directory - 700
+* private keys - 600
+* public keys - 644
+* remote auth file - 644
 
 
