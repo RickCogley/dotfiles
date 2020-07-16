@@ -1,4 +1,6 @@
 # Documentation: https://github.com/romkatv/zsh4humans/blob/v3/README.md.
+# JRC Notes:
+# Incorporate https://leahneukirchen.org/dotfiles/.zshrc ?
 
 # 'ask': ask to update; 'no': disable auto-update.
 zstyle ':z4h:'                auto-update      ask
@@ -32,6 +34,7 @@ export EDITOR=nova
 export GPG_TTY=$TTY
 
 # Extend PATH.
+typeset -U path
 path=(~/bin $path)
 
 # Use additional Git repositories pulled in with `z4h install`.
@@ -84,3 +87,5 @@ alias ls="${aliases[ls]:-ls} -A"
 # Set shell options: http://zsh.sourceforge.net/Doc/Release/Options.html.
 setopt glob_dots  # glob matches files starting with dot; `ls *` becomes equivalent to `ls *(D)`
 setopt print_eight_bit # allow use of japanese files
+
+ulimit -c $(((4 << 30) / 512))  # 4GB
