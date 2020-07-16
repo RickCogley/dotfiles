@@ -59,7 +59,7 @@ zstyle ':zle:(up|down)-line-or-beginning-search' leave-cursor       no
 # trigger another completion with this key binding. Great for completing file paths.
 zstyle ':fzf-tab:*'                              continuous-trigger tab
 
-# Autoload functions.
+# Autoload functions. Zmv is for renaming
 autoload -Uz zmv
 
 # Brew site functions
