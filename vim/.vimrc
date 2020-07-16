@@ -132,7 +132,7 @@ endif
 
 " theme
 set background=light
-colorscheme delek
+colorscheme iceberg
 
 " set mark column color
 hi! link SignColumn   LineNr
