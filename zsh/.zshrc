@@ -53,6 +53,8 @@ bindkey '^[^H' z4h-backward-kill-zword  # Ctrl+Alt+Backspace: Delete previous sh
 
 # Sort completion candidates when pressing Tab?
 zstyle ':completion:*'                           sort               false
+# Ignore case
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 # Should cursor go to the end when Up/Down/Ctrl-Up/Ctrl-Down fetches a command from history?
 zstyle ':zle:(up|down)-line-or-beginning-search' leave-cursor       no
 # When presented with the list of choices upon hitting Tab, accept selection and
@@ -81,3 +83,4 @@ alias ls="${aliases[ls]:-ls} -A"
 
 # Set shell options: http://zsh.sourceforge.net/Doc/Release/Options.html.
 setopt glob_dots  # glob matches files starting with dot; `ls *` becomes equivalent to `ls *(D)`
+setopt print_eight_bit # allow use of japanese files
