@@ -18,7 +18,10 @@ valet/CA/
 valet/Certificates/
 
 git/.gh.json
+git/.gist-vim
 git/.gist-vim.json
 twty/.config/twty/settings.json
+brew/.homebrew_github_api_token
+
 
 oni2/.config/oni2/store/

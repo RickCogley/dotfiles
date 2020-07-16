@@ -39,6 +39,7 @@ Encrypted and decrypted like this:
 git/.gh.json
 git/.gist-vim.json
 twty/.config/twty/settings.json
+brew/.homebrew_github_api_token
 ...
 ~~~~~
 
