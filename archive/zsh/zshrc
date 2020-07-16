@@ -122,9 +122,6 @@ HELPDIR=/usr/local/share/zsh/help
 # AWS
 source /usr/local/share/zsh/site-functions/_aws
 
-# workwell
-export WW_SERVICE_ID="esolia"
-export WW_SERVICE_SECRET="NcI9WXmdmQDL3Ho8a7o9GFvlLQ5QQvCdjfmizZFr1KcSuddqBfhNRq"
 
 # nim related
 export PATH=$HOME/.nimble/bin:$PATH
