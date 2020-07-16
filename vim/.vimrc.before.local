@@ -1,9 +1,0 @@
-# stuff to load first
-
-let g:airline_powerline_fonts=1
-let g:spf13_leader=' '
-
-set tw=80
-set colorcolumn=+1
-
-" set gfn=PragmataPro:h16
