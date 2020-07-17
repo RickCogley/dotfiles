@@ -47,7 +47,7 @@ z4h init || return
 export LANG=ja_JP.UTF-8
 export EDITOR=nova
 export VISUAL=nova
-export PAGER=less
+# export PAGER=less
 export GPG_TTY=$(tty)
 # Browser
 if [[ "$OSTYPE" == darwin* ]]; then
@@ -68,7 +68,11 @@ export CPPFLAGS="-I/usr/local/opt/libressl/include"
 # For pkg-config to find libressl you may need to set:
 export PKG_CONFIG_PATH="/usr/local/opt/libressl/lib/pkgconfig"
 # export MANPATH="/usr/local/man:$MANPATH"
-export MANPAGER="vim -c 'set ft=man' -"
+# export MANPAGER="vim -c 'set ft=man' -"
+export MANPAGER="/bin/sh -c \"col -b | vim -c 'set ft=man ts=8 nomod nolist nonu noma' -\""
+export PAGER=vimpager
+# export MANPAGER=vimmanpager
+alias less=$PAGER
 # Python
 export PYTHONPATH=/usr/local/lib/python2.7:/usr/local/lib/python3.5:$PYTHONPATH
 # Golang
