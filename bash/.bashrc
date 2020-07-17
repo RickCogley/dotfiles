@@ -111,3 +111,5 @@ shopt -s cdable_vars
 # export projects="$HOME/projects"
 # export documents="$HOME/Documents"
 # export dropbox="$HOME/Dropbox"
+
+export MANPAGER="/bin/sh -c \"col -b | vim -c 'set ft=man ts=8 nomod nolist nonu noma' -\""
