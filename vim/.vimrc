@@ -10,6 +10,9 @@
 " Desc: simple vim config for server, without any plugins.
 "==========================================
 
+" Vundle.vim
+" Plugin 'lambdalisue/vim-manpager'
+
 " leader
 let mapleader = ','
 let g:mapleader = ','
