@@ -89,6 +89,8 @@ export SAVEHIST="1000000"
 export HISTFILE=~/.zsh_history
 # Onivim2
 export ONI2_CONFIG_DIR=~/.config/oni2/
+# MS dotnet
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 
 # Extend PATH
