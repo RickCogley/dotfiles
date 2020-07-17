@@ -922,11 +922,11 @@ allup (){
   npm install -g npm
   echo -e "\e[1m\e[44m ============= UPDATE PIP =============== \e[0m"
   pipup
-  echo -e "\e[1m\e[44m ============ UPDATE ZSH ============== \e[0m"
-  zshup
   echo -e "\e[1m\e[44m ======= UPDATE BREW CLI and CASKS ======== \e[0m"
   brewhaha
   brewcu
+  echo -e "\e[1m\e[44m ============ UPDATE ZSH LAST ============== \e[0m"
+  zshup
 }
 
 brewcaskrelink (){
