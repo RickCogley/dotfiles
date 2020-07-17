@@ -14,6 +14,8 @@ zstyle ':z4h:'                cd-key           alt
 # Right-arrow key accepts one character ('partial-accept') from
 # command autosuggestions or the whole thing ('accept')?
 zstyle ':z4h:autosuggestions' forward-char     accept
+# Send extra rc files when using z4h ssh
+zstyle    ':z4h:ssh:*' send-extra-files '~/.vimrc' '~/.vim/colors/iceberg.vim' '~/.bashrc' '~/.bash_profile'
 
 # Clone additional Git repositories from GitHub. This doesn't do anything
 # apart from cloning the repository and keeping it up-to-date. Cloned
@@ -21,6 +23,11 @@ zstyle ':z4h:autosuggestions' forward-char     accept
 #
 # This is just an example. If you don't plan to use Oh My Zsh, delete this.
 # z4h install ohmyzsh/ohmyzsh || return
+
+# Perform anything that needs console IO
+if [[ -e ~/.homebrew_github_api_token ]]; then
+    export HOMEBREW_GITHUB_API_TOKEN="$(cat ~/.homebrew_github_api_token)"
+fi
 
 # Install or update core components (fzf, zsh-autosuggestions, etc.) and
 # initialize Zsh. After this point console I/O is unavailable. Everything
@@ -65,6 +72,9 @@ export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 # Zsh
 export HELPDIR=/usr/local/share/zsh/help
 export REPORTTIME=1
+export HISTSIZE="1000000"
+export SAVEHIST="1000000"
+export HISTFILE=~/.zsh_history
 # Onivim2
 export ONI2_CONFIG_DIR=~/.config/oni2/
 
@@ -81,7 +91,14 @@ path=(/usr/local/MacGPG2/bin $path) # brew gpg
 path=(~/.composer/vendor/bin $path) # php composer
 path+=(~/.cargo/bin) #rust
 path+=(~/.rbenv/bin) #ruby
-eval "$(rbenv init - zsh)"
+if (( $+commands[rbenv] )); then
+    eval "$(rbenv init - zsh)"
+fi
+# Enable direnv hooks if direnv is installed.
+if (( $+commands[direnv] )); then
+    eval "$(direnv hook zsh)"
+fi
+
 path+=(~/.nimble/bin) #nim
 path=(/usr/local/sbin $path) #std
 path=(/opt/local/bin $path) #std
@@ -880,6 +897,10 @@ keyboardioup (){
   make maintainer-update-submodules
 }
 
+zshup() {
+  z4h update
+}
+
 # Removed vimplugup keyboardioup
 allup (){
   cd
@@ -888,7 +909,7 @@ allup (){
   echo -e "\e[1m\e[44m ============= UPDATE PIP =============== \e[0m"
   pipup
   echo -e "\e[1m\e[44m ============ UPDATE ZSH ============== \e[0m"
-  echo "nom nom nom"
+  zshup
   echo -e "\e[1m\e[44m ======= UPDATE BREW CLI and CASKS ======== \e[0m"
   brewhaha
   brewcu
@@ -897,11 +918,6 @@ allup (){
 brewcaskrelink (){
   brew cask list -1 | while read line; do brew cask uninstall --force $line; brew cask install $line; done
 }
-
-# zsh (prezto voodoo is that you need to put these here in zshrc at the bottom)
-export HISTSIZE="1000000"
-export SAVEHIST="1000000"
-export HISTFILE=$HOME/.zsh_history
 
 # make notes
 
