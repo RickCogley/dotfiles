@@ -15,7 +15,7 @@ zstyle ':z4h:'                cd-key           alt
 # command autosuggestions or the whole thing ('accept')?
 zstyle ':z4h:autosuggestions' forward-char     accept
 # Send extra rc files when using z4h ssh
-zstyle    ':z4h:ssh:*' send-extra-files '~/.vimrc' '~/.vim/colors/iceberg.vim' '~/.bashrc' '~/.bash_profile'
+zstyle    ':z4h:ssh:*' send-extra-files '~/.vimrc' '~/.vim/colors/iceberg.vim' '~/.bashrc' '~/.bash_profile' '~/.fzf.bash'
 
 # Clone additional Git repositories from GitHub. This doesn't do anything
 # apart from cloning the repository and keeping it up-to-date. Cloned
@@ -27,6 +27,14 @@ zstyle    ':z4h:ssh:*' send-extra-files '~/.vimrc' '~/.vim/colors/iceberg.vim' '
 # Perform anything that needs console IO
 if [[ -e ~/.homebrew_github_api_token ]]; then
     export HOMEBREW_GITHUB_API_TOKEN="$(cat ~/.homebrew_github_api_token)"
+fi
+
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 # Install or update core components (fzf, zsh-autosuggestions, etc.) and
@@ -111,7 +119,7 @@ path=(~/gocode/bin $path) #go
 path=(~/bin $path)
 
 fpath=(/usr/local/share/zsh-completions $fpath) # brew recommended
-
+fpath+=(~/bin/zsh/functions) #add personal functions to fpath
 # export PATH and FPATH to sub-processes (make it inherited by child processes)
 export PATH
 export FPATH
@@ -153,8 +161,8 @@ if type brew &>/dev/null; then
   compinit
 fi
 
-# Define functions and completions.
-function md() { [[ $# == 1 ]] && mkdir -p -- "$1" && cd -- "$1" }
+# Define functions and completions. Personal ones are under ~/bin/zsh/functions
+autoload -Uz -- ~/bin/zsh/functions/[^_]*(.)
 compdef _directories md
 
 # Define aliases.
