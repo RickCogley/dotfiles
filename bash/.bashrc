@@ -1,8 +1,10 @@
 [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+[[ -d ~/liquidprompt ]] || git clone https://github.com/nojhan/liquidprompt.git
 # Only load Liquid Prompt in interactive shells, not from a script or from scp
-[[ $- = *i* ]] && source ~/liquidprompt/liquidprompt
+# [[ $- = *i* ]] && source ~/liquidprompt/liquidprompt
+[[ -d ~/liquidprompt ]] && source ~/liquidprompt/liquidprompt
 
 # Sensible Bash - An attempt at saner Bash defaults
 # Maintainer: mrzool <http://mrzool.cc>
