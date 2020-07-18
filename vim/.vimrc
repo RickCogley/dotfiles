@@ -71,6 +71,8 @@ set incsearch                   " do incremental searching, search as you type
 set ignorecase                  " ignore case when searching
 set smartcase                   " no ignorecase if Uppercase char present
 
+" load fuzzy finder fzf
+set rtp+=/usr/local/opt/fzf
 
 " tab
 set expandtab                   " expand tabs to spaces
