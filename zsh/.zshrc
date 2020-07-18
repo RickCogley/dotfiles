@@ -76,7 +76,12 @@ export PKG_CONFIG_PATH="/usr/local/opt/libressl/lib/pkgconfig"
 # export MANPAGER="vim -c 'set ft=man' -"
 export MANPAGER="/bin/sh -c \"col -b | vim -c 'set ft=man ts=8 nomod nolist nonu noma' -\""
 # export PAGER=vimpager
-export PAGER=less
+
+if (( $+commands[most] )); then
+    export PAGER=most
+  else
+    export PAGER=less
+fi
 # export MANPAGER=vimmanpager
 alias less=$PAGER
 # Python
@@ -177,7 +182,11 @@ if type brew &>/dev/null; then
 fi
 
 # Define aliases.
-alias tree='tree -a -I .git'
+(( $+commands[tree]  )) && alias tree='tree -aC -I .git --dirsfirst'
+(( $+commands[gedit] )) && alias gedit='gedit &>/dev/null'
+(( $+commands[rsync] )) && alias rsync='rsync -z'
+(( $+commands[exa]   )) && alias exa='exa -ga --group-directories-first --time-style=long-iso --color-scale $@'
+# add $@ to make the options the defaults
 
 # Add flags to existing aliases.
 alias ls="${aliases[ls]:-ls} -A"
