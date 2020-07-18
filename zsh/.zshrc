@@ -24,6 +24,8 @@ zstyle    ':z4h:ssh:*' send-extra-files '~/.vimrc' '~/.vim/colors/iceberg.vim' '
 # This is just an example. If you don't plan to use Oh My Zsh, delete this.
 # z4h install ohmyzsh/ohmyzsh || return
 
+z4h install romkatv/archive romkatv/zsh-prompt-benchmark
+
 # Perform anything that needs console IO
 if [[ -e ~/.homebrew_github_api_token ]]; then
     export HOMEBREW_GITHUB_API_TOKEN="$(cat ~/.homebrew_github_api_token)"
@@ -45,9 +47,12 @@ z4h init || return
 
 # Export environment variables.
 export LANG=ja_JP.UTF-8
-export EDITOR=nova
-export VISUAL=nova
-# export PAGER=less
+if [[ -x /usr/local/bin/nova ]]; then
+  export VISUAL=/usr/local/bin/nova
+else
+  export VISUAL=${${commands[vim]:t}:-vi}
+fi
+export EDITOR=$VISUAL
 export GPG_TTY=$(tty)
 # Browser
 if [[ "$OSTYPE" == darwin* ]]; then
@@ -70,7 +75,8 @@ export PKG_CONFIG_PATH="/usr/local/opt/libressl/lib/pkgconfig"
 # export MANPATH="/usr/local/man:$MANPATH"
 # export MANPAGER="vim -c 'set ft=man' -"
 export MANPAGER="/bin/sh -c \"col -b | vim -c 'set ft=man ts=8 nomod nolist nonu noma' -\""
-export PAGER=vimpager
+# export PAGER=vimpager
+export PAGER=less
 # export MANPAGER=vimmanpager
 alias less=$PAGER
 # Python
@@ -125,7 +131,8 @@ path=(~/gocode/bin $path) #go
 path=(~/bin $path)
 
 fpath=(/usr/local/share/zsh-completions $fpath) # brew recommended
-fpath+=(~/bin/zsh/functions) #add personal functions to fpath
+fpath=($Z4H/romkatv/archive $fpath) # add archive plugin to path
+[[ -d ~/bin/zsh/functions ]] && fpath=(~/bin/zsh/functions $fpath) #add personal functions to fpath if path exists
 # export PATH and FPATH to sub-processes (make it inherited by child processes)
 export PATH
 export FPATH
@@ -157,8 +164,10 @@ zstyle ':zle:(up|down)-line-or-beginning-search' leave-cursor       no
 # trigger another completion with this key binding. Great for completing file paths.
 zstyle ':fzf-tab:*'                              continuous-trigger tab
 
-# Autoload functions. Zmv is for renaming
-autoload -Uz zmv
+# Autoload functions. Zmv is for renaming. Archive etc loaded above.
+# Personal ones are under ~/bin/zsh/functions
+autoload -Uz -- zmv archive lsarchive unarchive ~/bin/zsh/functions/[^_]*(.)
+compdef _directories md
 
 # Brew site functions
 if type brew &>/dev/null; then
@@ -166,10 +175,6 @@ if type brew &>/dev/null; then
   autoload -Uz compinit
   compinit
 fi
-
-# Define functions and completions. Personal ones are under ~/bin/zsh/functions
-autoload -Uz -- ~/bin/zsh/functions/[^_]*(.)
-compdef _directories md
 
 # Define aliases.
 alias tree='tree -a -I .git'
@@ -183,8 +188,8 @@ setopt print_eight_bit # allow use of japanese files
 
 ulimit -c $(((4 << 30) / 512))  # 4GB
 
-# Functions
-# List all functions
+# Define functions.
+
 function lsfunc () {
   print -l ${(ok)functions}
 }
