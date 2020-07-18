@@ -886,6 +886,7 @@ brew_reinstall_head_apps (){
 alias brrehead=brew_reinstall_head_apps
 alias brewhaha='echo "Updating brew various...";brew update && brew upgrade; brew cleanup; brew doctor'
 alias brewcu='echo "Updating brew cask...";brew cu'
+alias brewrefzf='echo "Reinstall fzf...";brew reinstall fzf'
 
 # Upgrade nvim plugs
 
@@ -924,6 +925,7 @@ allup (){
   pipup
   echo -e "\e[1m\e[44m ======= UPDATE BREW CLI and CASKS ======== \e[0m"
   brewhaha
+  brewrefzf
   brewcu
   echo -e "\e[1m\e[44m ============ UPDATE ZSH LAST ============== \e[0m"
   zshup
