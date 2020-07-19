@@ -1,0 +1,71 @@
+brewhaha () {
+  echo -e "\e[1m\e[44m ============== MAINTAIN BREW =============== \e[0m"
+  cd
+  tput setaf 5; echo "Update brew..."
+  brew update
+  tput setaf 5; echo "Upgrade brew..."
+  brew upgrade
+  tput setaf 5; echo "Cleanup brew..."
+  brew cleanup
+  tput setaf 5; echo "Call the DOCTOR..."
+  brew doctor
+  tput setaf 5; echo "Update brew casks..."
+  brew cu
+}
+
+brewrefzf () {
+  echo -e "\e[1m\e[44m ============== REINSTALL FUZZY FINDER =============== \e[0m"
+  cd
+  tput setaf 5; echo "Fzf site recommends a brew reinstall..."
+  brew reinstall fzf
+}
+
+vimplugup () {
+  echo -e "\e[1m\e[44m ============== UPDATE DEIN =============== \e[0m"
+  cd
+  tput setaf 5; echo "Updating nvim dein plugins..."
+  nvim -c ':silent call dein#update()' -c quitall
+}
+
+zshup () {
+  echo -e "\e[1m\e[44m ============== UPDATE Z4H =============== \e[0m"
+  cd
+  tput setaf 5; echo "Updating zsh4humans last because of shell restart..."
+  z4h update
+}
+
+npmup () {
+  echo -e "\e[1m\e[44m ============== UPDATE NPM =============== \e[0m"
+  cd
+  tput setaf 5; echo "Updating npm..."
+  npm install -g npm
+}
+
+pipup () {
+  echo -e "\e[1m\e[44m ============== UPDATE PIP =============== \e[0m"
+  cd
+  tput setaf 5; echo "Updating pip setuptools ..."
+  pip install --upgrade pip setuptools wheel
+  # pip install --upgrade neovim
+  tput setaf 5; echo "Updating pip3 setuptools ..."
+  pip3 install --upgrade pip setuptools wheel
+  # pip3 install --upgrade neovim
+}
+
+keyboardioup () {
+  cd $HOME/Documents/Arduino/Model01-Firmware
+  tput setaf 5; echo "Fetch git master ..."
+  git fetch upstream master
+  cd $HOME/Documents/Arduino/hardware/keyboardio
+  tput setaf 5; echo "Run make ..."
+  make maintainer-update-submodules
+  cd
+}
+
+
+cd
+npmup
+pipup
+brewhaha
+brewrefzf
+zshup

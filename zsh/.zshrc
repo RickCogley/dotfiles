@@ -897,53 +897,7 @@ brew_reinstall_head_apps (){
   brew reinstall --HEAD fzf
   brew reinstall --HEAD tmux
 }
-alias brrehead=brew_reinstall_head_apps
-alias brewhaha='echo "Updating brew various...";brew update && brew upgrade; brew cleanup; brew doctor'
-alias brewcu='echo "Updating brew cask...";brew cu'
-alias brewrefzf='echo "Reinstall fzf...";brew reinstall fzf'
 
-# Upgrade nvim plugs
-
-vimplugup (){
-  echo "Updating dein plugins..."
-  nvim -c ':silent call dein#update()' -c quitall
-}
-
-# Upgrade pip and easy_install
-pipup (){
-  echo "Updating pip setuptools ..."
-  pip install --upgrade pip setuptools wheel
-  # pip install --upgrade neovim
-  echo "Updating pip3 setuptools ..."
-  pip3 install --upgrade pip setuptools wheel
-  # pip3 install --upgrade neovim
-}
-
-keyboardioup (){
-  cd $HOME/Documents/Arduino/Model01-Firmware
-  git fetch upstream master
-  cd $HOME/Documents/Arduino/hardware/keyboardio
-  make maintainer-update-submodules
-}
-
-zshup() {
-  z4h update
-}
-
-# Removed vimplugup keyboardioup
-allup (){
-  cd
-  echo -e "\e[1m\e[44m ============== UPDATE NPM =============== \e[0m"
-  npm install -g npm
-  echo -e "\e[1m\e[44m ============= UPDATE PIP =============== \e[0m"
-  pipup
-  echo -e "\e[1m\e[44m ======= UPDATE BREW CLI and CASKS ======== \e[0m"
-  brewhaha
-  brewrefzf
-  brewcu
-  echo -e "\e[1m\e[44m ============ UPDATE ZSH LAST ============== \e[0m"
-  zshup
-}
 
 brewcaskrelink (){
   brew cask list -1 | while read line; do brew cask uninstall --force $line; brew cask install $line; done
