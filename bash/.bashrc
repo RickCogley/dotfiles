@@ -113,3 +113,32 @@ shopt -s cdable_vars
 # export dropbox="$HOME/Dropbox"
 
 export MANPAGER="/bin/sh -c \"col -b | vim -c 'set ft=man ts=8 nomod nolist nonu noma' -\""
+
+path=(/usr/local/opt/curl/bin $path) # brew over apple curl
+path=(/usr/local/opt/sqlite/bin $path) # brew over apple sqlite
+path=(/usr/local/opt/libressl/bin $path) # brew over apple libressl
+path=(/usr/local/opt/php/bin $path) # brew over apple php
+path=(/usr/local/MacGPG2/bin $path) # brew gpg
+path=(~/.composer/vendor/bin $path) # php composer
+path+=(~/.cargo/bin) #rust
+path+=(~/.rbenv/bin) #ruby
+if (( $+commands[rbenv] )); then
+eval "$(rbenv init - zsh)"
+fi
+# Enable direnv hooks if direnv is installed.
+if (( $+commands[direnv] )); then
+eval "$(direnv hook bash)"
+fi
+
+path+=(~/.nimble/bin) #nim
+path=(/usr/local/sbin $path) #std
+path=(/opt/local/bin $path) #std
+path=(/opt/local/sbin $path) #std
+path=(/opt/X11/bin $path) #std
+path=(/usr/local/go/bin $path) #go
+path=(/usr/local/opt/go/libexec/bin $path) #go
+path=(~/gocode $path) #go
+path=(~/gocode/bin $path) #go
+path=(~/bin $path)
+
+export GPG_TTY=$(tty)
