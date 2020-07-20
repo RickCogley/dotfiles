@@ -571,24 +571,6 @@ function hugogenpost-live {
   $EDITOR ${_contentdir}/${_contentfile}
 }
 
-function hugogenpost-logr {
-  _hugobin="$HOME/gocode/bin/hugo"
-  _editbin="/usr/local/bin/nova"
-  _gitbin="/usr/local/bin/git"
-  _workingdir="$HOME/dev/logr.cogley.info"
-  _contentdir="${_workingdir}/content/posts"
-  _datetime=$(date +'%Y%m%d-%H%M%S')
-  _hytitle=RC-Logr-${_datetime}
-
-  cd ${_workingdir}
-  ${_hugobin} new posts/${_hytitle}.md
-  cd ${_workingdir}
-  ${_gitbin} add *
-  ${_gitbin} commit -m "Logr new post ${_datetime}"
-  ${_gitbin} push origin master
-  ${_editbin} ${_contentdir}/${_hytitle}.md
-}
-
 function hugodeploy-logr {
   hugogetjson-logr
   _hugobin="$HOME/gocode/bin/hugo"
@@ -1126,8 +1108,6 @@ function lsabassets (){
   echo "Use the webfaction abmd password and view what the file names look like"
   ssh abmd@abmd.webfactional.com ls "webapps/ab_assets/profed/"
 }
-
-export GPG_TTY=`tty`
 
 function 16-colors (){
   # This program is free software. It comes without any warranty, to
