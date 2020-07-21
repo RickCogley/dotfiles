@@ -4,7 +4,6 @@ task.*.task
 undo.data
 public/
 *.log
-*.sh
 *.markdown~
 *.md~
 .DS_Store
