@@ -80,3 +80,5 @@
 	allow = always
 [gc]
 	autoDetach = false
+[tag]
+	forceSignAnnotated = true
