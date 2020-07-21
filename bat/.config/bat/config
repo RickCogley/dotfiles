@@ -2,4 +2,3 @@
 --style="numbers,changes,header"
 --paging=always
 --pager="less --quit-if-one-screen --tabs=1"
---show-all
