@@ -114,6 +114,15 @@ shopt -s cdable_vars
 
 export MANPAGER="/bin/sh -c \"col -b | vim -c 'set ft=man ts=8 nomod nolist nonu noma' -\""
 
+# Python
+# Use PyEnv to set Python Environment
+if (( $+commands[pyenv] )); then
+  export PYENV_SHELL=zsh
+  export PYENV_ROOT=$(pyenv root)
+  export PYENV_VERSION=$(pyenv version-name)
+  export PYTHONPATH=$PYENV_ROOT/shims
+fi
+
 path=(/usr/local/opt/curl/bin $path) # brew over apple curl
 path=(/usr/local/opt/sqlite/bin $path) # brew over apple sqlite
 path=(/usr/local/opt/libressl/bin $path) # brew over apple libressl
@@ -125,6 +134,12 @@ path+=(~/.rbenv/bin) #ruby
 if (( $+commands[rbenv] )); then
 eval "$(rbenv init - zsh)"
 fi
+# alternative if command -v pyenv 1>/dev/null 2>&1; then
+if (( $+commands[pyenv] )); then
+eval "$(pyenv init -)"
+fi
+path=($PYENV_ROOT/bin $path) # pyenv
+
 # Enable direnv hooks if direnv is installed.
 if (( $+commands[direnv] )); then
 eval "$(direnv hook bash)"
