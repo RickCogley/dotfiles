@@ -64,7 +64,7 @@
 [credential]
 	helper = osxkeychain
 [gpg]
-	program = gpg2
+	program = /usr/local/MacGPG2/bin/gpg2
 [commit]
 	gpgsign = true
 [url "https://"]
