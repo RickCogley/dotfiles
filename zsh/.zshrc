@@ -119,6 +119,10 @@ path+=(~/.rbenv/bin) #ruby
 if (( $+commands[rbenv] )); then
     eval "$(rbenv init - zsh)"
 fi
+# alternative if command -v pyenv 1>/dev/null 2>&1; then
+if (( $+commands[pyenv] )); then
+  eval "$(pyenv init -)"
+fi
 # Enable direnv hooks if direnv is installed.
 if (( $+commands[direnv] )); then
     eval "$(direnv hook zsh)"
