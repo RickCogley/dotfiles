@@ -129,6 +129,9 @@ fi
 if (( $+commands[direnv] )); then
 eval "$(direnv hook bash)"
 fi
+if (( $+commands[pyenv] )); then
+eval "$(pyenv init -)"
+fi
 
 path+=(~/.nimble/bin) #nim
 path=(/usr/local/sbin $path) #std
