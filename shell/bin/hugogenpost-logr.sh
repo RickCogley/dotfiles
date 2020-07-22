@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Try a different kind of shbang
+# Try a different kind of shebang
 _hugobin="$HOME/gocode/bin/hugo"
 _editbin="/usr/local/bin/nova"
 _gitbin="/usr/local/bin/git"
