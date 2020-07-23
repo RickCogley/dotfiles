@@ -6,6 +6,7 @@ if which pyenv >/dev/null 2>&1; then
   /usr/bin/env PATH="${PATH//$(pyenv root)\/shims:/}" /usr/local/bin/brew "$@"
   echo -en "\n"
   tput setaf 3; echo "SPECIAL BREW by ~/bin/brew wrapper..."; tput sgr0
+  echo -en "\n"
   else
   /usr/local/bin/brew "$@"
 fi
