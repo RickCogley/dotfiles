@@ -115,6 +115,10 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=1
 # APPEND as path+=(/new/bin/dir)
 # PREPEND as path=(/new/bin/dir $path)
 typeset -gU cdpath fpath mailpath path # no dupes in path arrays
+path=(/usr/local/sbin $path) #std
+path=(/opt/local/bin $path) #std
+path=(/opt/local/sbin $path) #std
+path=(/opt/X11/bin $path) #std
 path=(/usr/local/opt/curl/bin $path) # brew over apple curl
 path=(/usr/local/opt/sqlite/bin $path) # brew over apple sqlite
 path=(/usr/local/opt/libressl/bin $path) # brew over apple libressl
@@ -126,26 +130,22 @@ path+=(~/.rbenv/bin) #ruby
 if (( $+commands[rbenv] )); then
     eval "$(rbenv init - zsh)"
 fi
-# alternative if command -v pyenv 1>/dev/null 2>&1; then
-# pyenv sets up shims path, installs autocompletion, rehashes shims, installs sh dispatcher
-if (( $+commands[pyenv] )); then
-  eval "$(pyenv init -)"
-fi
-path=($PYENV_ROOT/bin $path) # pyenv
-# Enable direnv hooks if direnv is installed.
-if (( $+commands[direnv] )); then
-    eval "$(direnv hook zsh)"
-fi
-
 path+=(~/.nimble/bin) #nim
-path=(/usr/local/sbin $path) #std
-path=(/opt/local/bin $path) #std
-path=(/opt/local/sbin $path) #std
-path=(/opt/X11/bin $path) #std
 path=(/usr/local/go/bin $path) #go
 path=(/usr/local/opt/go/libexec/bin $path) #go
 path=(~/gocode $path) #go
 path=(~/gocode/bin $path) #go
+# alternative if command -v pyenv 1>/dev/null 2>&1; then
+# pyenv sets up shims path, installs autocompletion, rehashes shims, installs sh dispatcher
+# PYENV PATHS NEED TO BE NEAR FRONT OF PATH
+if (( $+commands[pyenv] )); then
+eval "$(pyenv init -)"
+fi
+path=($PYENV_ROOT/bin $path) # pyenv
+# Enable direnv hooks if direnv is installed.
+if (( $+commands[direnv] )); then
+eval "$(direnv hook zsh)"
+fi
 path=(~/bin $path)
 
 fpath=(/usr/local/share/zsh-completions $fpath) # brew recommended

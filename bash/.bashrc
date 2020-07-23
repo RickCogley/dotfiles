@@ -134,20 +134,8 @@ path+=(~/.rbenv/bin) #ruby
 if (( $+commands[rbenv] )); then
 eval "$(rbenv init - zsh)"
 fi
-# alternative if command -v pyenv 1>/dev/null 2>&1; then
-# pyenv sets up shims path, installs autocompletion, rehashes shims, installs sh dispatcher
-if (( $+commands[pyenv] )); then
-eval "$(pyenv init -)"
-fi
-path=($PYENV_ROOT/bin $path) # pyenv
 
-# Enable direnv hooks if direnv is installed.
-if (( $+commands[direnv] )); then
-eval "$(direnv hook bash)"
-fi
-if (( $+commands[pyenv] )); then
-eval "$(pyenv init -)"
-fi
+
 
 path+=(~/.nimble/bin) #nim
 path=(/usr/local/sbin $path) #std
@@ -158,6 +146,21 @@ path=(/usr/local/go/bin $path) #go
 path=(/usr/local/opt/go/libexec/bin $path) #go
 path=(~/gocode $path) #go
 path=(~/gocode/bin $path) #go
+
+if (( $+commands[pyenv] )); then
+eval "$(pyenv init -)"
+fi
+# alternative if command -v pyenv 1>/dev/null 2>&1; then
+# pyenv sets up shims path, installs autocompletion, rehashes shims, installs sh dispatcher
+# PYENV PATHS NEAR TOP OF PATH
+if (( $+commands[pyenv] )); then
+eval "$(pyenv init -)"
+fi
+path=($PYENV_ROOT/bin $path) # pyenv
+# Enable direnv hooks if direnv is installed.
+if (( $+commands[direnv] )); then
+eval "$(direnv hook bash)"
+fi
 path=(~/bin $path)
 
 export GPG_TTY=$(tty)
