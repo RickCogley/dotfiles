@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # If pyenv is available, export path so pyenv shims are first
-# Based on https://binx.io/blog/2019/04/12/installing-pyenv-on-macos/
+# From https://binx.io/blog/2019/04/12/installing-pyenv-on-macos/
 
 if which pyenv >/dev/null 2>&1; then
   /usr/bin/env PATH="${PATH//$(pyenv root)\/shims:/}" /usr/local/bin/brew "$@"
