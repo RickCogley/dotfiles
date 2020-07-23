@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# If pyenv is available, export path so pyenv shims are first
+# Original: /usr/bin/env PATH="${PATH//$(pyenv root)\/shims:/}" /usr/local/bin/brew "$@"
+
+if (( $+commands[pyenv] )); then
+  /usr/bin/env PATH="${PATH//$(pyenv root)\/shims:/}" eval $commands[brew] "$@"
+  echo "Special Brewed"
+  echo $PATH
+else
+  eval $commands[brew] "$@"
+fi
+
