@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # If pyenv is available, export path so pyenv shims are first
+# Based on https://binx.io/blog/2019/04/12/installing-pyenv-on-macos/
 
-if (( $+commands[pyenv] )); then
+if which pyenv >/dev/null 2>&1; then
   /usr/bin/env PATH="${PATH//$(pyenv root)\/shims:/}" /usr/local/bin/brew "$@"
-  echo "Special Brewed"
-  echo $PATH
-else
+  echo -en "\n"
+  tput setaf 3; echo "SPECIAL BREW by ~/bin/brew wrapper..."; tput sgr0
+  else
   /usr/local/bin/brew "$@"
 fi
-
