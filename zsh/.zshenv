@@ -1,3 +1,5 @@
+#  `.zshenv' is sourced on all invocations of the shell, unless the -f option is set. It should contain commands to set the command search path, plus other important environment variables. `.zshenv' should not contain commands that produce output or assume the shell is attached to a tty.
+
 if [ -n "${ZSH_VERSION-}" ]; then
   : ${ZDOTDIR:=~}
   setopt no_global_rcs
@@ -30,3 +32,6 @@ fi
 . "$Z4H"/z4h.zsh || return
 
 setopt rcs
+
+path=(/usr/local/bin $path) #For nova to find npm in LOGIN SHELL
+

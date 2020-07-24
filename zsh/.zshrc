@@ -1,6 +1,7 @@
 # Documentation: https://github.com/romkatv/zsh4humans/blob/v3/README.md.
 # JRC Notes:
 # Incorporate https://leahneukirchen.org/dotfiles/.zshrc ?
+# `.zshrc' is sourced in interactive shells only, not login shells. It should contain commands to set up aliases, functions, options, key bindings, etc.
 
 # 'ask': ask to update; 'no': disable auto-update.
 zstyle ':z4h:'                auto-update      ask
