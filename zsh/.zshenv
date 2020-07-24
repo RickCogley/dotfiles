@@ -33,5 +33,4 @@ fi
 
 setopt rcs
 
-path=(/usr/local/bin $path) #For nova to find npm in LOGIN SHELL
 
