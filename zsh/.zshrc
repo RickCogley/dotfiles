@@ -125,6 +125,8 @@ path=(/usr/local/opt/sqlite/bin $path) # brew over apple sqlite
 path=(/usr/local/opt/libressl/bin $path) # brew over apple libressl
 path=(/usr/local/opt/php/bin $path) # brew over apple php
 path=(/usr/local/MacGPG2/bin $path) # brew gpg
+path=(/usr/local/opt/gnu-getopt/bin $path) # brew gnu-getopt
+
 path=(~/.composer/vendor/bin $path) # php composer
 path+=(~/.cargo/bin) #rust
 path+=(~/.rbenv/bin) #ruby
@@ -246,7 +248,7 @@ alias hgrep="fc -El 0 | grep"
 alias p='ps -f'
 
 # Always ask before proceeding
-alias rm='rm -I'
+alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
 
