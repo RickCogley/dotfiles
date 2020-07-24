@@ -198,7 +198,7 @@ fi
 # Define aliases.
 (( $+commands[tree]  )) && alias tree='tree -aC -I .git --dirsfirst'
 (( $+commands[gedit] )) && alias gedit='gedit &>/dev/null'
-(( $+commands[rsync] )) && alias rsync='rsync -z'
+(( $+commands[rsync] )) && alias rsync='rsync --compress --verbose --iconv=UTF-8-MAC,UTF-8 $@'
 (( $+commands[exa]   )) && alias exa='exa -ga --group-directories-first --time-style=long-iso --color-scale $@'
 # add $@ to make the options the defaults
 
