@@ -199,8 +199,18 @@ fi
 (( $+commands[tree]  )) && alias tree='tree -aC -I .git --dirsfirst'
 (( $+commands[gedit] )) && alias gedit='gedit &>/dev/null'
 (( $+commands[rsync] )) && alias rsync='rsync --compress --verbose --iconv=UTF-8-MAC,UTF-8 $@'
-(( $+commands[exa]   )) && alias exa='exa -ga --group-directories-first --time-style=long-iso --color-scale $@'
+(( $+commands[exa]   )) && alias exa='exa --group --all --group-directories-first --time-style=long-iso --color-scale $@'
 # add $@ to make the options the defaults
+
+# ls Command but with exa with fallback to ls
+(( $+commands[exa] )) && alias l='exa --grid --all --group-directories-first --color-scale' || alias l='ls -F'
+(( $+commands[exa] )) && alias lrs='exa --grid --all --group-directories-first --color-scale --reverse' || alias lrs='ls -F'
+(( $+commands[exa] )) && alias ll='exa --long --header --all --classify --group --git --group-directories-first --time-style=long-iso --color-scale' || alias ll='ls -lhA'
+(( $+commands[exa] )) && alias llrs='exa --long --header --all --classify --group --git --group-directories-first --time-style=long-iso --color-scale --reverse' || alias llrs='ls -lhA'
+(( $+commands[exa] )) && alias llr='exa --long --header --all --classify --group --git --group-directories-first --time-style=long-iso --color-scale --recurse -L ' || alias llr='ls -lhA'
+(( $+commands[exa] )) && alias lt='exa --tree' || alias lt='ls -lhA'
+(( $+commands[exa] )) && alias ltr='exa --tree -L ' || alias lt='ls -lhA'
+(( $+commands[exa] )) && alias le='exa --long --header --all --classify --group --git --group-directories-first --time-style=long-iso --color-scale --extended' || alias le='ls -lhA'
 
 # Add flags to existing aliases.
 alias ls="${aliases[ls]:-ls} -A"
