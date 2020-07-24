@@ -203,7 +203,7 @@ fi
 # add $@ to make the options the defaults
 
 # ls Command but with exa with fallback to ls
-(( $+commands[exa] )) && alias l='exa --grid --all --group-directories-first --color-scale' || alias l='ls -F'
+(( $+commands[exa] )) && alias l='exa --grid --all --group-directories-first --color-scale' || alias l='ls -CF'
 (( $+commands[exa] )) && alias lrs='exa --grid --all --group-directories-first --color-scale --reverse' || alias lrs='ls -F'
 (( $+commands[exa] )) && alias ll='exa --long --header --all --classify --group --git --group-directories-first --time-style=long-iso --color-scale' || alias ll='ls -lhA'
 (( $+commands[exa] )) && alias llrs='exa --long --header --all --classify --group --git --group-directories-first --time-style=long-iso --color-scale --reverse' || alias llrs='ls -lhA'
@@ -214,6 +214,41 @@ fi
 
 # Add flags to existing aliases.
 alias ls="${aliases[ls]:-ls} -A"
+
+# pokayoke
+alias cd..="cd .."
+alias sl="ls"
+
+# get your ip
+alias myip="curl http://ipecho.net/plain; echo"
+
+# Open File and follow
+alias t='tail -f'
+
+# Pipe extensions
+alias -g G='| ag'
+alias -g NE='2> /dev/null'
+alias -g NUL='> /dev/null 2>&1'
+
+# Show disk usage
+alias dud='du -d 1 -h'
+alias duf='du -sh *'
+
+# Find
+alias fd='find . -type d -name'
+alias ff='find . -type f -name'
+
+# History
+alias h='history'
+alias hgrep="fc -El 0 | grep"
+
+# Show Processes of current Shell
+alias p='ps -f'
+
+# Always ask before proceeding
+alias rm='rm -I'
+alias cp='cp -i'
+alias mv='mv -i'
 
 # Set shell options: http://zsh.sourceforge.net/Doc/Release/Options.html.
 setopt glob_dots  # glob matches files starting with dot; `ls *` becomes equivalent to `ls *(D)`
