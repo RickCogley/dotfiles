@@ -101,6 +101,14 @@ masup () {
   mas upgrade
 }
 
+dbup () {
+  echo -e "\e[1m\e[44m ============== UPDATE CLI DATABASES =============== \e[0m"
+  cd
+  tput setaf 5; echo "Updating the locate database, enter your password ..."; tput sgr0
+  sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
+}
+
+
 cd
 npmup
 # yarnup
@@ -108,4 +116,6 @@ npmup
 # gemup
 brewhaha
 brewrefzf
+masup
+dbup
 zshup
