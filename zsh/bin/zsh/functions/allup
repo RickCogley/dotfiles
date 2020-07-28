@@ -105,17 +105,22 @@ dbup () {
   echo -e "\e[1m\e[44m ============== UPDATE CLI DATABASES =============== \e[0m"
   cd
   tput setaf 5; echo "Updating the locate database, enter your password ..."; tput sgr0
-  sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
+  # START UP AS: sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
+  # REFRESH DB AS:
+  sudo /usr/libexec/locate.updatedb
 }
 
-
+DOW=$(date +%u)
 cd
 npmup
 # yarnup
 # pipup
 # gemup
 brewhaha
-brewrefzf
+if (( $DOW == 3 )) then;
+  tput setaf 3; echo "it is day $DOW in week, so upgrade fzf"  ; tput sgr0
+  brewrefzf
+fi
 masup
 dbup
 zshup
