@@ -1,4 +1,12 @@
-#  `.zshenv' is sourced on all invocations of the shell, unless the -f option is set. It should contain commands to set the command search path, plus other important environment variables. `.zshenv' should not contain commands that produce output or assume the shell is attached to a tty.
+#  `.zshenv' is sourced on all invocations of the shell, unless the -f
+# option is set. It should contain commands to set the command search path,
+# plus other important environment variables. `.zshenv' should not contain
+# commands that produce output or assume the shell is attached to a tty.
+#
+# It's best to keep this file unchanged unless you know exactly what you
+# are doing. Keep all Zsh customization and configuration in ~/.zshrc or
+# in files sourced from ~/.zshrc. This includes exported environment
+# variables such as PATH.
 
 if [ -n "${ZSH_VERSION-}" ]; then
   : ${ZDOTDIR:=~}
