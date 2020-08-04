@@ -151,7 +151,9 @@ eval "$(direnv hook zsh)"
 fi
 path=(~/bin $path)
 
-fpath=(/usr/local/share/zsh-completions $fpath) # brew recommended
+# brew recommended, but not needed as it's installed by z4h already
+# fpath=(/usr/local/share/zsh-completions $fpath)
+
 fpath=($Z4H/romkatv/archive $fpath) # add archive plugin to path
 [[ -d ~/bin/zsh/functions ]] && fpath=(~/bin/zsh/functions $fpath) #add personal functions to fpath if path exists
 # export PATH and FPATH to sub-processes (make it inherited by child processes)
