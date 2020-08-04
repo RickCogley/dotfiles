@@ -3,18 +3,17 @@
 # Incorporate https://leahneukirchen.org/dotfiles/.zshrc ?
 # `.zshrc' is sourced in interactive shells only, not login shells. It should contain commands to set up aliases, functions, options, key bindings, etc.
 
-# 'ask': ask to update; 'no': disable auto-update.
+# Periodic auto-update on Zsh startup: 'ask' or 'no'.
 zstyle ':z4h:'                auto-update      ask
-# Auto-update this often; has no effect if auto-update is 'no'.
+# Ask whether to auto-update this often; has no effect if auto-update is 'no'.
 zstyle ':z4h:'                auto-update-days 28
-# Stability vs freshness of plugins: stable, testing or dev.
-zstyle ':z4h:*'               channel          stable
 # Bind alt-arrows or ctrl-arrows to change current directory?
 # The other key modifier will be bound to cursor movement by words.
 zstyle ':z4h:'                cd-key           alt
 # Right-arrow key accepts one character ('partial-accept') from
 # command autosuggestions or the whole thing ('accept')?
 zstyle ':z4h:autosuggestions' forward-char     accept
+
 # Send extra rc files when using z4h ssh
 zstyle    ':z4h:ssh:*' send-extra-files '~/.vimrc' '~/.vim/colors/iceberg.vim' '~/.bashrc' '~/.bash_profile' '~/.fzf.bash'
 
@@ -167,11 +166,9 @@ export FPATH
 # z4h source $Z4H/ohmyzsh/ohmyzsh/plugins/emoji-clock/emoji-clock.plugin.zsh
 # fpath+=($Z4H/ohmyzsh/ohmyzsh/plugins/supervisor)
 
-# Source additional local files.
-if [[ $LC_TERMINAL == iTerm2 ]]; then
-  # Enable iTerm2 shell integration (if installed).
-  z4h source ~/.iterm2_shell_integration.zsh
-fi
+# Source additional local files if they exist.
+# Enable iTerm2 shell integration (if installed).
+z4h source ~/.iterm2_shell_integration.zsh
 
 # Define key bindings.
 bindkey '^H'   z4h-backward-kill-word   # Ctrl+H and Ctrl+Backspace: Delete previous word.
@@ -181,8 +178,8 @@ bindkey '^[^H' z4h-backward-kill-zword  # Ctrl+Alt+Backspace: Delete previous sh
 zstyle ':completion:*'                           sort               false
 # Ignore case
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-# Should cursor go to the end when Up/Down/Ctrl-Up/Ctrl-Down fetches a command from history?
-zstyle ':zle:(up|down)-line-or-beginning-search' leave-cursor       no
+# Keep cursor position unchanged when Up/Down fetches a command from history?
+zstyle ':zle:(up|down)-line-or-beginning-search' leave-cursor       true
 # When presented with the list of choices upon hitting Tab, accept selection and
 # trigger another completion with this key binding. Great for completing file paths.
 zstyle ':fzf-tab:*'                              continuous-trigger tab
