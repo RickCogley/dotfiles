@@ -196,6 +196,9 @@ if type brew &>/dev/null; then
   compinit
 fi
 
+# Define named directories: ~w <=> Windows home directory on WSL.
+[[ -n $z4h_win_home ]] && hash -d w=$z4h_win_home
+
 # Define aliases.
 (( $+commands[tree]  )) && alias tree='tree -aC -I .git --dirsfirst'
 (( $+commands[gedit] )) && alias gedit='gedit &>/dev/null'
