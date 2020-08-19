@@ -112,6 +112,7 @@ dbup () {
 
 DOW=$(date +%u)
 cd
+dbup
 npmup
 # yarnup
 # pipup
@@ -122,5 +123,4 @@ if (( $DOW == 3 )) then;
   brewrefzf
 fi
 masup
-dbup
 zshup
