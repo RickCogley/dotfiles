@@ -514,6 +514,7 @@ function hugodeploy (){
   echo "====== Deploy $1 site to AWS S3 ======"
   echo " "
   echo "Usage: hugodeploy sitestring /path/from/home"
+  hugogetjson-jvad
   _hugobin="$HOME/gocode/bin/hugo"
   _awsbin="/usr/local/bin/aws"
   _workingdir="$HOME$2"
