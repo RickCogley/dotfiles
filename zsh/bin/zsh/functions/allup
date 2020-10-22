@@ -112,7 +112,10 @@ dbup () {
 
 DOW=$(date +%u)
 cd
-dbup
+if (( $DOW == 3 )) then;
+  tput setaf 3; echo "it is day $DOW in week, so refresh databases"  ; tput sgr0
+  dbup
+fi
 npmup
 # yarnup
 # pipup
