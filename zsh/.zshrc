@@ -168,7 +168,9 @@ export FPATH
 
 # Source additional local files if they exist.
 # Enable iTerm2 shell integration (if installed).
-z4h source ~/.iterm2_shell_integration.zsh
+# z4h source ~/.iterm2_shell_integration.zsh
+# 20201202 N.b.: this breaks p10k needed to run:
+# unset ITERM_SHELL_INTEGRATION_INSTALLED && p10k reload
 
 # Define key bindings.
 bindkey '^H'   z4h-backward-kill-word   # Ctrl+H and Ctrl+Backspace: Delete previous word.
