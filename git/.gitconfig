@@ -82,3 +82,5 @@
 	autoDetach = false
 [tag]
 	forceSignAnnotated = true
+[smartgit "gui"]
+	signOff = false

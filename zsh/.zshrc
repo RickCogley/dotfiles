@@ -651,7 +651,8 @@ function hugodeploy-logr {
   ${_gitbin} commit -m "Logr update post ${_datetime}"
   ${_gitbin} push origin master
   ${_hugobin} --gc --minify
-  ${_rsyncbin} --verbose --compress --archive --recursive --partial --progress --checksum --delete --exclude '.git' ${_workingdir}/public/ ${_targetdir}
+  # ${_rsyncbin} --verbose --compress --archive --recursive --partial --progress --checksum --delete --exclude '.git' ${_workingdir}/public/ ${_targetdir}
+  up production
   ping-rcclogr
   sleep 30
   logrtweet 0
@@ -671,7 +672,8 @@ function hugoretry-logr {
   ${_gitbin} commit -m "Logr update post ${_datetime}"
   ${_gitbin} push origin master
   ${_hugobin} --gc --minify
-  ${_rsyncbin} --verbose --compress --archive --recursive --partial --progress --checksum --delete --exclude '.git' ${_workingdir}/public/ ${_targetdir}
+  # ${_rsyncbin} --verbose --compress --archive --recursive --partial --progress --checksum --delete --exclude '.git' ${_workingdir}/public/ ${_targetdir}
+  up production
 }
 
 function logrtweet {
