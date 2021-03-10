@@ -25,7 +25,7 @@ brewrefzf () {
   echo -e "\e[1m\e[44m ============== REINSTALL FUZZY FINDER =============== \e[0m"
   cd
   tput setaf 5; echo "Fzf site recommends a brew reinstall..."; tput sgr0
-  brew reinstall fzf
+  brew upgrade fzf
 }
 
 vimplugup () {
