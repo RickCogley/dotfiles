@@ -84,3 +84,5 @@
 	forceSignAnnotated = true
 [smartgit "gui"]
 	signOff = false
+[init]
+	defaultBranch = main
