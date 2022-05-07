@@ -44,7 +44,7 @@ hs.hotkey.bind(ctrl_opt_cmd, "W", function()
    hs.alert.show(second_monitor)
 end)
 
--- use miro spoon 
+-- use miro spoon
 
 spoon.MiroWindowsManager:bindHotkeys({
   up = {ctrl_opt_cmd, "up"},
@@ -406,7 +406,7 @@ homeSSID = "CogleyHaus"
 lastSSID = hs.wifi.currentNetwork()
 function ssidChangedCallback()
     newSSID = hs.wifi.currentNetwork()
-    if string.match(newSSID, homeSSID) and not string.match(lastSSID, homeSSID) then 
+    if string.match(newSSID, homeSSID) and not string.match(lastSSID, homeSSID) then
     -- if newSSID == homeSSID and lastSSID ~= homeSSID then
         -- We just joined our home WiFi network
         hs.audiodevice.defaultOutputDevice():setVolume(1)

@@ -1,3 +1,6 @@
 [filesystem "AdoptOpenJDK|11.0.4|/dev/disk1s1"]
 	timestampResolution = 6000 nanoseconds
 	minRacyThreshold = 0 nanoseconds
+[filesystem "Amazon.com Inc.|11.0.8|/dev/disk1s2"]
+	timestampResolution = 6000 nanoseconds
+	minRacyThreshold = 0 nanoseconds
