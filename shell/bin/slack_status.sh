@@ -20,7 +20,7 @@ if [[ $1 == "setup" ]]; then
     cat > "$CONFIG_FILE" <<EOF
 # vim: ft=sh
 # Configuration file for slack_status
-# Set EXPIRES to 0 for no expiration or to a seconds integer value
+# Set EXPIRES to 0 for no expiration or to seconds as an integer value
 TOKEN=$TOKEN
 
 PRESET_EMOJI_test=":white_check_mark:"
