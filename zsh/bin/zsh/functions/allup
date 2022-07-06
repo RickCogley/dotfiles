@@ -18,7 +18,7 @@ brewhaha () {
   brew doctor
   brew missing
   tput setaf 5; echo "Updating brew casks and cleaning up..."; tput sgr0
-  brew cu --yes --cleanup
+  brew cu --all --yes --cleanup
 }
 
 brewrefzf () {
