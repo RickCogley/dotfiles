@@ -49,6 +49,7 @@ npmup () {
   npm install -g npm
   tput setaf 5; echo "Updating npm modules and browserlist..."; tput sgr0
   npm update -g
+  npx browserslist@latest --update-db
 }
 
 pipup () {
