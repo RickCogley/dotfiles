@@ -47,7 +47,7 @@ npmup () {
   cd
   tput setaf 5; echo "Updating npm itself..."; tput sgr0
   npm install -g npm
-  tput setaf 5; echo "Updating npm modules..."; tput sgr0
+  tput setaf 5; echo "Updating npm modules and browserlist..."; tput sgr0
   npm update -g
 }
 
