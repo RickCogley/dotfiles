@@ -1,3 +1,9 @@
+# DEPRECATED
+
+There's settings sync, so just use that instead. 
+
+* * * 
+
 VsCode's default settings file goes in: 
 
 ~~~~~
