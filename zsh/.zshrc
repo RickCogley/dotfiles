@@ -148,6 +148,7 @@ path=($PYENV_ROOT/bin $path) # pyenv
 if (( $+commands[direnv] )); then
 eval "$(direnv hook zsh)"
 fi
+path=(~/.local/bin $path)
 path=(~/bin $path)
 
 # brew recommended, but not needed as it's installed by z4h already
