@@ -25,6 +25,8 @@ source ~/.zplug/init.zsh
 # Make sure to use double quotes
 zplug "zsh-users/zsh-history-substring-search"
 
+zplug "lukechilds/zsh-nvm"
+
 # Grab binaries from GitHub Releases
 # and rename with the "rename-to:" tag
 zplug "junegunn/fzf-bin", \
@@ -148,9 +150,12 @@ export PATH="/usr/local/opt/php/bin:$PATH"
 # for php composer
 export PATH="$HOME/.composer/vendor/bin:$PATH"
 
+# for nvm node version manager
+export NVM_DIR="$HOME/.nvm"
+[[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [[ -s "$NVM_DIR/bash_completion" ]] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # function to reload shell
-
 function relogin {
   exec $SHELL --login
 }
