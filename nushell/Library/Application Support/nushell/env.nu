@@ -84,9 +84,9 @@ def allup [] {
   brew update
   print $"(ansi bg_purple) 🍻 Upgrading brew... (ansi reset)"
   brew upgrade
-  print $"(ansi bg_purple) 🍻 Cleaning up brew (keep only last)... (ansi reset)"
+  print $"(ansi bg_purple) 🍻 Cleaning up brew to keep only last version... (ansi reset)"
   brew cleanup -s
-  print $"(ansi bg_purple) 🍻 Calling the DOCTOR! What is missing?... (ansi reset)"
+  print $"(ansi bg_purple) 🍻 Calling the DOCTOR and find what is missing... (ansi reset)"
   brew doctor
   brew missing
   print $"(ansi bg_purple) 🍻 Updating brew casks and cleaning up... (ansi reset)"
