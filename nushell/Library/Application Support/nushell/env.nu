@@ -78,18 +78,18 @@ let-env NU_PLUGIN_DIRS = [
 # let-env PATH = ($env.PATH | split row (char esep) | prepend '/some/path')
 
 def allup [] {
-  $"(ansi bg_blue) ====== MAINTAIN BREW ====== (ansi reset)"
+  print $"(ansi bg_blue) ====== MAINTAIN BREW ====== (ansi reset)"
   cd
-  $"(ansi bg_purple) 🍻 Updating brew... (ansi reset)"
+  print $"(ansi bg_purple) 🍻 Updating brew... (ansi reset)"
   brew update
-  $"(ansi bg_purple) 🍻 Upgrading brew... (ansi reset)"
+  print $"(ansi bg_purple) 🍻 Upgrading brew... (ansi reset)"
   brew upgrade
-  $"(ansi bg_purple) 🍻 Cleaning up brew (keep only last)... (ansi reset)"
+  print $"(ansi bg_purple) 🍻 Cleaning up brew (keep only last)... (ansi reset)"
   brew cleanup -s
-  $"(ansi bg_purple) 🍻 Calling the DOCTOR! What is missing?... (ansi reset)"
+  print $"(ansi bg_purple) 🍻 Calling the DOCTOR! What is missing?... (ansi reset)"
   brew doctor
   brew missing
-  $"(ansi bg_purple) 🍻 Updating brew casks and cleaning up... (ansi reset)"
+  print $"(ansi bg_purple) 🍻 Updating brew casks and cleaning up... (ansi reset)"
   brew cu --all --yes --cleanup
 }
 
