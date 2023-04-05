@@ -110,6 +110,11 @@ export ONI2_CONFIG_DIR=~/.config/oni2/
 # MS dotnet
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
+# for nvm node version manager
+export NVM_DIR="$HOME/.nvm"
+[[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [[ -s "$NVM_DIR/bash_completion" ]] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 
 # Extend PATH
 # APPEND as path+=(/new/bin/dir)
@@ -1282,3 +1287,9 @@ function bsize() (
     _print "$(_bsize BucketSizeBytes $sclass)" iec-i "%10.2f" B
     _print "$(_bsize NumberOfObjects AllStorageTypes)" si "%8.2f"
   )
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/rcogley/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/rcogley/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/rcogley/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/rcogley/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
