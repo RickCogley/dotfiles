@@ -75,7 +75,27 @@ let-env NU_PLUGIN_DIRS = [
 ]
 
 # To add entries to PATH (on Windows you might use Path), you can use the following pattern:
-# let-env PATH = ($env.PATH | split row (char esep) | prepend '/some/path')
+let-env PATH = ($env.PATH | split row (char esep) | append '~/.cargo/bin')
+let-env PATH = ($env.PATH | split row (char esep) | append '~/.rbenv/bin')
+let-env PATH = ($env.PATH | split row (char esep) | append '~/.nimble/bin')
+let-env PATH = ($env.PATH | split row (char esep) | append '/opt/homebrew/bin')
+let-env PATH = ($env.PATH | split row (char esep) | append '/usr/local/opt/curl/bin')
+let-env PATH = ($env.PATH | split row (char esep) | append '/usr/local/opt/sqlite/bin')
+let-env PATH = ($env.PATH | split row (char esep) | append '/usr/local/opt/libressl/bin')
+let-env PATH = ($env.PATH | split row (char esep) | append '/usr/local/opt/MacGPG2/bin')
+let-env PATH = ($env.PATH | split row (char esep) | append '/usr/local/opt/gnu-getopt/bin')
+let-env PATH = ($env.PATH | split row (char esep) | append '~/.composer/vendor/bin')
+let-env PATH = ($env.PATH | split row (char esep) | append '/usr/local/go/bin')
+let-env PATH = ($env.PATH | split row (char esep) | append '/usr/local/opt/go/libexec/bin')
+let-env PATH = ($env.PATH | split row (char esep) | append '~/gocode')
+let-env PATH = ($env.PATH | split row (char esep) | append '~/gocode/bin')
+let-env PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/sbin')
+let-env PATH = ($env.PATH | split row (char esep) | prepend '/opt/local/bin')
+let-env PATH = ($env.PATH | split row (char esep) | prepend '/opt/local/sbin')
+let-env PATH = ($env.PATH | split row (char esep) | prepend '/opt/X11/bin')
+let-env PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/bin')
+let-env PATH = ($env.PATH | split row (char esep) | prepend '~/.local/bin')
+let-env PATH = ($env.PATH | split row (char esep) | prepend '~/bin')
 
 def allup [] {
   print $"(ansi bg_blue) ====== MAINTAIN BREW ====== (ansi reset)"
@@ -93,4 +113,7 @@ def allup [] {
   brew cu --all --yes --cleanup
 }
 
-
+def renu [] {
+  # source `/Users/rcogley/.dotfiles/nushell/Library/Application Support/nushell/env.nu`
+  # source `/Users/rcogley/.dotfiles/nushell/Library/Application Support/nushell/config.nu`
+}
