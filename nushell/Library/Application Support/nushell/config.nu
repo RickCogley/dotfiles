@@ -8,7 +8,7 @@
 # https://github.com/nushell/nu_scripts/tree/main/themes
 let dark_theme = {
     # color for nushell primitives
-    separator: white
+    separator: grey
     leading_trailing_space_bg: { attr: n } # no fg, no bg, attr none effectively turns this off
     header: green_bold
     empty: blue
@@ -40,7 +40,7 @@ let dark_theme = {
       } else if $in < 52wk {
         'deepskyblue3b'
       } else { 'dark_gray' }
-    }    
+    }
     range: white
     float: white
     string: white
@@ -531,6 +531,15 @@ let-env config = {
       keycode: char_s
       mode: [emacs, vi_normal, vi_insert]
       event: { send: menu name: commands_with_description }
+    }
+    {
+      name: reload_config
+      modifier: control
+      keycode: char_n
+      mode: [ emacs vi_insert vi_normal ]
+      event: {
+        send: executehostcommand,
+        cmd: $"source '($nu.env-path)'; source '($nu.config-path)'"      }
     }
   ]
 }
