@@ -8,7 +8,7 @@
 # https://github.com/nushell/nu_scripts/tree/main/themes
 let dark_theme = {
     # color for nushell primitives
-    separator: grey
+    separator: gray
     leading_trailing_space_bg: { attr: n } # no fg, no bg, attr none effectively turns this off
     header: green_bold
     empty: blue
@@ -539,7 +539,7 @@ let-env config = {
       mode: [ emacs vi_insert vi_normal ]
       event: {
         send: executehostcommand,
-        cmd: $"source '($nu.env-path)'; source '($nu.config-path)'"      }
+        cmd: $"source '($nu.env-path)'; source '($nu.config-path)'; print 'Reloaded nu env and config'"      }
     }
   ]
 }
