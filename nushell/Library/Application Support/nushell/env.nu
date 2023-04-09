@@ -99,8 +99,11 @@ let-env PATH = ($env.PATH | split row (char esep) | prepend '~/bin')
 
 # env vars
 
+let-env LANG = 'ja_JP.UTF-8'
 let-env EDITOR = 'code'
-
+let-env GPG_TTY = (tty)
+# let-env PRODB15331TOKEN = (open --raw "~/.ssh/tokens/PRODB15331TOKEN")
+open ~/.ssh/tokens/api-tokens.nuon | load-env
 
 # custom commands
 def allup [] {
@@ -129,7 +132,16 @@ def renu [] {
 
 def qrenco [url:string] { curl $"qrenco.de/https://($url)" }
 
-def stup [msg:string] {
-  let qry = $"{ query: mutation updateStatusMutation {message:($msg)}}"
-  print $qry
+def stup [emoji:string, msg:string] {
+  let hdr = $"'Authorization: Bearer ($env.OMGLOL)'"
+  let omgacct = rick
+  let apiurl = $"'https://api.omg.lol/address/($omgacct)/statuses/'"
+  let qry = $"'{"emoji": "($emoji)", "content": "($msg)"}'"
+  curl --location --request POST --header $hdr $apiurl --data $qry
+}
+
+def ttt [] {
+  let omgacct = rick
+  let apiurl = $"'https://api.omg.lol/address/($omgacct)/statuses/'"
+  print $apiurl
 }
