@@ -97,6 +97,12 @@ let-env PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/bin')
 let-env PATH = ($env.PATH | split row (char esep) | prepend '~/.local/bin')
 let-env PATH = ($env.PATH | split row (char esep) | prepend '~/bin')
 
+# env vars
+
+let-env EDITOR = 'code'
+
+
+# custom commands
 def allup [] {
   print $"(ansi bg_blue) ====== MAINTAIN BREW ====== (ansi reset)"
   cd
@@ -114,6 +120,16 @@ def allup [] {
 }
 
 def renu [] {
-  # source `/Users/rcogley/.dotfiles/nushell/Library/Application Support/nushell/env.nu`
-  # source `/Users/rcogley/.dotfiles/nushell/Library/Application Support/nushell/config.nu`
+  # sourced files need to be available before the script can be checked or run
+  # not working
+  # source '($nu.env-path)'
+  # source '($nu.config-path)'
+  # print 'Reloaded nu env and config'
+}
+
+def qrenco [url:string] { curl $"qrenco.de/https://($url)" }
+
+def stup [msg:string] {
+  let qry = $"{ query: mutation updateStatusMutation {message:($msg)}}"
+  print $qry
 }
