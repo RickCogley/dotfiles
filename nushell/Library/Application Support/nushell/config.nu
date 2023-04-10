@@ -539,7 +539,8 @@ let-env config = {
       mode: [ emacs vi_insert vi_normal ]
       event: {
         send: executehostcommand,
-        cmd: $"source '($nu.env-path)'; source '($nu.config-path)'; print 'Reloaded nu env and config'"      }
+        # cmd: $"source '($nu.env-path)'; source '($nu.config-path)'; print 'Reloaded nu env and config'"      }
+        cmd: $"print 'Reloading nushell env and config'; exec nu"}
     }
   ]
 }
