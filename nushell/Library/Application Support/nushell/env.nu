@@ -75,27 +75,32 @@ let-env NU_PLUGIN_DIRS = [
 ]
 
 # To add entries to PATH (on Windows you might use Path), you can use the following pattern:
-let-env PATH = ($env.PATH | split row (char esep) | append '~/.cargo/bin')
-let-env PATH = ($env.PATH | split row (char esep) | append '~/.rbenv/bin')
-let-env PATH = ($env.PATH | split row (char esep) | append '~/.nimble/bin')
-let-env PATH = ($env.PATH | split row (char esep) | append '/opt/homebrew/bin')
-let-env PATH = ($env.PATH | split row (char esep) | append '/usr/local/opt/curl/bin')
-let-env PATH = ($env.PATH | split row (char esep) | append '/usr/local/opt/sqlite/bin')
-let-env PATH = ($env.PATH | split row (char esep) | append '/usr/local/opt/libressl/bin')
-let-env PATH = ($env.PATH | split row (char esep) | append '/usr/local/opt/MacGPG2/bin')
-let-env PATH = ($env.PATH | split row (char esep) | append '/usr/local/opt/gnu-getopt/bin')
-let-env PATH = ($env.PATH | split row (char esep) | append '~/.composer/vendor/bin')
-let-env PATH = ($env.PATH | split row (char esep) | append '/usr/local/go/bin')
-let-env PATH = ($env.PATH | split row (char esep) | append '/usr/local/opt/go/libexec/bin')
-let-env PATH = ($env.PATH | split row (char esep) | append '~/gocode')
-let-env PATH = ($env.PATH | split row (char esep) | append '~/gocode/bin')
-let-env PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/sbin')
-let-env PATH = ($env.PATH | split row (char esep) | prepend '/opt/local/bin')
-let-env PATH = ($env.PATH | split row (char esep) | prepend '/opt/local/sbin')
-let-env PATH = ($env.PATH | split row (char esep) | prepend '/opt/X11/bin')
-let-env PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/bin')
-let-env PATH = ($env.PATH | split row (char esep) | prepend '~/.local/bin')
-let-env PATH = ($env.PATH | split row (char esep) | prepend '~/bin' | uniq)
+let-env PATH = (
+    $env.PATH | split row (char esep)
+    | prepend '~/.cargo/bin'
+    | append '~/.rbenv/bin'
+    | append '~/.nimble/bin'
+    | prepend '/opt/homebrew/bin'
+    | append '/usr/local/opt/curl/bin'
+    | append '/usr/local/opt/sqlite/bin'
+    | append '/usr/local/opt/libressl/bin'
+    | append '/usr/local/opt/MacGPG2/bin'
+    | append '/usr/local/opt/gnu-getopt/bin'
+    | append '~/.composer/vendor/bin'
+    | append '/usr/local/go/bin'
+    | append '/usr/local/opt/go/libexec/bin'
+    | append '~/gocode'
+    | append '~/gocode/bin'
+    | prepend '/usr/local/sbin'
+    | prepend '/opt/local/bin'
+    | prepend '/opt/local/sbin'
+    | prepend '/opt/X11/bin'
+    | prepend '/usr/local/bin'
+    | prepend '~/.local/bin'
+    | prepend '~/bin'
+    | uniq
+)
+
 
 # env vars
 
