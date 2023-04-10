@@ -95,7 +95,7 @@ let-env PATH = ($env.PATH | split row (char esep) | prepend '/opt/local/sbin')
 let-env PATH = ($env.PATH | split row (char esep) | prepend '/opt/X11/bin')
 let-env PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/bin')
 let-env PATH = ($env.PATH | split row (char esep) | prepend '~/.local/bin')
-let-env PATH = ($env.PATH | split row (char esep) | prepend '~/bin')
+let-env PATH = ($env.PATH | split row (char esep) | prepend '~/bin' | uniq)
 
 # env vars
 
@@ -146,6 +146,34 @@ def statusup [emoji:string, msg:string] {
   let qry = $"{"emoji": "($emoji)", "content": "($msg)"}"
   http post -H ["Authorization" $"Bearer ($env.OMGLOL)"] -t application/json $apiurl $qry
 }
+
+# get the environment details
+def "env details" [] {
+  let e = ($env | reject config | transpose key value)
+  $e | each {|r|
+    let envc = ($r.key == ENV_CONVERSIONS)
+    if $envc {
+      $env | 
+      get ENV_CONVERSIONS | 
+      transpose key value | 
+      each {|ec| 
+        let to_string = ($ec.value | get to_string | view source $in)
+        let from_string = ($ec.value | get from_string | view source $in)
+        echo {'ENV_CONVERSIONS': {($ec.key): { 'to_string': ($to_string) 'from_string': ($from_string)}}}
+      }
+    }
+    let is_closure = ($r.value | describe | str contains 'closure')
+    if not $envc {
+      if $is_closure {
+        let closure_value = (view source ($env | get $r.key))
+        echo [[key value]; [($r.key) ($closure_value)]]
+      } else {
+        echo [[key value]; [($r.key) ($r.value)]]
+      }
+    }
+  }
+}
+
 
 def ttt [] {
   let omgacct = rick
