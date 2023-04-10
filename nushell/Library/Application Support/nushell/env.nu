@@ -140,8 +140,16 @@ def stup [emoji:string, msg:string] {
   curl --location --request POST --header $hdr $apiurl --data $qry
 }
 
+def statusup [emoji:string, msg:string] {
+  let omgacct = rick
+  let apiurl = $"https://api.omg.lol/address/($omgacct)/statuses/"
+  let qry = $"{"emoji": "($emoji)", "content": "($msg)"}"
+  http post -H ["Authorization" $"Bearer ($env.OMGLOL)"] -t application/json $apiurl $qry
+}
+
 def ttt [] {
   let omgacct = rick
   let apiurl = $"'https://api.omg.lol/address/($omgacct)/statuses/'"
   print $apiurl
 }
+
