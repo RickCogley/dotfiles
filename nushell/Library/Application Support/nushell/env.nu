@@ -155,29 +155,31 @@ def statusup [emoji:string, msg:string] {
 # get the environment details
 def "env details" [] {
   let e = ($env | reject config | transpose key value)
-  $e | each {|r|
-    let envc = ($r.key == ENV_CONVERSIONS)
-    if $envc {
-      $env | 
-      get ENV_CONVERSIONS | 
-      transpose key value | 
-      each {|ec| 
-        let to_string = ($ec.value | get to_string | view source $in)
-        let from_string = ($ec.value | get from_string | view source $in)
-        echo {'ENV_CONVERSIONS': {($ec.key): { 'to_string': ($to_string) 'from_string': ($from_string)}}}
-      }
-    }
+  $e | each { |r|
+    let is_envc = ($r.key == ENV_CONVERSIONS)
     let is_closure = ($r.value | describe | str contains 'closure')
-    if not $envc {
-      if $is_closure {
-        let closure_value = (view source ($env | get $r.key))
-        echo [[key value]; [($r.key) ($closure_value)]]
-      } else {
-        echo [[key value]; [($r.key) ($r.value)]]
-      }
+    let is_list = ($r.value | describe | str contains 'list')
+    if $is_envc {
+      echo [[key value]; 
+        [($r.key) ($r.value | transpose key value | each { |ec| 
+          let to_string = ($ec.value | get to_string | view source $in | nu-highlight)
+          let from_string = ($ec.value | get from_string | view source $in | nu-highlight)
+          echo ({'ENV_CONVERSIONS': {($ec.key): { 'to_string': ($to_string) 'from_string': ($from_string)}}})
+        })]
+      ]
+    } else if $is_closure {
+      let closure_value = (view source ($env | get $r.key) | nu-highlight)
+      echo [[key value]; [($r.key) ($closure_value)]]
+    } else if $is_list {
+      let list_value = ($env | get $r.key | split row (char esep))
+      echo [[key value]; [($r.key) ($list_value)]]
+    } else {
+      echo [[key value]; [($r.key) ($r.value)]]
     }
   }
 }
+
+def env [] { env details | flatten | table -e }
 
 
 def ttt [] {
