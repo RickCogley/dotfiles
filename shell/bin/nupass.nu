@@ -6,7 +6,7 @@
 # Generate password of 3 dictionary file words, numbers and symbols
 export def main [
   word_length: int = 4    # Max length of 3 words in password
-  --debug    # Include debug info
+  --debug (-d)    # Include debug info
 ] {
   ##### Main function #####
   # Get dictionary file:
@@ -83,4 +83,3 @@ def get-random-symbol [
     | split chars
     | get (random integer 0..14)
 }
-
