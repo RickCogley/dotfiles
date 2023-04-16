@@ -1,6 +1,8 @@
 # Script to generate a password from a dictionary file
 # Author: @rickcogley
 # Thanks: @amtoine, @fdncred, @jelle
+# Updates: 20230415 - initial version
+#          20230416 - added @amtoine's slick probabilistic "random decimal" char capitalization
 
 #======= NUPASS PASSWORD GENERATOR =======
 # Generate password of 3 dictionary file words, numbers and symbols
@@ -64,11 +66,13 @@ def get-random-word [
 # Function to format a word randomly
 def random-format-word [] {
     each {|it| 
-        let rint = (random integer 1..3)
+        let rint = (random integer 1..4)
         if $rint == 1 {
             ($it | str capitalize)
         } else if $rint == 2 {
             ($it | str upcase)
+        } else if $rint == 3 {
+            ($it | split chars | each {|c| if (random decimal) < 0.3 { $c | str upcase } else { $c }} | str join "")
         } else {
             ($it | str downcase)
         }
