@@ -2,7 +2,7 @@
 #
 # version = 0.78.0
 
-# Load own scripts
+# Load own scripts stored in $env.NU_LIB_DIRS\scripts
 use nupass.nu
 
 # For more information on defining custom themes, see
