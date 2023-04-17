@@ -3,6 +3,7 @@
 # Thanks: @amtoine, @fdncred, @jelle
 # Updates: 20230415 - initial version
 #          20230416 - added @amtoine's slick probabilistic "random decimal" char capitalization
+#          20230417 - added script duration output in debug block
 
 #======= NUPASS PASSWORD GENERATOR =======
 # Generate password of 3 dictionary file words, numbers and symbols
@@ -15,6 +16,7 @@ export def main [
   # http get https://raw.githubusercontent.com/RickCogley/jpassgen/master/genpass-dict-jp.txt | save genpass-dict-jp
   # Set the path:
   let dictfile = $"/usr/local/bin/genpass-dict-jp"
+  let starttime = (date now)
   
   # Find number of lines with strings less than or equal to the supplied length
   let num_lines = (open ($dictfile) | lines | wrap word | upsert len {|it| $it.word | split chars | length} | where len <= ($word_length) | length)
@@ -40,7 +42,8 @@ export def main [
     print $randword1 $randword2 $randword3
     print $"(ansi bg_blue) 🔔 Randomly selected symbols: (ansi reset)"
     print $symb1 $symb2 $symb3 $symb4
-    print $"(ansi bg_green) 🔔 Generated password: (ansi reset)"
+    let endtime = (date now)
+    print $"(ansi bg_green) 🔔 Generated password in ($endtime - $starttime): (ansi reset)"
   }
 
   # Return password
