@@ -178,92 +178,13 @@ def "env details" [] {
     }
   }
 }
-
 def env [] { env details | flatten | table -e }
 
-def pgenxx [] {
+def testpassgen [] {
   #let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+"
   #let len = 16n
   #let pass = (str repeat $len $chars | str shuffle)
   #print $pass
-}
-
-# Generate password of 3 dictionary file words, numbers and symbols
-def nupass [
-  word_length: int = 4    # Max length of 3 words in password
-  --debug    # Include debug info
-  ] { 
-
-  let dictfile = $"/usr/local/bin/genpass-dict-jp"
-  # get the dictionary file with:
-  # http get https://raw.githubusercontent.com/RickCogley/jpassgen/master/genpass-dict-jp.txt | save genpass-dict-jp
-  # TODO test:
-  # let dictfile = (http get https://raw.githubusercontent.com/RickCogley/jpassgen/master/genpass-dict-jp.txt)
-  
-  # Find number of lines with strings less than or equal to the supplied length
-  let numlines = (open ($dictfile) | lines | wrap word | upsert len {|it| $it.word | split chars | length} | where len <= ($word_length) | length)
-  
-  # Get three random line numbers from 1 to numlines
-  let randline1 = (random integer 1..($numlines))
-  let randline2 = (random integer 1..($numlines))
-  let randline3 = (random integer 1..($numlines))
-  
-  # Get the associated words from the file
-  let randword1 = (open ($dictfile) | lines | wrap word | upsert len {|it| $it.word | split chars | length} | where len <= ($word_length) | get ($randline1) | get word)
-  let randword2 = (open ($dictfile) | lines | wrap word | upsert len {|it| $it.word | split chars | length} | where len <= ($word_length) | get ($randline2) | get word)
-  let randword3 = (open ($dictfile) | lines | wrap word | upsert len {|it| $it.word | split chars | length} | where len <= ($word_length) | get ($randline3) | get word)
-
-  # Mix it up a bit with random capitalization, upper-casing and lower-casing
-  let ri1 = (random integer 1..3)
-  let randword1 = (if $ri1 == 1 {
-    ($randword1 | str capitalize)
-  } else if $ri1 == 2 {
-    ($randword1 | str upcase)
-  } else {
-    ($randword1)
-  })
-  
-  let ri2 = (random integer 1..3)
-  let randword2 = (if $ri2 == 1 {
-    ($randword2 | str capitalize)
-  } else if $ri2 == 2 {
-    ($randword2 | str upcase)
-  } else {
-    ($randword2)
-  })
-
-  let ri3 = (random integer 1..3)
-  let randword3 = (if $ri3 == 1 {
-    ($randword3 | str capitalize)
-  } else if $ri3 == 2 {
-    ($randword3 | str upcase)
-  } else {
-    ($randword3)
-  })
-
-  # Sprinkle some symbols like salt bae
-  let symbolchars = "!@#$%^&*()_-+[]"
-  let symb1 = ($symbolchars  | split chars | get (random integer 0..14))
-  let symb2 = ($symbolchars  | split chars | get (random integer 0..14))
-  let symb3 = ($symbolchars  | split chars | get (random integer 0..14))
-  let symb4 = ($symbolchars  | split chars | get (random integer 0..14))
-
-  # Print some vars and stuff if debug flag is set
-  if $debug {
-    print $"(ansi bg_blue) ====== DEBUG INFO ====== (ansi reset)"
-    print $"(ansi bg_purple) 🔔 Number of lines in dict with words under ($word_length) chars: (ansi reset)"
-    print $numlines
-    print $"(ansi bg_purple) 🔔 Randomly selected lines: (ansi reset)"
-    print $randline1 $randline2 $randline3
-    print $"(ansi bg_purple) 🔔 Words from selected lines: (ansi reset)"
-    print $randword1 $randword2 $randword3
-    print $"(ansi bg_purple) 🔔 Randomly selected symbols: (ansi reset)"
-    print $symb1 $symb2 $symb3 $symb4
-    print $"(ansi bg_green) 🔔 Generated password: (ansi reset)"
-  }
-  
-  # Print the password
-  print $"($symb1)(random integer 1..99)($randword1)($symb2)($randword2)($symb3)(random integer 1..99)($randword3)($symb4)"
 }
 
 def testpathvar1 [] {
