@@ -152,6 +152,15 @@ def statusup [emoji:string, msg:string] {
   http post -H ["Authorization" $"Bearer ($env.OMGLOL)"] -t application/json $apiurl $qry
 }
 
+# Fetch simple anwser from WolframAlpha API
+# def wolfram [...query #Your query
+# ] {
+#     let appID = $env.WOLFRAMAPP001
+#     let query_string = ($query | str join " ")
+#     let result = (fetch ("https://api.wolframalpha.com/v1/result?" + ([[appid i]; [$appID $query_string]] | to url)))
+#     $result + ""
+# }
+
 # get the environment details
 def "env details" [] {
   let e = ($env | reject config | transpose key value)
