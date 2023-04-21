@@ -28,6 +28,7 @@ export def main [
   let randword3 = ($dictfile | get-random-word $word_length $num_lines | random-format-word)
 
   # Get some symbols to sprinkle like salt bae
+  # Update symbol chars as needed
   let symbol_chars = "!@#$%^&()_-+[]{}"
   let symbol_chars_len = ($symbol_chars | str length)
   let symb1 = (get-random-symbol $symbol_chars $symbol_chars_len)
