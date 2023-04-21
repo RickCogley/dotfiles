@@ -189,11 +189,19 @@ def "env details" [] {
 }
 def env [] { env details | flatten | table -e }
 
-def testpassgen [] {
-  #let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+"
-  #let len = 16n
-  #let pass = (str repeat $len $chars | str shuffle)
-  #print $pass
+def teststringlen [] {
+  let str1 = "nugget"
+  let slen1 = ($str1 | str length)
+  print $str1 $slen1
+}
+
+def testgetrandom [
+    testchars: string
+    testcharslen: int
+] {
+    $testchars
+    | split chars
+    | get (random integer 0..($testcharslen - 1))
 }
 
 def testpathvar1 [] {
