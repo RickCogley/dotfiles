@@ -23,9 +23,9 @@ export def main [
 ] {
   ##### Main function #####
   # Get dictionary file:
-  # http get https://raw.githubusercontent.com/RickCogley/jpassgen/master/genpass-dict-jp.txt | save genpass-dict-jp
+  # http get https://raw.githubusercontent.com/RickCogley/jpassgen/master/jrc-japanese-words-and-phrases.txt | save jrc-japanese-words-and-phrases.txt
   # Set the path:
-  let dictfile = $"/usr/local/bin/genpass-dict-jp"
+  let dictfile = $"/Users/rcogley/dev/jpassgen/jrc-japanese-words-and-phrases.txt"
   let starttime = (date now)
   
   # Find number of lines with strings less than or equal to the supplied length
@@ -73,8 +73,9 @@ export def main [
     # Reduce random words only to string
     return ($random_words | reduce { |it, acc| $acc + $it })
   } else if $variant == "diceware" {
-    # Reduce to string with hyphen between words
-    return ($random_words | reduce { |it, acc| $acc + $"($delimiter)($it)" })
+    # Reduce to string with delimiter between words
+    #return ($random_words | reduce { |it, acc| $acc + $"($delimiter)($it)" })
+    return ($random_words | str join $delimiter)
   }
 }
 
@@ -118,3 +119,7 @@ def get-random-symbol [
     | split chars
     | get (random integer 0..($symbolcharslen - 1))
 }
+
+export def dict [] {
+  print "test"
+} 
