@@ -113,6 +113,7 @@ let-env PATH = (
 let-env LANG = 'ja_JP.UTF-8'
 let-env EDITOR = 'code'
 let-env GPG_TTY = (tty)
+let-env DICT_FILE_PATH = '/Users/rcogley/dev/jpassgen/' 
 # let-env PRODB15331TOKEN = (open --raw "~/.ssh/tokens/PRODB15331TOKEN")
 open ~/.ssh/tokens/api-tokens.nuon | load-env
 
@@ -152,13 +153,18 @@ def nuup [] {
 # Add words to the dictionary file
 def "dict add" [
   ...words: string
+  dictpath?: string
 ] {
   # $word | save --raw --append dict
-  let working = $"/Users/rcogley/dev/jpassgen"
-  let dictfile = $"/Users/rcogley/dev/jpassgen/jrc-japanese-words-and-phrases.txt"
+  # let working = $"/Users/rcogley/dev/jpassgen"
+  let dictpath = ($dictpath | default $env.DICT_FILE_PATH)
+
+  # let dictfile = $"/Users/rcogley/dev/jpassgen/jrc-japanese-words-and-phrases.txt"
+  let dictfile = (get_dict_file $dictpath)
   let delimiter = (char space)
-  print $"Appending and commiting new words:\n($words)"
-  cd $working
+  print $"(ansi bg_blue) 😚 Appending and committing new words:\n($words)(ansi reset)"
+  
+  cd $dictpath
   for $word in $words {
     #$"($w)\n" | save --raw --append $dictfile
     $word | append_file $dictfile
@@ -169,19 +175,21 @@ def "dict add" [
   # let commitstg = ($word | reduce { |it, acc| $acc + $"($delimiter)($it)" })
   let commitdetails = ($words | str join $delimiter)
   git add $dictfile
-  git commit -m $"Add words such as ($firstword)\n\n($commitdetails)" 
+  git commit -m $"Add words including ($firstword)\n\n($commitdetails)" 
   git push origin master
 }
 
-#todo fix this
-def get_dict_file [repo, lang="jp"] {
-  $repo | path join $"genpass-dict-($lang).txt"
+#Get the dict file
+def get_dict_file [dictpath] {
+  $dictpath | path join $"jrc-japanese-words-and-phrases.txt"
 }
 
+#Sort the dict file, remove dupes, re-save
 def sort_dict [filepth:string] {
   open ($filepth) | lines | uniq | sort | save --force ($filepth)
 }
 
+#Append words to the dict file
 def append_file [
   dest: string
 ] {
