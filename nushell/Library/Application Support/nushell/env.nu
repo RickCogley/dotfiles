@@ -114,6 +114,7 @@ let-env LANG = 'ja_JP.UTF-8'
 let-env EDITOR = 'code'
 let-env GPG_TTY = (tty)
 let-env DICT_FILE_PATH = '/Users/rcogley/dev/jpassgen/' 
+let-env MANPAGER = "sh -c 'col -bx | bat -l man -p'"
 # let-env PRODB15331TOKEN = (open --raw "~/.ssh/tokens/PRODB15331TOKEN")
 open ~/.ssh/tokens/api-tokens.nuon | load-env
 
@@ -153,30 +154,52 @@ def nuup [] {
 # Add words to the dictionary file
 def "dict add" [
   ...words: string
-  dictpath?: string
+  --dictpath (-p): string # assign a different path to dict file
 ] {
-  # $word | save --raw --append dict
-  # let working = $"/Users/rcogley/dev/jpassgen"
+  # Set working directory of dict file, default to envar
   let dictpath = ($dictpath | default $env.DICT_FILE_PATH)
-
-  # let dictfile = $"/Users/rcogley/dev/jpassgen/jrc-japanese-words-and-phrases.txt"
+  # Set dict file
+  # /Users/rcogley/dev/jpassgen/jrc-japanese-words-and-phrases.txt
   let dictfile = (get_dict_file $dictpath)
-  let delimiter = (char space)
-  print $"(ansi bg_blue) 😚 Appending and committing new words:\n($words)(ansi reset)"
-  
-  cd $dictpath
+  # Get num words
+  let numwords = ($words | length)
+  # Display what we are doing
+  print $"(ansi bg_white)(ansi green_bold)◼️◼️◼️ ADD WORDS TO DICT ◼️◼️◼️(ansi reset)"
+  print $"(ansi bg_blue) 🧐 Confirming ($numwords) new words:(ansi reset)\n(ansi bg_purple)($words)(ansi reset)"
+  print $"(ansi bg_blue) Add to:(ansi reset)"
+  print $dictfile 
+
+  # Setup lists to collect words added or not
+  mut addedwords = []
+  mut notaddedwords = []
+
+  # Loop through supplied words and add to dict if not there
+  print $"(ansi bg_blue) 🧐 Checking words...(ansi reset)"
   for $word in $words {
-    #$"($w)\n" | save --raw --append $dictfile
-    $word | append_file $dictfile
+    if (open $dictfile | str contains $word) {
+      $notaddedwords ++= $word
+    } else {
+      $word | append_file $dictfile
+      $addedwords ++= $word
+    }
   }
-  let firstword = ($words | get 0)
-  # open $dictfile | lines | uniq | sort | save --force $dictfile
+  
+  # Sort and clean up dict file
   sort_dict $dictfile
-  # let commitstg = ($word | reduce { |it, acc| $acc + $"($delimiter)($it)" })
-  let commitdetails = ($words | str join $delimiter)
-  git add $dictfile
-  git commit -m $"Add words including ($firstword)\n\n($commitdetails)" 
-  git push origin master
+
+  # Display message depending on what happened
+  let numaddedwords = ($addedwords | length)
+  let numnotaddedwords = ($notaddedwords | length)
+  if $addedwords == [] {
+    print $"(ansi bg_red) 😩 Skipping all of ($numnotaddedwords) words:(ansi reset)\n(ansi bg_purple)($notaddedwords)(ansi reset)"
+  } else if $notaddedwords == [] {
+    print $"(ansi bg_blue) 🤩 Committing all of ($numaddedwords) new words:(ansi reset)\n(ansi bg_purple)($addedwords)(ansi reset)"
+    dict_added_git_commit $dictpath $dictfile $addedwords $numaddedwords
+  } else {
+    print $"(ansi bg_blue) 🤩 Committing ($numaddedwords) new words:(ansi reset)\n(ansi bg_purple)($addedwords)(ansi reset)"
+    print $"(ansi bg_red) 😩 Skipping ($numnotaddedwords) words:(ansi reset)\n(ansi bg_purple)($notaddedwords)(ansi reset)"
+    dict_added_git_commit $dictpath $dictfile $addedwords $numaddedwords
+  }
 }
 
 #Get the dict file
@@ -194,6 +217,22 @@ def append_file [
   dest: string
 ] {
   $"($in)\n" | save --raw --append $dest
+}
+
+#Commit the added words to git
+def dict_added_git_commit [
+  dictpath: string
+  dictfile: string
+  addedwords: list
+  numaddedwords: int
+] {
+  let delimiter = (char space)
+  cd ($dictpath)
+  let firstword = ($addedwords | get 0)
+  let commitdetails = ($addedwords | str join $delimiter)
+  git add $dictfile
+  git commit -m $"Add ($numaddedwords) words including ($firstword)\n\n($commitdetails)" 
+  git push origin master
 }
 
 def qrenco [url:string] { curl $"qrenco.de/https://($url)" }
@@ -331,13 +370,33 @@ def testaddword [
   let firstword = ($word | get 0)
   print $firstword 
   cd $working
+  mut addedwords = []
+  
   for $w in $word {
-    #(open $dictfile | lines | append $w) | uniq | sort | save --force $dictfile
-    $"($w)\n" | save --raw --append $dictfile
+    #(open $dictfile | lines | append $w) | uniq | sort | save --force $dictfile 
+    # if $w not-in $dictfile {
+    #   print $"Adding ($w) to dict"
+    #   $"($w)\n" | save --raw --append $dictfile
+    # } else {
+    #   print $"($w) already in dict"
+    # }
+    if (open $dictfile | str contains $w) {
+      print $"($w) already in dict"
+    } else {
+      print $"Adding ($w) to dict"
+      $"($w)\n" | save --raw --append $dictfile
+      $addedwords ++= $w
+    }
   }
+
   open $dictfile | lines | uniq | sort | save --force $dictfile
   cat $dictfile
-  
+  if $addedwords == [] {
+    print "No words added"
+  } else {
+    print "Added words:"
+  }
+  print $addedwords 
   let commitstg = ($word | reduce { |it, acc| $acc + $"($delimiter)($it)" })
   print $commitstg 
   # git add $dictfile
