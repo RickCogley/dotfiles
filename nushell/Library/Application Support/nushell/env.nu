@@ -157,7 +157,7 @@ def "dict add" [
   --dictpath (-p): string # assign a different path to dict file
 ] {
   # Set working directory of dict file, default to envar
-  let dictpath = ($dictpath | default $env.DICT_FILE_PATH)
+  let dictpath = ($dictpath | default (get-dict-file-path))
   # Set dict file
   # /Users/rcogley/dev/jpassgen/jrc-japanese-words-and-phrases.txt
   let dictfile = (get_dict_file $dictpath)
@@ -200,6 +200,15 @@ def "dict add" [
     print $"(ansi bg_red) 😩 Skipping ($numnotaddedwords) words:(ansi reset)\n(ansi bg_purple)($notaddedwords)(ansi reset)"
     dict_added_git_commit $dictpath $dictfile $addedwords $numaddedwords
   }
+}
+
+#Get the dict file path envar or error out
+def get-dict-file-path [] {
+    if not "DICT_FILE_PATH" in $env {
+        error make {msg: "DICT_FILE_PATH not set"}
+        exit 1
+    }
+    return $env.DICT_FILE_PATH
 }
 
 #Get the dict file
