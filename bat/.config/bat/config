@@ -1,4 +1,4 @@
 --theme="Dracula"
 --style="numbers,changes,header"
---paging=always
+--paging=never
 --pager="less --quit-if-one-screen --tabs=1"
