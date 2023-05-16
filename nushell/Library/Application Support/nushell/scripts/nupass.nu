@@ -9,6 +9,10 @@
 #          20230501 - refactor to allow number of words to be specified, use list manipulation and reduce to string
 #          20230502 - improve performance on list builders with par-each
 #          20230503 - add threads flag for fine tuning par-each
+#          20230516 - add option to copy password to clipboard
+
+# Load library
+use std clip
 
 #======= NUPASS PASSWORD GENERATOR =======
 # Generate password of 3 dictionary file words, numbers and symbols
@@ -19,6 +23,7 @@ export def main [
   --variant (-v): string = "regular" # Password style to generate in regular, mixnmatch, alphanum, alpha, diceware
   --delimiter (-m): string = "-" # Delimiter for diceware
   --threads (-t): int = 16  # Number of threads to use in par-each
+  --clipboard (-c): bool = true    # Copy password to clipboard
   --debug (-d)    # Include debug info
 ] {
   ##### Main function #####
@@ -61,7 +66,7 @@ export def main [
   if $variant == "regular" {
     # Default variant, with regular distribution
     # Generate new list w symbol, words, numbers, then reduce to string
-    return (0..($words - 1) | each { |it| ($random_symbols | get $it) + ($random_words | get $it) + ($random_numbers | get $it | into string) } | reduce { |it, acc| $acc + $it })
+    return (0..($words - 1) | each { |it| ($random_symbols | get $it) + ($random_words | get $it) + ($random_numbers | get $it | into string) } | reduce { |it, acc| $acc + $it } | (do_clip $clipboard))
 
   } else if $variant == "mixnmatch" {
     # Combine lists, shuffle randomly, reduce to string
@@ -123,3 +128,14 @@ def get-random-symbol [
 export def dict [] {
   print "test"
 } 
+
+#Send to clipboard optionally
+def do_clip [
+  copy_clip: bool
+] {
+  if $copy_clip {
+    $in | std clip
+  } else {
+    $in
+  }
+}
