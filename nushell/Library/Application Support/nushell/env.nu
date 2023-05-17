@@ -137,14 +137,17 @@ def allup [] {
 
 def nuup [] {
   # get latest nu code and re-compile
-  print $"(ansi bg_blue) ====== RECOMPILE NU ====== (ansi reset)"
+  print $"(ansi bg_blue) ====== RECOMPILE NU and PLUGINS ====== (ansi reset)"
   print $"(ansi bg_purple) 🚀 Switch to where nushell is cloned... (ansi reset)"
   cd
   cd dev/nushell
   print $"(ansi bg_purple) 🚀 Pull the latest from git... (ansi reset)"
   git pull
-  print $"(ansi bg_purple) 🚀 Recompile... (ansi reset)"
-  cargo install --path . --features=dataframe
+  print $"(ansi bg_purple) 🚀 Recompile nu and plugins... (ansi reset)"
+  ./install-all.sh
+  # cargo install --path . --features=dataframe
+  print $"(ansi bg_purple) 🚀 Register plugins... (ansi reset)"
+  nu register-plugins.nu
   print $"(ansi bg_purple) 🚀 Where is nu... (ansi reset)"
   let which1 = (which nu)
   print $which1
