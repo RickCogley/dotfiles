@@ -402,7 +402,7 @@ appWatcher:start()
 
 --if at home wifi, set vol to 1, if away, set to 0
 wifiWatcher = nil
-homeSSID = "CogleyHaus"
+homeSSID = "Maru-Haus"
 lastSSID = hs.wifi.currentNetwork()
 function ssidChangedCallback()
     newSSID = hs.wifi.currentNetwork()
