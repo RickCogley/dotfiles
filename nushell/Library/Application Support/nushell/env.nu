@@ -144,14 +144,16 @@ def nuup [] {
   print $"(ansi bg_purple) 🚀 Pull the latest from git... (ansi reset)"
   git pull
   print $"(ansi bg_purple) 🚀 Recompile nu and plugins... (ansi reset)"
-  ./install-all.sh
+  ./scripts/install-all.sh
   # cargo install --path . --features=dataframe
   print $"(ansi bg_purple) 🚀 Register plugins... (ansi reset)"
-  nu register-plugins.nu
+  nu scripts/register-plugins.nu
   print $"(ansi bg_purple) 🚀 Where is nu... (ansi reset)"
   let which1 = (which nu)
   print $which1
   ls ~/.cargo/bin/nu*
+  print $"(ansi bg_purple) 🚀 Reload nu... (ansi reset)"
+  exec nu
 }
 
 # Add words to the dictionary file
