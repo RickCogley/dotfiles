@@ -1,4 +1,4 @@
---theme="Dracula"
+--theme="OneHalfLight"
 --style="numbers,changes,header"
 --paging=never
 --pager="less --quit-if-one-screen --tabs=1"
