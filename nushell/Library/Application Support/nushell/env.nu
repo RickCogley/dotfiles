@@ -310,6 +310,13 @@ export def parallel [...closures] {
     }
 }
 
+# switch theme
+# def themeon [theme:string] {
+#   const themepath = $"/Users/rcogley/dev/nu_scripts/themes/themes/($theme).nu"
+#   use $themepath
+#   let-env config = ($env.config | merge {color_config: ($theme)})
+# }
+
 def teststringlen [] {
   let str1 = "nugget"
   let slen1 = ($str1 | str length)
