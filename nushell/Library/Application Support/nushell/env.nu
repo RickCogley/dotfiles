@@ -147,7 +147,7 @@ def nuup [] {
   ./scripts/install-all.sh
   # cargo install --path . --features=dataframe
   print $"(ansi bg_purple) 🚀 Register plugins... (ansi reset)"
-  nu scripts/register-plugins.nu
+  toolkit plugin register
   print $"(ansi bg_purple) 🚀 Where is nu... (ansi reset)"
   let which1 = (which nu)
   print $which1
