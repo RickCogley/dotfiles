@@ -141,19 +141,24 @@ def nuup [] {
   print $"(ansi bg_purple) 🚀 Switch to where nushell is cloned... (ansi reset)"
   cd
   cd dev/nushell
+  # use toolkit.nu
   print $"(ansi bg_purple) 🚀 Pull the latest from git... (ansi reset)"
   git pull
   print $"(ansi bg_purple) 🚀 Recompile nu and plugins... (ansi reset)"
   ./scripts/install-all.sh
   # cargo install --path . --features=dataframe
   print $"(ansi bg_purple) 🚀 Register plugins... (ansi reset)"
-  toolkit plugin register
+  nu -c "
+    use toolkit.nu
+    toolkit register plugins
+  "
   print $"(ansi bg_purple) 🚀 Where is nu... (ansi reset)"
   let which1 = (which nu)
   print $which1
   ls ~/.cargo/bin/nu*
   print $"(ansi bg_purple) 🚀 Reload nu... (ansi reset)"
   exec nu
+  nu --version
 }
 
 # Add words to the dictionary file
