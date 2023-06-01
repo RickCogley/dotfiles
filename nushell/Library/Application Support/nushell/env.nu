@@ -141,17 +141,15 @@ def nuup [] {
   print $"(ansi bg_purple) 🚀 Switch to where nushell is cloned... (ansi reset)"
   cd
   cd dev/nushell
-  # use toolkit.nu
+  print $"(ansi bg_purple) 🚀 Run cargo update... (ansi reset)"
+  cargo update
   print $"(ansi bg_purple) 🚀 Pull the latest from git... (ansi reset)"
   git pull
   print $"(ansi bg_purple) 🚀 Recompile nu and plugins... (ansi reset)"
   ./scripts/install-all.sh
   # cargo install --path . --features=dataframe
   print $"(ansi bg_purple) 🚀 Register plugins... (ansi reset)"
-  nu -c "
-    use toolkit.nu
-    toolkit register plugins
-  "
+  nu -c $"use toolkit.nu; toolkit register plugins"
   print $"(ansi bg_purple) 🚀 Where is nu... (ansi reset)"
   let which1 = (which nu)
   print $which1
@@ -255,6 +253,11 @@ def dict_added_git_commit [
 }
 
 def qrenco [url:string] { curl $"qrenco.de/https://($url)" }
+
+# Get date in iso rfc3339 format like 2023-06-01T19:26:05+09:00 for Hugo blog post
+# Used to use this in zsh: gdate --rfc-3339=seconds | sed 's/ /T/'
+def ts3339 [] { date now | date format "%Y-%m-%dT%H:%M:%S%:z" | std clip}
+
 
 def stup [emoji:string, msg:string] {
   let hdr = $"'Authorization: Bearer ($env.OMGLOL)'"
