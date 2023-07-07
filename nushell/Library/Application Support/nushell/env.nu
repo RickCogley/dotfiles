@@ -3,7 +3,7 @@
 # version = 0.79.0
 use std
 
-let-env STARSHIP_SHELL = "nu"
+$env.STARSHIP_SHELL = "nu"
 
 def create_left_prompt [] {
     # mut home = ""
@@ -40,22 +40,22 @@ def create_right_prompt [] {
 }
 
 # Use nushell functions to define your right and left prompt
-let-env PROMPT_COMMAND = {|| create_left_prompt }
-# let-env PROMPT_COMMAND_RIGHT = {|| create_right_prompt }
-let-env PROMPT_COMMAND_RIGHT = ""
+$env.PROMPT_COMMAND = {|| create_left_prompt }
+# $env.PROMPT_COMMAND_RIGHT = {|| create_right_prompt }
+$env.PROMPT_COMMAND_RIGHT = ""
 
 # The prompt indicators are environmental variables that represent
 # the state of the prompt
-let-env PROMPT_INDICATOR = {|| "> " }
-let-env PROMPT_INDICATOR_VI_INSERT = {|| ": " }
-let-env PROMPT_INDICATOR_VI_NORMAL = {|| "> " }
-let-env PROMPT_MULTILINE_INDICATOR = {|| "::: " }
+$env.PROMPT_INDICATOR = {|| "> " }
+$env.PROMPT_INDICATOR_VI_INSERT = {|| ": " }
+$env.PROMPT_INDICATOR_VI_NORMAL = {|| "> " }
+$env.PROMPT_MULTILINE_INDICATOR = {|| "::: " }
 
 # Specifies how environment variables are:
 # - converted from a string to a value on Nushell startup (from_string)
 # - converted from a value back to a string when running external commands (to_string)
 # Note: The conversions happen *after* config.nu is loaded
-let-env ENV_CONVERSIONS = {
+$env.ENV_CONVERSIONS = {
   "PATH": {
     from_string: { |s| $s | split row (char esep) | path expand -n }
     to_string: { |v| $v | path expand -n | str join (char esep) }
@@ -69,19 +69,19 @@ let-env ENV_CONVERSIONS = {
 # Directories to search for scripts when calling source or use
 #
 # By default, <nushell-config-dir>/scripts is added
-let-env NU_LIB_DIRS = [
+$env.NU_LIB_DIRS = [
     ($nu.config-path | path dirname | path join 'scripts')
 ]
 
 # Directories to search for plugin binaries when calling register
 #
 # By default, <nushell-config-dir>/plugins is added
-let-env NU_PLUGIN_DIRS = [
+$env.NU_PLUGIN_DIRS = [
     ($nu.config-path | path dirname | path join 'plugins')
 ]
 
 # To add entries to PATH (on Windows you might use Path), you can use the following pattern:
-let-env PATH = (
+$env.PATH = (
     $env.PATH | split row (char esep)
     | prepend '~/.cargo/bin'
     | append '~/.rbenv/bin'
@@ -110,12 +110,12 @@ let-env PATH = (
 
 # env vars
 
-let-env LANG = 'ja_JP.UTF-8'
-let-env EDITOR = 'code'
-let-env GPG_TTY = (tty)
-let-env DICT_FILE_PATH = '/Users/rcogley/dev/jpassgen/' 
-let-env MANPAGER = "sh -c 'col -bx | bat -l man -p'"
-# let-env PRODB15331TOKEN = (open --raw "~/.ssh/tokens/PRODB15331TOKEN")
+$env.LANG = 'ja_JP.UTF-8'
+$env.EDITOR = 'code'
+$env.GPG_TTY = (tty)
+$env.DICT_FILE_PATH = '/Users/rcogley/dev/jpassgen/' 
+$env.MANPAGER = "sh -c 'col -bx | bat -l man -p'"
+# $env.PRODB15331TOKEN = (open --raw "~/.ssh/tokens/PRODB15331TOKEN")
 open ~/.ssh/tokens/api-tokens.nuon | load-env
 
 # custom commands
@@ -141,8 +141,8 @@ def nuup [] {
   print $"(ansi bg_purple) 🚀 Switch to where nushell is cloned... (ansi reset)"
   cd
   cd dev/nushell
-  print $"(ansi bg_purple) 🚀 Run cargo update... (ansi reset)"
-  cargo update
+  # print $"(ansi bg_purple) 🚀 Run cargo update... (ansi reset)"
+  # cargo update
   print $"(ansi bg_purple) 🚀 Pull the latest from git... (ansi reset)"
   git pull
   print $"(ansi bg_purple) 🚀 Recompile nu and plugins... (ansi reset)"
@@ -322,7 +322,7 @@ export def parallel [...closures] {
 # def themeon [theme:string] {
 #   const themepath = $"/Users/rcogley/dev/nu_scripts/themes/themes/($theme).nu"
 #   use $themepath
-#   let-env config = ($env.config | merge {color_config: ($theme)})
+#   $env.config = ($env.config | merge {color_config: ($theme)})
 # }
 
 def teststringlen [] {
