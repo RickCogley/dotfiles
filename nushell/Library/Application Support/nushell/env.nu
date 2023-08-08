@@ -161,7 +161,7 @@ def nuup [] {
 
 # Add words to the dictionary file
 def "dict add" [
-  ...words: string
+  ...words
   --dictpath (-p): string # assign a different path to dict file
 ] {
   # Set working directory of dict file, default to envar
@@ -256,7 +256,7 @@ def qrenco [url:string] { curl $"qrenco.de/https://($url)" }
 
 # Get date in iso rfc3339 format like 2023-06-01T19:26:05+09:00 for Hugo blog post
 # Used to use this in zsh: gdate --rfc-3339=seconds | sed 's/ /T/'
-def ts3339 [] { date now | date format "%Y-%m-%dT%H:%M:%S%:z" | std clip}
+def ts3339 [] { date now | format date "%Y-%m-%dT%H:%M:%S%:z" | std clip}
 
 
 def stup [emoji:string, msg:string] {
@@ -388,50 +388,60 @@ def testwhich [] {
   print $which1
 }
 
-def testaddword [
-  ...word: string
-] {
-  # $word | save --raw --append dict
-  let working = $"/Users/rcogley/Downloads/testadd"
-  let dictfile = $"/Users/rcogley/Downloads/testadd/dict"
-  let delimiter = $" "
-  print $word 
-  let firstword = ($word | get 0)
-  print $firstword 
-  cd $working
-  mut addedwords = []
-  
-  for $w in $word {
-    #(open $dictfile | lines | append $w) | uniq | sort | save --force $dictfile 
-    # if $w not-in $dictfile {
-    #   print $"Adding ($w) to dict"
-    #   $"($w)\n" | save --raw --append $dictfile
-    # } else {
-    #   print $"($w) already in dict"
-    # }
-    if (open $dictfile | str contains $w) {
-      print $"($w) already in dict"
-    } else {
-      print $"Adding ($w) to dict"
-      $"($w)\n" | save --raw --append $dictfile
-      $addedwords ++= $w
-    }
+def testpareach [words: int = 3] {
+  let testlist = [aaa bbb ccc ddd eee]
+  $testlist | par-each {
+    |w| print $w
   }
-
-  open $dictfile | lines | uniq | sort | save --force $dictfile
-  cat $dictfile
-  if $addedwords == [] {
-    print "No words added"
-  } else {
-    print "Added words:"
-  }
-  print $addedwords 
-  let commitstg = ($word | reduce { |it, acc| $acc + $"($delimiter)($it)" })
-  print $commitstg 
-  # git add $dictfile
-  # git commit -m $"Add word ($word) etc" 
-  # git push origin master
+  1..$words | par-each { print $in }
+  let thewords = (1..$words | par-each { print $in })
+  print $thewords
 }
+
+# def testaddword [
+#   ...word: string
+# ] {
+#   # $word | save --raw --append dict
+#   let working = $"/Users/rcogley/Downloads/testadd"
+#   let dictfile = $"/Users/rcogley/Downloads/testadd/dict"
+#   let delimiter = $" "
+#   print $word 
+#   let firstword = ($word | get 0)
+#   print $firstword 
+#   cd $working
+#   mut addedwords = []
+  
+#   for $w in $word {
+#     #(open $dictfile | lines | append $w) | uniq | sort | save --force $dictfile 
+#     # if $w not-in $dictfile {
+#     #   print $"Adding ($w) to dict"
+#     #   $"($w)\n" | save --raw --append $dictfile
+#     # } else {
+#     #   print $"($w) already in dict"
+#     # }
+#     if (open $dictfile | str contains $w) {
+#       print $"($w) already in dict"
+#     } else {
+#       print $"Adding ($w) to dict"
+#       $"($w)\n" | save --raw --append $dictfile
+#       $addedwords ++= $w
+#     }
+#   }
+
+#   open $dictfile | lines | uniq | sort | save --force $dictfile
+#   cat $dictfile
+#   if $addedwords == [] {
+#     print "No words added"
+#   } else {
+#     print "Added words:"
+#   }
+#   print $addedwords 
+#   let commitstg = ($word | reduce { |it, acc| $acc + $"($delimiter)($it)" })
+#   print $commitstg 
+#   # git add $dictfile
+#   # git commit -m $"Add word ($word) etc" 
+#   # git push origin master
+# }
 
 def greet [...name: string] {
   print "hello all:"
