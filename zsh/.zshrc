@@ -30,6 +30,11 @@ z4h install romkatv/archive romkatv/zsh-prompt-benchmark
 if [[ -e ~/.homebrew_github_api_token ]]; then
     export HOMEBREW_GITHUB_API_TOKEN="$(cat ~/.homebrew_github_api_token)"
 fi
+if [[ -e ~/.ssh/tokens/PRODB15331TOKEN2411 ]]; then
+    export PRODB15331TOKEN2411="$(cat ~/.ssh/tokens/PRODB15331TOKEN2411)"
+fi
+
+
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]

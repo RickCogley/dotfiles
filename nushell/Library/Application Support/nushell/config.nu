@@ -3,8 +3,8 @@
 # version = 0.78.0
 
 # Load own scripts stored in $env.NU_LIB_DIRS\scripts
-use nupass.nu
-use brews.nu
+# use nupass.nu
+# use brews.nu
 
 # For more information on defining custom themes, see
 # https://www.nushell.sh/book/coloring_and_theming.html

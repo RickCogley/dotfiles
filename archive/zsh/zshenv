@@ -45,6 +45,10 @@ export XML_CATALOG_FILES=/usr/local/etc/xml/catalog
 export HOMEBREW_GITHUB_API_TOKEN="$(cat ~/.homebrew_github_api_token)"
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 
+# PROdb API
+export PRODB15331TOKEN2411="$(cat ~/.ssh/tokens/PRODB15331TOKEN2411)"
+
+
 # Zsh
 export HELPDIR=/usr/local/share/zsh/help
 export REPORTTIME=1
