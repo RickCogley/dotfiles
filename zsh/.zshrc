@@ -89,6 +89,11 @@ if (( $+commands[most] )); then
 fi
 # export MANPAGER=vimmanpager
 alias less=$PAGER
+
+# Deno
+export DENO_INSTALL="/Users/rcogley/.deno"
+export PATH="$DENO_INSTALL/bin:$PATH"
+
 # Python
 # Use PyEnv to set Python Environment
 if (( $+commands[pyenv] )); then
