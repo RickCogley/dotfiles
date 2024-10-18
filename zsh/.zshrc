@@ -1303,3 +1303,5 @@ if [ -f '/Users/rcogley/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Use
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/rcogley/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/rcogley/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+export DVM_DIR="/Users/rcogley/.dvm"
+export PATH="$DVM_DIR/bin:$PATH"
