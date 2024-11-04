@@ -1,7 +1,7 @@
 [user]
 	name = Rick Cogley
 	email = rick.cogley@esolia.co.jp
-	signingkey = 53ED9480368C74EB7E73D8843793629D3346F03F
+	signingkey = /Users/rcogley/.ssh/jrc-id_ed25519-241104.pub
 [core]
 	autocrlf = input
 	safecrlf = true
@@ -51,9 +51,10 @@
 [credential]
 	helper = osxkeychain
 [gpg]
-	program = /usr/local/MacGPG2/bin/gpg2
+	program = gpg
+	format = ssh
 [commit]
-	gpgsign = true
+	gpgsign = false
 [url "https://"]
 	insteadOf = git://
 [sendemail]
