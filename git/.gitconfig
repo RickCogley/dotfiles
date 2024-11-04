@@ -5,10 +5,10 @@
 [core]
 	autocrlf = input
 	safecrlf = true
-	editor = /usr/local/bin/code
+	editor = code --new-window --wait
 	excludesfile = /Users/rcogley/.gitignore_global
 	whitespace = trailing-space,space-before-tab
-	pager = cat
+	pager = bat
 [alias]
   co = checkout
   ci = commit
@@ -17,25 +17,18 @@
   hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
   type = cat-file -t
   dump = cat-file -p
-[mergetool]
-	keepBackup = true
-	prompt = false
-[difftool "Kaleidoscope"]
-	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [diff]
-	tool = Kaleidoscope
-	renames = copies
-	mnemonicprefix = true
-[difftool]
-	prompt = false
-[mergetool "Kaleidoscope"]
-	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
-	trustExitCode = true
+    tool = code
+[difftool "code"]
+    cmd = code --wait --new-window --diff $LOCAL $REMOTE
 [merge]
-	tool = Kaleidoscope
-	stat = true
+  tool = code
+[mergetool "code"]
+  cmd = code --wait --new-window --merge $REMOTE $LOCAL $BASE $MERGED
 [push]
 	default = tracking
+[pull]
+	rebase = true
 [filter "media"]
 	required = true
 	clean = git media clean %f
@@ -45,12 +38,6 @@
 	required = true
 	clean = git-lfs clean -- %f
 	process = git-lfs filter-process
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path =
-[mergetool "sourcetree"]
-	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
 [color]
 	ui = auto
 [branch]
@@ -76,13 +63,9 @@
 	smtpServerPort = 587
 	smtppass = xotrctbssgobgxgk
 	multiEdit = true
-[protocol "keybase"]
-	allow = always
 [gc]
 	autoDetach = false
 [tag]
 	forceSignAnnotated = true
-[smartgit "gui"]
-	signOff = false
 [init]
 	defaultBranch = main
