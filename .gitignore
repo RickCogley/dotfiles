@@ -24,3 +24,7 @@ brew/.homebrew_github_api_token
 
 
 oni2/.config/oni2/store/
+gpg/.gnupg/private-keys-v1.d/
+gpg/.gnupg/crls.d/DIR.txt
+gpg/.gnupg/tofu.db
+gpg/.gnupg/trustdb.gpg
