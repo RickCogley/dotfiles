@@ -1,7 +1,7 @@
 [user]
-	name = Rick Cogley
+	name = James R. Cogley
 	email = rick.cogley@esolia.co.jp
-	signingkey = /Users/rcogley/.ssh/jrc-id_ed25519-241104.pub
+	signingkey = 3142F7C3
 [core]
 	autocrlf = input
 	safecrlf = true
@@ -52,9 +52,9 @@
 	helper = osxkeychain
 [gpg]
 	program = gpg
-	format = ssh
+	format = openpgp
 [commit]
-	gpgsign = false
+	gpgsign = true
 [url "https://"]
 	insteadOf = git://
 [sendemail]
@@ -68,5 +68,6 @@
 	autoDetach = false
 [tag]
 	forceSignAnnotated = true
+	gpgsign = true
 [init]
 	defaultBranch = main
