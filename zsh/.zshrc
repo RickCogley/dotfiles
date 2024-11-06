@@ -58,7 +58,18 @@ else
   export VISUAL=${${commands[vim]:t}:-vi}
 fi
 export EDITOR=$VISUAL
+
+# allow for GPG to act as an SSH agent
+export GPGPRIMARY="E8404D8E8DAB59CD1E5255BD56BCDEBC6448A091"
+export GPGSIGNING=$(\
+  gpg --list-keys --with-subkey-fingerprints $GPGPRIMARY | \
+  sed -n '/\[S\]/,+1p' | \
+  awk '/^[[:space:]]+[0-9A-F]{40}/ {print $1}'\
+)
 export GPG_TTY=$(tty)
+export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+gpgconf --launch gpg-agent
+
 # Browser
 if [[ "$OSTYPE" == darwin* ]]; then
     export BROWSER='open'
@@ -883,7 +894,7 @@ function r() { grep "$1" ${@:2} -R . }
 # put pgp on clipboard
 
 function pgp2clipboard {
-  gpg --armor --export 3346F03F | pbcopy
+  gpg --armor --export E8404D8E8DAB59CD1E5255BD56BCDEBC6448A091 | pbcopy
 }
 
 ### TaskWarrior ###
