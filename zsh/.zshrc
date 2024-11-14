@@ -102,8 +102,10 @@ fi
 alias less=$PAGER
 
 # Deno
-export DENO_INSTALL="/Users/rcogley/.deno"
+export DENO_INSTALL="$HOME/.deno"
 export PATH="$DENO_INSTALL/bin:$PATH"
+export DENO_DIR="$HOME/Library/Caches/deno"
+export PATH="$DENO_DIR/bin:$PATH"
 
 # Python
 # Use PyEnv to set Python Environment
