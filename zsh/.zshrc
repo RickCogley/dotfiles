@@ -33,7 +33,9 @@ fi
 if [[ -e ~/.ssh/tokens/PRODB15331TOKEN2411 ]]; then
     export PRODB15331TOKEN2411="$(cat ~/.ssh/tokens/PRODB15331TOKEN2411)"
 fi
-
+if [[ -e ~/.ssh/tokens/API_KEY_01 ]]; then
+    export API_KEY_01="$(cat ~/.ssh/tokens/API_KEY_01)"
+fi
 
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
