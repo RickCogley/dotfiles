@@ -1,0 +1,53 @@
+# type(scope): subject
+# 0000000x000000000x000000000x000000000x0000000050
+# 0000000x000000000x000000000x000000000x000000000x000000000x000000000x72
+# Example: feat(auth): Implement user login flow
+# Example: fix: Correct off-by-one error in pagination
+# Example: docs: Update README with installation guide
+# Example: chore: Update build dependencies
+# Example: refactor: Extract common validation logic
+#
+# Example: feat(user-profile): Add avatar upload functionality
+#          ^type ^scope       ^subject
+#
+#          Adds an interface for users to upload and manage
+#          their profile avatars. Implements client-side validation
+#          and server-side storage.
+#
+#          BREAKING CHANGE: User model 'profile_image_url' is now 'avatar_url'.
+#          Closes #999
+#
+# Header: <type>(<scope>): <subject>
+# ---------------------------------------------------------------------
+# Type: (required)
+#   feat:     A new feature
+#   fix:      A bug fix
+#   docs:     Documentation only changes
+#   style:    Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+#   refactor: A code change that neither fixes a bug nor adds a feature
+#   perf:     A code change that improves performance
+#   test:     Adding missing tests or correcting existing tests
+#   build:    Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
+#   ci:       Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
+#   chore:    Other changes that don't modify src or test files
+#   revert:   Reverts a previous commit
+#
+# Scope: (optional)
+#   What part of the codebase is affected? (e.g., 'auth', 'dashboard', 'API', 'UI', 'database', 'compiler')
+#
+# Subject: (required)
+#   - Use the imperative mood ("add", "change", "fix")
+#   - Max 72 characters
+#   - Don't capitalize first letter
+#   - No period at the end
+# ---------------------------------------------------------------------
+#
+# Body: (optional)
+#   - Explain the 'why' and 'how' of the change
+#   - Wrap lines at 72 characters
+# ---------------------------------------------------------------------
+#
+# Footer: (optional)
+#   - Reference issues (e.g., 'Closes #123', 'Fixes #456', 'Refs #789')
+#   - BREAKING CHANGE: (Mandatory for breaking changes - explains migration)
+# ---------------------------------------------------------------------
