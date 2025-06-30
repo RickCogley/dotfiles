@@ -1320,3 +1320,8 @@ if [ -f '/Users/rcogley/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Use
 if [ -f '/Users/rcogley/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/rcogley/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 export DVM_DIR="/Users/rcogley/.dvm"
 export PATH="$DVM_DIR/bin:$PATH"
+
+
+# Add to ~/.zshrc or ~/.bashrc
+alias changelog-since='f(){ git log ${1:-HEAD}..HEAD --pretty=format:"- %s (%h)" | pbcopy; }; f'
+alias release-dates='git tag -l --sort=-version:refname --format="%(refname:short) - %(creatordate:short)" | pbcopy'
