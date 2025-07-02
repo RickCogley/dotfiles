@@ -288,3 +288,48 @@ This global configuration provides defaults that can be overridden by local `CLA
 - Framework-specific coding standards
 
 However, OWASP Top 10 verification and InfoSec commit standards should be maintained across all projects for security compliance.
+
+## CI/CD Best Practices
+
+### Release Verification
+1. **Multi-Stage Verification**: A release is only considered successful when:
+   - All tests pass locally
+   - CI/CD workflows succeed (GitHub Actions, GitLab CI, etc.)
+   - Package is published to registry (npm, JSR, PyPI, etc.)
+   - Always verify the final publication before considering a release complete
+
+2. **Automated Release Flags**: When tools support it, use non-interactive flags:
+   - `--yes`, `-y`, `--skip-confirmation` for automated workflows
+   - Document these flags in project-specific CLAUDE.md files
+   - Essential for CI/CD pipelines and automated releases
+
+### TypeScript/JavaScript Specific Guidelines
+1. **Type Safety Enforcement**: NEVER use `any` type in TypeScript projects
+   - Modern projects enforce `no-explicit-any` lint rules
+   - Always import and use proper types: `import { EnumType, InterfaceType } from "./types"`
+   - Use proper type assertions: `value as SpecificType` not `value as any`
+   - This prevents CI failures and ensures type safety
+
+2. **Test Environment Considerations**: Some tests may need different behavior in CI:
+   ```typescript
+   // Skip tests that require specific environment setup
+   Deno.test({
+     ignore: Deno.env.get("CI") === "true",
+     name: "Test requiring local filesystem"
+   }, async (t) => { /* test code */ });
+   ```
+   - Common for tests requiring: git repositories, filesystem operations, network access
+   - Document these patterns in test files
+
+### Security Alert Management
+1. **False Positive Suppressions**: When security scanners flag false positives:
+   - Add appropriate suppression comments with justification
+   - Common tools: DevSkim, CodeQL, Semgrep, SonarQube
+   - Format: `// DevSkim: ignore DS123456 - This is test data, not a real secret`
+   - Document why the suppression is justified
+
+2. **Common False Positives**:
+   - Test data that looks like secrets (SHA hashes, example tokens)
+   - Intentional security test patterns (ReDoS tests, injection tests)
+   - Example configurations with standard URLs (HTTPS examples)
+   - Template patterns that need flexible matching (missing anchors by design)
