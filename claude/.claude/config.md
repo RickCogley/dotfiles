@@ -289,6 +289,78 @@ This global configuration provides defaults that can be overridden by local `CLA
 
 However, OWASP Top 10 verification and InfoSec commit standards should be maintained across all projects for security compliance.
 
+## Project Setup Best Practices
+
+### Git Hooks for Code Quality
+
+**Always set up pre-commit hooks** in projects with formatting/linting requirements to prevent CI failures:
+
+1. Create `.githooks/pre-commit` file:
+```bash
+#!/bin/sh
+# Pre-commit hook to ensure code quality before committing
+
+echo "🎨 Running pre-commit checks..."
+
+# For Deno projects
+if [ -f "deno.json" ] || [ -f "deno.jsonc" ]; then
+  echo "Running deno fmt..."
+  deno fmt
+  git add -u
+fi
+
+# For Node.js projects
+if [ -f "package.json" ]; then
+  if [ -f "package-lock.json" ]; then
+    echo "Running npm run format (if available)..."
+    npm run format --if-present && git add -u
+  elif [ -f "yarn.lock" ]; then
+    echo "Running yarn format (if available)..."
+    yarn format --if-present && git add -u
+  fi
+fi
+
+# For Python projects
+if [ -f "pyproject.toml" ] || [ -f "setup.py" ]; then
+  echo "Running black formatter..."
+  black . && git add -u
+fi
+
+# For Rust projects
+if [ -f "Cargo.toml" ]; then
+  echo "Running cargo fmt..."
+  cargo fmt && git add -u
+fi
+
+echo "✅ Pre-commit checks complete"
+```
+
+2. Make it executable:
+```bash
+chmod +x .githooks/pre-commit
+```
+
+3. Configure git to use the hooks:
+```bash
+git config core.hooksPath .githooks
+```
+
+4. Add setup instructions to project documentation (README.md or CLAUDE.md):
+```markdown
+## Initial Setup
+
+Enable git hooks for automatic code formatting:
+\`\`\`bash
+git config core.hooksPath .githooks
+\`\`\`
+```
+
+This approach:
+- Prevents formatting-related CI failures
+- Ensures consistent code style
+- Reduces review friction
+- Saves developer time
+
 ## CI/CD Best Practices
 
 ### Release Verification
