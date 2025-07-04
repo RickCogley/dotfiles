@@ -279,6 +279,262 @@ InfoSec: No security impact - code organization only
 - **Consistency**: Follow language-specific idioms and conventions
 - **Readability**: Code should be self-documenting through clear naming
 
+## File Organization Best Practices
+
+### Standard Project Directory Structure
+
+Projects should follow a clear separation of concerns for file placement:
+
+1. **Root Directory** - Keep it clean with only essential entry points:
+   - Main entry point files (e.g., `index.ts`, `main.py`, `cli.ts`, `app.js`)
+   - Library interface files (e.g., `mod.ts`, `lib.rs`)
+   - Configuration files (e.g., `config.ts`, `settings.py`)
+   - Type definitions that are exported (e.g., `types.ts`, `types.d.ts`)
+   - Build configuration (e.g., `package.json`, `Cargo.toml`, `deno.json`)
+   - Documentation files (README.md, LICENSE, CHANGELOG.md)
+
+2. **Source Code Directory** (`/src`, `/lib`, or language convention):
+   - Core application/library code that runs in production
+   - Business logic and main functionality
+   - Components, modules, and services
+   - All code that gets distributed with the package
+
+3. **Development Tools Directory** (`/scripts`, `/tools`, `/dev`):
+   - Build and deployment scripts (NOT distributed)
+   - Code generation utilities
+   - Development automation tools
+   - Local development helpers
+   - Database migration scripts
+   - Documentation generators
+
+4. **Test Directory** (`/tests`, `/test`, `/__tests__`):
+   - Unit tests for all source components
+   - Integration and end-to-end tests
+   - Test fixtures and utilities
+   - Mock data and helpers
+
+5. **Documentation Directory** (`/docs`, `/documentation`):
+   - Auto-generated API documentation
+   - User guides and manuals
+   - Architecture diagrams
+   - Note: Some projects use `/docs` for GitHub Pages
+
+6. **Internal Documentation** (`/plans`, `/design`, `/rfcs`):
+   - Architecture decision records (ADRs)
+   - Design proposals and RFCs
+   - Migration guides
+   - Development notes and findings
+   - Post-mortems and retrospectives
+
+7. **Other Standard Directories**:
+   - `/examples` - Example usage and demo code
+   - `/assets` or `/resources` - Static files, images, data files
+   - `/config` - Configuration files and templates
+   - `/templates` - Code generation or document templates
+   - `/locales` or `/i18n` - Internationalization files
+
+### Key Principles:
+
+1. **Root Cleanliness**: Keep the root directory minimal - only files that users or the build system need to interact with directly
+2. **Clear Separation**: Runtime code vs. development tools should never mix
+3. **Discoverability**: Standard names help developers navigate unfamiliar projects
+4. **Distribution Awareness**: Know what gets packaged vs. what stays in the repository
+5. **Convention Over Configuration**: Follow language/ecosystem conventions when they exist
+
+### Examples by Language:
+
+**TypeScript/Node.js:**
+```
+/
+├── index.ts          # Main entry point
+├── package.json      # Build config
+├── tsconfig.json     # TypeScript config
+├── /src             # Source code
+├── /scripts         # Dev tools
+├── /tests           # Test files
+└── /docs            # Documentation
+```
+
+**Python:**
+```
+/
+├── setup.py         # Package config
+├── pyproject.toml   # Modern config
+├── /src/mypackage   # Source code
+├── /scripts         # Dev tools
+├── /tests           # Test files
+└── /docs            # Documentation
+```
+
+**Go:**
+```
+/
+├── main.go          # Entry point
+├── go.mod           # Module definition
+├── /cmd             # Command line apps
+├── /pkg             # Library code
+├── /internal        # Private code
+├── /scripts         # Dev tools
+└── /docs            # Documentation
+```
+
+This structure promotes maintainability, discoverability, and clear boundaries between different types of code.
+
+## Security Scanning Configuration
+
+### DevSkim and CodeQL Integration
+
+When working with GitHub security scanning tools (DevSkim and CodeQL), understanding their suppression syntax and configuration is critical for managing false positives.
+
+#### DevSkim Suppressions
+
+**Key Rule**: DevSkim suppression comments MUST be placed inline at the END of the offending line.
+
+**Format**: `// DevSkim: ignore DS######` where DS###### is the specific rule ID
+
+**Common DevSkim Rules**:
+- `DS162092` - Hardcoded tokens/keys (use for test SHA values, test credentials)
+- `DS173237` - Alternative rule for tokens/keys
+- `DS137138` - Regex patterns (use for intentionally unanchored patterns, ReDoS test patterns)
+- `DS176209` - TODO comments
+- `DS189424` - eval usage (common in security tests)
+- `DS440000` or `DS440011` - SSL/TLS protocol references (documentation strings)
+- `DS172411` - setTimeout with untrusted data
+
+**Example**:
+```javascript
+const testSha = "abc123def456"; // DevSkim: ignore DS162092
+const pattern = /shields\.io\/badge/g; // DevSkim: ignore DS137138
+```
+
+**Directory Exclusions**:
+Configure in `.github/workflows/devskim.yml`:
+```yaml
+- name: Run DevSkim scanner
+  uses: microsoft/DevSkim-Action@v1
+  with:
+    directory-to-scan: .
+    ignore-globs: |
+      **/docs/**
+      **/*.min.js
+      **/node_modules/**
+```
+
+#### CodeQL Suppressions
+
+**Key Rule**: CodeQL suppression comments MUST be placed on a SEPARATE LINE BEFORE the offending code.
+
+**Format**: `// codeql[rule-id]` where rule-id is the CodeQL query identifier
+
+**Common CodeQL Rules**:
+- `js/redos` - Regular expression denial of service
+- `js/regex/missing-regexp-anchor` - Unanchored regex patterns
+- `js/sql-injection` - SQL injection vulnerabilities
+- `js/xss` - Cross-site scripting vulnerabilities
+
+**Example**:
+```javascript
+// codeql[js/redos]
+const dangerousPattern = /(a+)+b/;
+
+// codeql[js/regex/missing-regexp-anchor]
+const badgePattern = /shields\.io\/badge\/version-([^-]+)/g;
+```
+
+**Directory Exclusions**:
+Configure in `.github/codeql/codeql-config.yml`:
+```yaml
+paths-ignore:
+  - docs/
+  - "**/*.min.js"
+  - "**/vendor/**"
+  - "**/node_modules/**"
+```
+
+#### Common Pitfalls to Avoid
+
+1. **Wrong placement**: 
+   - ❌ DevSkim on separate line
+   - ❌ CodeQL inline at end of line
+   - ❌ Using `// lgtm` syntax (deprecated)
+
+2. **Wrong syntax**:
+   - ❌ `// CodeQL: ignore[rule]` (incorrect)
+   - ❌ `// devskim: ignore` (lowercase)
+   - ❌ Missing rule IDs
+
+3. **Auto-generated files**:
+   - Don't try to add suppressions to auto-generated files
+   - Instead, exclude the directory in workflow configuration
+
+### GitHub Security Alerts Workflow
+
+#### Step-by-Step Process
+
+1. **Identify Alert Sources**
+   ```bash
+   gh api repos/OWNER/REPO/code-scanning/alerts --paginate | \
+     jq -r '.[] | select(.state == "open") | "\(.tool.name): \(.rule.id) - \(.most_recent_instance.location.path):\(.most_recent_instance.location.start_line)"'
+   ```
+
+2. **Categorize Alerts** by severity, type, and location
+
+3. **Determine Resolution Strategy**:
+   - Fix real vulnerabilities
+   - Suppress false positives with comments
+   - Exclude directories via config
+   - Document accepted risks
+
+4. **Apply Suppressions Correctly** (see syntax above)
+
+5. **Handle Auto-Generated Files** via workflow exclusions
+
+6. **Commit with Security Context**:
+   ```bash
+   git commit -m "fix: resolve security scanning alerts
+   
+   - Add DevSkim suppressions for test data
+   - Configure CodeQL to exclude auto-generated docs
+   - Fix actual vulnerability in user input
+   
+   InfoSec: Addressed all high-severity alerts, suppressed false positives with documentation"
+   ```
+
+7. **Verify Resolution**:
+   - Check workflow runs: `gh run list --limit=5`
+   - Verify in GitHub Security tab
+   - Debug if alerts persist
+
+#### Common Patterns and Solutions
+
+**Test Data Suppressions**:
+```javascript
+const testToken = "ghp_1234567890"; // DevSkim: ignore DS162092 - Test token
+const testSha = "abc123def"; // DevSkim: ignore DS173237 - Test SHA
+```
+
+**Intentional Patterns**:
+```javascript
+// codeql[js/regex/missing-regexp-anchor]
+const pattern = /shields\.io\/badge/g; // DevSkim: ignore DS137138
+```
+
+**Security Testing**:
+```javascript
+// codeql[js/eval-injection]
+expect(() => eval(userInput)).toThrow(); // DevSkim: ignore DS189424
+```
+
+#### Best Practices
+
+1. **Document suppressions**: Always explain why the suppression is safe
+2. **Batch similar alerts**: Process all of one type together
+3. **Global exclusions first**: Configure workflows before adding many inline comments
+4. **Regular review**: Periodically validate suppressed alerts
+5. **Track technical debt**: Monitor accumulation of suppressions
+
+Remember: DevSkim = inline at end, CodeQL = separate line before!
+
 ## Repository-Specific Overrides
 
 This global configuration provides defaults that can be overridden by local `CLAUDE.md` files in individual repositories. Local configurations take precedence for:
