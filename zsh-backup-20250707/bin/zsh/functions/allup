@@ -1,0 +1,130 @@
+template () {
+  echo -e "\e[1m\e[44m ============== MAIN TOPIC =============== \e[0m"
+  cd
+  tput setaf 5; echo "Doing xxxxx ..."; tput sgr0
+  the command
+}
+
+brewhaha () {
+  echo -e "\e[1m\e[44m ============== MAINTAIN BREW =============== \e[0m"
+  cd
+  tput setaf 5; echo "Updating brew..."; tput sgr0
+  brew update
+  tput setaf 5; echo "Upgrading brew..."; tput sgr0
+  brew upgrade
+  tput setaf 5; echo "Cleaning up brew (keep only last)..."; tput sgr0
+  brew cleanup -s
+  tput setaf 5; echo "Calling the DOCTOR! What is missing?..."; tput sgr0
+  brew doctor
+  brew missing
+  tput setaf 5; echo "Updating brew casks and cleaning up..."; tput sgr0
+  brew cu --all --yes --cleanup
+}
+
+brewrefzf () {
+  echo -e "\e[1m\e[44m ============== REINSTALL FUZZY FINDER =============== \e[0m"
+  cd
+  tput setaf 5; echo "Fzf site recommends a brew reinstall..."; tput sgr0
+  brew upgrade fzf
+}
+
+vimplugup () {
+  echo -e "\e[1m\e[44m ============== UPDATE DEIN =============== \e[0m"
+  cd
+  tput setaf 5; echo "Updating nvim dein plugins..."; tput sgr0
+  nvim -c ':silent call dein#update()' -c quitall
+}
+
+zshup () {
+  echo -e "\e[1m\e[44m ============== UPDATE Z4H =============== \e[0m"
+  cd
+  tput setaf 5; echo "Updating zsh4humans last because of shell restart..."; tput sgr0
+  z4h update
+}
+
+npmup () {
+  echo -e "\e[1m\e[44m ============== UPDATE NPM =============== \e[0m"
+  cd
+  tput setaf 5; echo "Updating npm itself..."; tput sgr0
+  npm install -g npm
+  tput setaf 5; echo "Updating npm modules and browserlist..."; tput sgr0
+  npm update -g
+  npx browserslist@latest --update-db
+}
+
+pipup () {
+  echo -e "\e[1m\e[44m ============== UPDATE PIP =============== \e[0m"
+  cd
+  echo "TRY PIP-UPGRADE!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  tput setaf 5; echo "Updating pip2 setuptools ..."; tput sgr0
+  pip install --upgrade pip setuptools wheel
+  tput setaf 5; echo "Updating pip2 pips ..."; tput sgr0
+  pip2 freeze - local | grep -v ‘^\-e’ | cut -d = -f 1 | xargs pip2 install -U
+  # pip install --upgrade neovim
+  tput setaf 5; echo "Updating pip3 setuptools ..."; tput sgr0
+  pip3 install --upgrade pip setuptools wheel
+  tput setaf 5; echo "Updating pip3 pips ..."; tput sgr0
+  pip3 freeze - local | grep -v ‘^\-e’ | cut -d = -f 1 | xargs pip3 install -U
+  # pip3 install --upgrade neovim
+}
+
+gemup () {
+  echo -e "\e[1m\e[44m ============== UPDATE RUBY GEMS =============== \e[0m"
+  cd
+  tput setaf 5; echo "Updating gems ..."; tput sgr0
+  gem update --user-install
+  gem cleanup --user-install
+}
+
+yarnup () {
+  echo -e "\e[1m\e[44m ============== UPDATE YARN =============== \e[0m"
+  cd
+  tput setaf 5; echo "Updating yarn ..."; tput sgr0
+  yarn upgrade --latest
+}
+
+keyboardioup () {
+  cd $HOME/Documents/Arduino/Model01-Firmware
+  tput setaf 5; echo "Fetching git master ..."; tput sgr0
+  git fetch upstream master
+  cd $HOME/Documents/Arduino/hardware/keyboardio
+  tput setaf 5; echo "Running make ..."; tput sgr0
+  make maintainer-update-submodules
+  cd
+}
+
+masup () {
+  echo -e "\e[1m\e[44m ============== UPDATE MAC APPLE STORE APPS =============== \e[0m"
+  cd
+  tput setaf 5; echo "Checking for outdated ..."; tput sgr0
+  mas outdated
+  tput setaf 5; echo "Upgrading mas apps ..."; tput sgr0
+  mas upgrade
+}
+
+dbup () {
+  echo -e "\e[1m\e[44m ============== UPDATE CLI DATABASES =============== \e[0m"
+  cd
+  tput setaf 5; echo "Updating the locate database, enter your password ..."; tput sgr0
+  # START UP AS: sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
+  # REFRESH DB AS:
+  sudo /usr/libexec/locate.updatedb
+}
+
+DOW=$(date +%u)
+cd
+if (( $DOW == 3 )) then;
+  tput setaf 3; echo "it is day $DOW in week, so refresh databases"  ; tput sgr0
+  dbup
+fi
+npmup
+# yarnup
+# pipup
+# gemup
+brewhaha
+if (( $DOW == 3 )) then;
+  tput setaf 3; echo "it is day $DOW in week, so upgrade fzf"  ; tput sgr0
+  brewrefzf
+fi
+masup
+zshup
