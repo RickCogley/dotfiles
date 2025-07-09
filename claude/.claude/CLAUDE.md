@@ -4,7 +4,7 @@ This file provides universal guidance for Claude Code across all repositories an
 
 ## Quick Reference - Read This First
 
-1. This is the global memory at `/Users/rcogley/.claude/config.md`
+1. This is the global memory at `~/.claude/CLAUDE.md`
 2. NEVER add AI attribution to commits
 3. Run preflight checks before EVERY commit
 4. Security (OWASP) checks come FIRST
@@ -13,7 +13,7 @@ This file provides universal guidance for Claude Code across all repositories an
 ## CRITICAL: Memory File Locations and Reading
 
 **ALWAYS read these files at session start and when requested:**
-- Global memory: `/Users/rcogley/.claude/config.md` (THIS FILE)
+- Global memory: `~/.claude/CLAUDE.md` (THIS FILE)
 - Project memory: `./CLAUDE.md` (if exists in current directory)
 
 **DO NOT search for these files** - they are at these exact paths. Read them directly.
