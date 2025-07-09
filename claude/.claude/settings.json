@@ -2,12 +2,12 @@
   "includeCoAuthoredBy": false,
   "autoUpdates": true,
   "additionalDirectories": [
-    "~/.claude"
+    "/Users/rcogley/.claude"
   ],"slashCommands": [
     {
       "name": "memin",
       "description": "Load global and project memory files",
-      "prompt": "Read the following memory files in order:\n1. Global memory at ~/.claude/config.md\n2. Project memory at ./CLAUDE.md (if it exists)\n\nSummarize what you've learned from these files, particularly any rules about git commits, PR descriptions, and coding standards."
+      "prompt": "Read the following memory files in order:\n1. Global memory at /Users/rcogley/.claude/config.md\n2. Project memory at @CLAUDE.md (if it exists)\n\nSummarize what you've learned from these files, particularly any rules about git commits, PR descriptions, and coding standards."
     },
     {
       "name": "security-rules",
@@ -42,7 +42,7 @@
     {
       "name": "commands",
       "description": "List all available slash commands",
-      "prompt": "List all available slash commands from ~/.claude/settings.json in a clear, formatted way. You can use jq to do this. Include the command name, description, and prompt for each command."
+      "prompt": "List all available slash commands from /Users/rcogley/.claude/settings.json in a clear, formatted way. You can use jq to do this. Include the command name, description, and prompt for each command."
     }
   ],
   "permissions": {
@@ -134,7 +134,7 @@
     ]
   },
   "globalMemory": {
-    "path": "~/.claude/config.md",
+    "path": "/Users/rcogley/.claude/config.md",
     "format": "markdown"
   }
 }
