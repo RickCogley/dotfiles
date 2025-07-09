@@ -6,8 +6,8 @@
   ],"slashCommands": [
     {
       "name": "memin",
-      "description": "Read in Claude memory configuration",
-      "prompt": "Use /add-dir to add the user's home folder ~ if it is not added already. Then ingest `~/.claude/config.md` (global memory) and `./CLAUDE.md` (project memory @CLAUDE.md), then summarize the key points."
+      "description": "Load global and project memory files",
+      "prompt": "Read the following memory files in order:\n1. Global memory at ~/.claude/config.md\n2. Project memory at ./CLAUDE.md (if it exists)\n\nSummarize what you've learned from these files, particularly any rules about git commits, PR descriptions, and coding standards."
     },
     {
       "name": "security-rules",
