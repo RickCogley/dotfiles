@@ -2,6 +2,22 @@
 
 This file provides universal guidance for Claude Code across all repositories and projects.
 
+## Quick Reference - Read This First
+
+1. This is the global memory at `/Users/rcogley/.claude/config.md`
+2. NEVER add AI attribution to commits
+3. Run preflight checks before EVERY commit
+4. Security (OWASP) checks come FIRST
+5. Use InfoSec comments for security-relevant changes
+
+## CRITICAL: Memory File Locations and Reading
+
+**ALWAYS read these files at session start and when requested:**
+- Global memory: `/Users/rcogley/.claude/config.md` (THIS FILE)
+- Project memory: `./CLAUDE.md` (if exists in current directory)
+
+**DO NOT search for these files** - they are at these exact paths. Read them directly.
+
 ## Security & Compliance Standards (Universal)
 
 ### OWASP Top 10 Verification Required
@@ -278,6 +294,22 @@ InfoSec: No security impact - code organization only
 - **Comments**: Avoid unless necessary for complex business logic or security considerations
 - **Consistency**: Follow language-specific idioms and conventions
 - **Readability**: Code should be self-documenting through clear naming
+
+## Git Commit Rules - ABSOLUTE REQUIREMENTS
+
+### NEVER ADD THESE TO COMMITS OR PRs:
+- ❌ "Co-authored-by: Claude" or ANY attribution to AI/Claude
+- ❌ "Generated with Claude Code" or similar marketing strings
+- ❌ Any reference to AI assistance in commit messages
+- ❌ Marketing language or promotional text
+
+### Settings Reminder:
+The setting `includeCoAuthoredBy: false` is configured - RESPECT THIS ALWAYS.
+
+### Example of INCORRECT commit:
+feat: add new feature
+Co-authored-by: Claude  # NEVER DO THIS
+Generated with Claude Code  # NEVER DO THIS
 
 ## File Organization Best Practices
 
@@ -661,3 +693,11 @@ This approach:
    - Intentional security test patterns (ReDoS tests, injection tests)
    - Example configurations with standard URLs (HTTPS examples)
    - Template patterns that need flexible matching (missing anchors by design)
+
+## Session Initialization Checklist
+
+When starting a new Claude Code session:
+1. Read this global memory file
+2. Read project-specific CLAUDE.md if it exists
+3. Note the includeCoAuthoredBy: false setting
+4. Remember: NO marketing strings in commits
