@@ -27,3 +27,10 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Claude local settings
+**/.claude/settings.local.json
+
+# Zsh compiled files
+*.zwc
+*.zwc.*
