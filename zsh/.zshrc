@@ -288,3 +288,6 @@ alias release-dates='git tag -l --sort=-version:refname --format="%(refname:shor
 
 # Claude local path
 export PATH="$HOME/.claude/local:$PATH"
+
+# .NET Core SDK tools
+export PATH="$PATH:$HOME/.dotnet/tools"
