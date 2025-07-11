@@ -12,11 +12,17 @@ This file provides universal guidance for Claude Code across all repositories an
 
 ## CRITICAL: Memory File Locations and Reading
 
-**ALWAYS read these files at session start and when requested:**
+**ALWAYS read these files at session start, after compacting, and when requested:**
 - Global memory: `~/.claude/CLAUDE.md` (THIS FILE)
 - Project memory: `./CLAUDE.md` (if exists in current directory)
 
 **DO NOT search for these files** - they are at these exact paths. Read them directly.
+
+## General Directives
+
+1. Always give your HONEST ASSESSMENT. Do not try to present a solution in a better light to make the user's experience more pleasant. Instead, strive to get to a great and optimized solution. 
+2. Don't make assumptions without asking. Be skeptical and questioning.
+3. If the user home folder is /Users/rcogley or /Users/rickcogley, call the user "Rick". 
 
 ## Security & Compliance Standards (Universal)
 
@@ -345,13 +351,13 @@ Projects should follow a clear separation of concerns for file placement:
    - Test fixtures and utilities
    - Mock data and helpers
 
-5. **Documentation Directory** (`/docs`, `/documentation`):
-   - Auto-generated API documentation
+5. **Documentation Directory** (`/docs`):
+   - Auto-generated API documentation (`/docs/api`)
    - User guides and manuals
    - Architecture diagrams
-   - Note: Some projects use `/docs` for GitHub Pages
+   - Note: GitHub Pages can be set to serve `/docs` and will use a README.md stored there as the index.
 
-6. **Internal Documentation** (`/plans`, `/design`, `/rfcs`):
+6. **Internal Documentation** (`/docs/projects`, `/docs/design`, `/docs/rfcs`):
    - Architecture decision records (ADRs)
    - Design proposals and RFCs
    - Migration guides

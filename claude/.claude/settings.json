@@ -150,6 +150,17 @@
         "command": "echo 'Be sure to read the global configuration file at ~/.claude/CLAUDE.md to understand the coding standards and conventions for this and any session.'",
         "description": "Prompts Claude to load global configuration at session start"
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "message",
+            "message": "🪴 Aichaku MCP Review Required:\n\n1. For TypeScript/JavaScript files (.ts, .js):\n   - Use: mcp__aichaku-reviewer__review_file\n   - Run: deno fmt --check <file>\n   - Run: deno lint <file>\n   - Run: deno check <file>\n\n2. For Markdown files (.md):\n   - Run: aichaku docs-lint <file>\n   - Check standards with: aichaku docs-standard\n\n3. For methodology compliance:\n   - Use: mcp__aichaku-reviewer__review_methodology\n\n4. For any file:\n   - Use: mcp__aichaku-reviewer__review_file with the file path\n   - This checks security patterns, standards compliance, and provides Claude-specific guidance"
+          }
+        ]
+      }
     ]
   }
 }
