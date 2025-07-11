@@ -1,12 +1,12 @@
 [user]
 	name = James R. Cogley
 	email = rick.cogley@esolia.co.jp
-	signingkey = 3142F7C3
+	signingKey = E8404D8E8DAB59CD1E5255BD56BCDEBC6448A091
 [core]
 	autocrlf = input
 	safecrlf = true
 	editor = code --new-window --wait
-	excludesfile = /Users/rcogley/.gitignore_global
+	excludesfile = ~/.gitignore_global
 	whitespace = trailing-space,space-before-tab
 	pager = bat
 [alias]
@@ -55,6 +55,7 @@
 	format = openpgp
 [commit]
 	gpgsign = true
+	template = ~/.gitmessage
 [url "https://"]
 	insteadOf = git://
 [sendemail]
