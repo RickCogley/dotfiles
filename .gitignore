@@ -19,6 +19,7 @@ valet/Certificates/
 git/.gh.json
 git/.gist-vim
 git/.gist-vim.json
+git/.gitconfig.local
 twty/.config/twty/settings.json
 brew/.homebrew_github_api_token
 

@@ -3,7 +3,11 @@
     "allow": [
       "Bash(ls:*)",
       "Bash(source:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(mkdir:*)",
+      "Bash(find:*)",
+      "Bash(aichaku:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

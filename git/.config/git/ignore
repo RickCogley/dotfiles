@@ -34,3 +34,5 @@ Temporary Items
 # Zsh compiled files
 *.zwc
 *.zwc.*
+
+**/.claude/settings.local.json

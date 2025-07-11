@@ -1,2 +1,5 @@
 [user]
-    signingKey = ABC-your-real-gpg-private-key
+    signingKey = YOUR-GPG-KEY-HERE
+
+[sendemail]
+    smtppass = YOUR-SMTP-PASSWORD-HERE

@@ -1,7 +1,8 @@
+[include]
+	path = ~/.gitconfig.local
 [user]
 	name = James R. Cogley
 	email = rick.cogley@esolia.co.jp
-	signingKey = E8404D8E8DAB59CD1E5255BD56BCDEBC6448A091
 [core]
 	autocrlf = input
 	safecrlf = true
@@ -63,7 +64,6 @@
 	smtpServer = smtp.gmail.com
 	smtpUser = rick.cogley@esolia.co.jp
 	smtpServerPort = 587
-	smtppass = xotrctbssgobgxgk
 	multiEdit = true
 [gc]
 	autoDetach = false
