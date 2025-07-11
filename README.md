@@ -1,55 +1,88 @@
-# Rick Cogley's dotfiles
+# Rick Cogley's Dotfiles
 
-I've been trying various methods to manage my dotfiles and get them onto systems, but, it turns out that the easiest thing is to just use Gnu `stow`, with some shell scripts for non-dotfile system setup. There is a good reason to use something like [Homemaker](https://github.com/FooSoft/homemaker), written in Go, because it has no dependencies so you don't need elevated privileges to install it on any given system, and it can handle configuration, not just your dotfile linking. That said, for me it is not such a challenge so far, to install `git` and `stow` on any server I'm managing. If those are not present and I really need my dotfiles on a system, there's always `rsync`. Once they are linked in, just run a couple of scripts to install what you need. 
+A comprehensive, modular dotfiles repository using GNU Stow for symlink management, 
+designed for macOS development environments with security and maintainability in mind.
 
-Here's what I do on a new system assuming `git` and `stow` are installed: 
+## Quick Start
 
-~~~~~
-% cd $HOME
-% git clone https://github.com/RickCogley/dotfiles.git .dotfiles
-% cd .dotfiles
-% stow zsh
-% stow vim
-% cd
-% ls -la #confirm .zshrc, .vimrc etc
-~~~~~
+```bash
+# Clone the repository
+cd $HOME
+git clone https://github.com/RickCogley/dotfiles.git .dotfiles
+cd .dotfiles
 
-The `stow zsh` for instance, just finds the folder `zsh`, and creates symbolic links to its contents in the _parent_ folder, even respecting subfolders. Because your dotfiles repo has been cloned into `$HOME/.dotfiles`, the symbolic links get created in your user folder, so everything just works as expected. Then you just edit and do your git operations on the files in `~/.dotfiles`, and the links will of course just reference those. 
+# Apply configurations
+stow git zsh vim
 
-Some files might contain secrets, so you can symmetrically encrypt those before committing, then decrypt after using stow. For example these files: 
+# Set up your private configuration
+cp ~/.gitconfig.local.template ~/.gitconfig.local
+$EDITOR ~/.gitconfig.local  # Add your GPG key and other secrets
+```
 
-~~~~~
-.dotfiles/twty/.config/twty/settings.json.gpg
-.dotfiles/git/.gh.json.gpg
-.dotfiles/git/.gist-vim.gpg
-~~~~~
+## What's Included
 
-Encrypted and decrypted like this: 
+- **Git**: Comprehensive git configuration with secure secret management
+- **Zsh**: Modern shell setup with Znap plugin manager and Starship prompt
+- **Vim**: Editor configuration and plugins
+- **Security**: GPG signing, SSH key management, and secret handling patterns
+- **Documentation**: Complete guides following industry standards
 
-~~~~~
-% cd .dotfiles
-% gpg --symmetric --cipher-algo TWOFISH twty/.config/twty/settings.json
-% gpg —output twty/.config/twty/settings.json —decrypt twty/.config/twty/settings.json.gpg
-~~~~~
+## Key Features
 
-**IMPORTANT:** _Do not commit the unencrypted files._ If you commit a "dummy" version of the files, you can run `git update-index --assume-unchanged thefile` to prevent accidentally committing changes. However, in this case, since the plain-text version is never wanted, add them to `.gitignore`: 
+- 🔒 **Security-first design** - Secrets never committed to the repository
+- 🧩 **Modular structure** - Apply only the configurations you need
+- 📖 **Comprehensive documentation** - Tutorials, guides, and references
+- 🔄 **Cross-machine compatibility** - Consistent setup across multiple systems
+- 🛡️ **Split configuration** - Public configs in repo, private configs local-only
 
-~~~~~
-...
-git/.gh.json
-git/.gist-vim.json
-twty/.config/twty/settings.json
-brew/.homebrew_github_api_token
-...
-~~~~~
+## Documentation
 
-Additionally, I'm now using the excellent «[zsh for humans](https://github.com/romkatv/zsh4humans)» mainly for its ability to copy zsh and other config files (a v3 feature) up to a remote server just by doing `z4h ssh me@theserver.com`. Smart! Especially if you're mostly only ssh-ing to the server anyway. It also has "sane defaults" so, it's easy to get started with for beginners, though I've been using `zsh` for quite some time. 
+**📚 [Full Documentation](https://rickcogley.github.io/dotfiles/)**
 
-Regarding the `~/.ssh` folder, its permissions and those of the remote host need to be set up as such: 
+### Quick Links
 
-* directory - 700
-* private keys - 600
-* public keys - 644
-* remote auth file - 644
+- **🎓 [Getting Started Tutorial](docs/tutorials/getting-started.md)** - Step-by-step setup guide
+- **🏗️ [Architecture Overview](docs/explanations/architecture.md)** - How it all works
+- **🔐 [Security Guide](docs/explanations/security.md)** - Keeping your secrets safe
+- **⚙️ [Configuration Reference](docs/reference/)** - Detailed configuration docs
 
+### Browse by Type
 
+- **[Tutorials](docs/tutorials/)** - Learning-oriented guides for beginners
+- **[How-to Guides](docs/how-to/)** - Task-oriented solutions for specific problems  
+- **[Reference](docs/reference/)** - Technical specifications and configuration details
+- **[Explanations](docs/explanations/)** - Conceptual discussions and design decisions
+
+## Why This Approach?
+
+After trying various dotfile management methods, GNU Stow emerged as the ideal solution:
+- **Simple and reliable** - Just creates standard symlinks
+- **No dependencies** - Works anywhere git and stow are available
+- **Transparent** - Easy to understand and debug
+- **Flexible** - Apply configurations selectively
+
+For systems without git/stow, rsync provides a reliable fallback option.
+
+## Philosophy
+
+These dotfiles prioritize:
+- **Security** over convenience
+- **Simplicity** over features  
+- **Documentation** over assumptions
+- **Modularity** over monolithic configs
+
+## Contributing
+
+This is a personal configuration repository, but the documentation and patterns 
+may be useful for others building their own dotfile systems. Feel free to:
+- Use any patterns or documentation for your own setup
+- Submit issues for documentation improvements
+- Share feedback on the architecture approach
+
+## License
+
+This repository is shared under the MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+**📖 For complete setup instructions and detailed documentation, visit [rickcogley.github.io/dotfiles](https://rickcogley.github.io/dotfiles/)**

@@ -81,7 +81,7 @@ Use this for offline backups without Git history.
 
 ## Restore Solution
 
-### Step 1: Clone Repository
+### Option 1: Full Git + Stow Setup (Recommended)
 
 1. Install prerequisites:
    ```bash
@@ -95,6 +95,48 @@ Use this for offline backups without Git history.
    git clone https://github.com/yourusername/dotfiles.git ~/.dotfiles
    cd ~/.dotfiles
    ```
+
+### Option 2: Rsync Fallback (No Git/Stow Available)
+
+When git or stow aren't available on the target system:
+
+1. **From another machine with access:**
+   ```bash
+   # Copy dotfiles to remote system
+   rsync -avz ~/.dotfiles/ user@remote-host:~/dotfiles-backup/
+   
+   # On remote system, manually copy needed files
+   cp ~/dotfiles-backup/zsh/.zshrc ~/.zshrc
+   cp ~/dotfiles-backup/git/.gitconfig ~/.gitconfig
+   ```
+
+2. **Using archive method:**
+   ```bash
+   # Create archive on source machine
+   tar -czf dotfiles-essential.tar.gz \
+       .dotfiles/zsh/.zshrc \
+       .dotfiles/git/.gitconfig \
+       .dotfiles/vim/.vimrc
+   
+   # Transfer and extract on target
+   scp dotfiles-essential.tar.gz user@remote-host:
+   ssh user@remote-host 'tar -xzf dotfiles-essential.tar.gz'
+   ```
+
+### Option 3: Zsh4humans Remote Sync
+
+If using zsh4humans, leverage its built-in sync capability:
+
+1. **Setup zsh4humans locally** (if not already configured)
+2. **Use z4h ssh for automatic sync:**
+   ```bash
+   # Automatically copies zsh and other configs to remote server
+   z4h ssh user@remote-server.com
+   ```
+
+This feature (available in z4h v3+) automatically transfers your zsh
+configuration and other dotfiles to the remote server, perfect for
+systems you access primarily via SSH.
 
 3. Checkout specific backup (if needed):
    ```bash

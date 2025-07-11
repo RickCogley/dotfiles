@@ -123,6 +123,40 @@ TOKEN=$(pass github/token)
 source ~/.secrets/env.sh  # This file is gitignored
 ```
 
+**Symmetric Encryption for Configuration Files:**
+
+For configuration files that contain secrets but need to be available across
+machines, use GPG symmetric encryption:
+
+```bash
+# Encrypt sensitive configuration files
+gpg --symmetric --cipher-algo TWOFISH config/sensitive-file.json
+
+# Decrypt when needed
+gpg --output config/sensitive-file.json --decrypt config/sensitive-file.json.gpg
+
+# Add unencrypted versions to .gitignore
+echo "config/sensitive-file.json" >> .gitignore
+```
+
+**Example workflow for files like API tokens:**
+```bash
+# Files that might be encrypted
+.dotfiles/twty/.config/twty/settings.json.gpg
+.dotfiles/git/.gh.json.gpg
+.dotfiles/git/.gist-vim.gpg
+
+# After stowing, decrypt for use
+cd .dotfiles
+gpg --output git/.gh.json --decrypt git/.gh.json.gpg
+```
+
+**Prevent accidental commits of decrypted files:**
+```bash
+# For dummy/template files that should never be committed
+git update-index --assume-unchanged path/to/template-file
+```
+
 **Secret File Template:**
 ```bash
 # ~/.secrets/env.sh (chmod 600)
@@ -186,12 +220,13 @@ fi
 # Script to fix permissions
 #!/usr/bin/env bash
 
-# SSH directory
-chmod 700 ~/.ssh
-chmod 600 ~/.ssh/id_*
-chmod 644 ~/.ssh/id_*.pub
-chmod 644 ~/.ssh/known_hosts
-chmod 600 ~/.ssh/config
+# SSH directory and files
+chmod 700 ~/.ssh                    # Directory: 700
+chmod 600 ~/.ssh/id_*               # Private keys: 600
+chmod 644 ~/.ssh/id_*.pub            # Public keys: 644
+chmod 644 ~/.ssh/known_hosts         # Known hosts: 644
+chmod 644 ~/.ssh/authorized_keys     # Remote auth file: 644
+chmod 600 ~/.ssh/config              # SSH config: 600
 
 # GPG directory
 chmod 700 ~/.gnupg
@@ -200,6 +235,16 @@ chmod 600 ~/.gnupg/*
 # Secret files
 chmod 600 ~/.secrets/*
 ```
+
+**SSH Permission Requirements:**
+- **Directory**: 700 (owner read/write/execute only)
+- **Private keys**: 600 (owner read/write only)
+- **Public keys**: 644 (owner read/write, group/others read)
+- **Remote auth file** (`authorized_keys`): 644
+- **SSH config**: 600 (owner read/write only)
+
+These permissions are critical for SSH security. Incorrect permissions will
+cause SSH to reject the keys or configuration.
 
 ### 4. Symlink Security
 
