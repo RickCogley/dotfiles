@@ -123,20 +123,27 @@ When git or stow aren't available on the target system:
    ssh user@remote-host 'tar -xzf dotfiles-essential.tar.gz'
    ```
 
-### Option 3: Zsh4humans Remote Sync
+### Option 3: Manual Sync for Essential Files
 
-If using zsh4humans, leverage its built-in sync capability:
+For quick setup of essential configurations on remote systems:
 
-1. **Setup zsh4humans locally** (if not already configured)
-2. **Use z4h ssh for automatic sync:**
+1. **Copy core shell configuration:**
    ```bash
-   # Automatically copies zsh and other configs to remote server
-   z4h ssh user@remote-server.com
+   # Essential files for basic functionality
+   scp ~/.zshrc user@remote-host:~/.zshrc
+   scp ~/.gitconfig user@remote-host:~/.gitconfig
    ```
 
-This feature (available in z4h v3+) automatically transfers your zsh
-configuration and other dotfiles to the remote server, perfect for
-systems you access primarily via SSH.
+2. **Bootstrap znap on remote system:**
+   ```bash
+   # On remote system, znap will auto-install when .zshrc is sourced
+   ssh user@remote-host
+   zsh  # Will trigger znap installation and plugin setup
+   ```
+
+Note: The znap plugin manager will automatically clone and set up plugins
+when the shell configuration is first loaded, making remote setup
+straightforward.
 
 3. Checkout specific backup (if needed):
    ```bash
