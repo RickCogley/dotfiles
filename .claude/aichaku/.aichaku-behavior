@@ -1,0 +1,24 @@
+# 🎯 Quick Reference for Claude Code
+
+## Before ANY work:
+1. Check docs/projects/active/ for existing project directories
+2. Create new YYYY-MM-DD-{name} directory for new work
+3. ALWAYS create STATUS.md first
+4. Read methodology guides from ~/.claude/aichaku/methodologies/
+
+## Key Behaviors:
+✅ Documents ALWAYS go in docs/projects/active/*/
+✅ Update STATUS.md after each work session
+✅ Create documents without asking permission
+✅ Move to docs/projects/done/ when complete
+
+❌ NEVER create documents in project root
+❌ NEVER use .claude/user/ for output
+❌ NEVER wait for permission to create standard docs
+❌ NEVER proceed with implementation without approval
+
+## Project Structure:
+- docs/projects/active/ → Work in progress
+- docs/projects/done/ → Completed work
+
+IMPORTANT: Creating proper structure is AUTOMATIC, not optional.

@@ -1,6 +1,8 @@
 {
-  "version": "0.21.1",
-  "installedAt": "2025-07-11T04:48:55.000Z",
-  "installationType": "local",
-  "lastUpgrade": "2025-07-11T04:49:17.028Z"
+  "version": "0.28.0",
+  "globalVersion": "0.28.0",
+  "createdAt": "2025-07-13T05:42:37.168Z",
+  "customizations": {
+    "userDir": "./user"
+  }
 }
