@@ -1,0 +1,13 @@
+{
+  "name": "dotfiles",
+  "version": "1.0.0",
+  "exports": "./README.md",
+  "tasks": {
+    "release": "deno run --allow-all jsr:@rick/nagare@2.9.1 release",
+    "release:patch": "deno run --allow-all jsr:@rick/nagare@2.9.1 release patch",
+    "release:minor": "deno run --allow-all jsr:@rick/nagare@2.9.1 release minor", 
+    "release:major": "deno run --allow-all jsr:@rick/nagare@2.9.1 release major",
+    "release:dry": "deno run --allow-all jsr:@rick/nagare@2.9.1 release --dry-run",
+    "rollback": "deno run --allow-all jsr:@rick/nagare@2.9.1 rollback"
+  }
+}

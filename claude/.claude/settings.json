@@ -37,8 +37,13 @@
     },
     {
       "name": "checkpoint",
-      "description": "Save session summary to .claude/sessions/YYYY-MM-DD.md",
-      "prompt": "Create a session checkpoint by following these steps in order:\n\n1. CREATE CHECKPOINT FILE:\n   - Path: `.claude/sessions/YYYY-MM-DD.md` (use today's date)\n   - Create directory if needed: `mkdir -p .claude/sessions`\n   - Use markdown format\n\n2. CHECKPOINT CONTENT (use these exact sections):\n   # Session Checkpoint - YYYY-MM-DD\n   \n   ## Summary of Work Accomplished\n   List main tasks completed with brief descriptions\n   \n   ## Key Technical Decisions\n   Document important architectural/implementation choices and rationale\n   \n   ## Files Created/Modified\n   ### Created\n   - List new files with purpose\n   ### Modified\n   - List changed files with type of change\n   \n   ## Problems Solved\n   List issues resolved and their solutions\n   \n   ## Lessons Learned\n   Key insights or patterns discovered\n   \n   ## Next Steps\n   Potential future work or improvements\n\nIf the session file already exists, append to it instead of creating a new one. If there are no changes to be added to the session file, report that. Show progress after each step. If any step fails, report the error and continue with remaining steps."
+      "description": "Save session summary to docs/checkpoints/checkpoint-YYYY-MM-DD-{descriptive-name}.md",
+      "prompt": "Create a session checkpoint by following these steps in order:\n\n1. CREATE CHECKPOINT FILE:\n   - Path: `docs/checkpoints/checkpoint-YYYY-MM-DD-{descriptive-name}.md` (use today's date and a descriptive name based on the work done)\n   - Create directory if needed: `mkdir -p docs/checkpoints`\n   - Use markdown format\n\n2. CHECKPOINT CONTENT (use these exact sections):\n   # Session Checkpoint - YYYY-MM-DD - {Descriptive Name}\n   \n   ## Summary of Work Accomplished\n   List main tasks completed with brief descriptions\n   \n   ## Key Technical Decisions\n   Document important architectural/implementation choices and rationale\n   \n   ## Files Created/Modified\n   ### Created\n   - List new files with purpose\n   ### Modified\n   - List changed files with type of change\n   \n   ## Problems Solved\n   List issues resolved and their solutions\n   \n   ## Lessons Learned\n   Key insights or patterns discovered\n   \n   ## Next Steps\n   Potential future work or improvements\n\nIf a checkpoint for today already exists with the same descriptive name, append to it with a timestamp separator. Show progress after each step. If any step fails, report the error and continue with remaining steps."
+    },
+    {
+      "name": "project",
+      "description": "Manage project-specific memory",
+      "prompt": "Manage project-specific memory files. Use the following commands:\n- `/project add <file>`: Add a file to the project context\n- `/project remove <file>`: Remove a file from the project context\n- `/project list`: List all files in the project context"
     },
     {
       "name": "commands",
@@ -53,13 +58,10 @@
   ],
   "permissions": {
     "allow": [
-      // File operations
       "Bash(cp:*)",
       "Bash(touch:*)",
       "Bash(chmod:*)",
       "Bash(ls:*)",
-
-      // Development tools
       "Bash(npm:*)",
       "Bash(yarn:*)",
       "Bash(python:*)",
@@ -76,8 +78,6 @@
       "Bash(deno doc:*)",
       "Bash(deno eval:*)",
       "Bash(deno cache:*)",
-
-      // Git operations
       "Bash(git tag:*)",
       "Bash(git add:*)",
       "Bash(git checkout:*)",
@@ -101,8 +101,6 @@
       "Bash(gh release edit:*)",
       "Bash(gh release view:*)",
       "Bash(gh release list:*)",
-
-      // Text processing
       "Bash(awk:*)",
       "Bash(sed:*)",
       "Bash(grep:*)",
@@ -117,15 +115,11 @@
       "Bash(tr:*)",
       "Bash(uniq:*)",
       "Bash(jq:*)",
-
-      // System info
       "Bash(ps:*)",
       "Bash(which:*)",
       "Bash(pwd:*)",
       "Bash(echo:*)",
       "Bash(where:*)",
-
-      // More web domains
       "WebFetch(domain:*.github.io)",
       "WebFetch(domain:docs.deno.com)",
       "WebFetch(domain:developer.mozilla.org)",
@@ -133,10 +127,9 @@
       "WebFetch(domain:docs.anthropic.com)"
     ],
     "deny": [
-      // Examples of what you might want to block
-      "Bash(rm -rf:*)",  // Prevent accidental deletions
-      "Bash(sudo:*)",    // Require manual elevation
-      "Bash(killall:*)"  // Prevent process termination
+      "Bash(rm -rf:*)",
+      "Bash(sudo:*)",
+      "Bash(killall:*)"
     ]
   },
   "globalMemory": {
@@ -146,20 +139,29 @@
   "hooks": {
     "SessionStart": [
       {
-        "name": "Load Global Config",
+        "name": "Load Global Memory",
         "hooks": [
           {
             "type": "message",
-            "message": "Be sure to read the global configuration file at ~/.claude/CLAUDE.md to understand the coding standards and conventions for this and any session."
+            "message": "You MUST read the global memory file at ~/.claude/CLAUDE.md to understand the coding standards and conventions for this and any session."
           }
         ]
       },
       {
-        "name": "Start Aichaku MCP Server",
+        "name": "Load Project Memory",
         "hooks": [
           {
-            "type": "command",
-            "command": "aichaku mcp --start > /dev/null 2>&1 || true"
+            "type": "message",
+            "message": "You MUST read the project memory file at @CLAUDE.md to understand the project-specific directives."
+          }
+        ]
+      },
+      {
+        "name": "Load Self Memory",
+        "hooks": [
+          {
+            "type": "message",
+            "message": "You MUST read your own @README.md and your documentation at @docs/README.md to understand the project and its requirements."
           }
         ]
       }
@@ -175,16 +177,22 @@
         ]
       }
     ],
-    "SessionEnd": [
+    "Stop": [
       {
-        "name": "Show Aichaku Statistics",
+        "name": "Save Session Checkpoint",
         "hooks": [
           {
             "type": "command",
-            "command": "aichaku review --stats 2>&1"
+            "command": "echo 'Please create a structured summary of our conversation and save it to /path/to/summaries/summary-$(date +%Y%m%d-%H%M%S).md' | claude --output-format text >> /path/to/summaries/summary-$(date +%Y%m%d-%H%M%S).md"
           }
         ]
+      },
+      {
+        "name": "Conversation Summary",
+        "command": "echo \"🪴 Aichaku: Consider creating a checkpoint with /checkpoint command before stopping.\"",
+        "description": "Auto-save summaries before context loss"
       }
-    ]
+    ],
+    "SessionEnd": []
   }
 }

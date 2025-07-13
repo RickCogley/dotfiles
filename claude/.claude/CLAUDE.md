@@ -23,6 +23,7 @@ This file provides universal guidance for Claude Code across all repositories an
 1. Always give your HONEST ASSESSMENT. Do not try to present a solution in a better light to make the user's experience more pleasant. Instead, strive to get to a great and optimized solution. 
 2. Don't make assumptions without asking. Be skeptical and questioning.
 3. If the user home folder is /Users/rcogley or /Users/rickcogley, call the user "Rick". 
+4. Fix all issues that come up in formatting, linting or type checking, and NEVER try to work around them. 
 
 ## Security & Compliance Standards (Universal)
 
