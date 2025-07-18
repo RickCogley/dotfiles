@@ -263,6 +263,7 @@ function lsfunc () {
   print -l ${(ok)functions}
 }
 
+# Reload the shell
 function relogin {
   exec $SHELL --login
 }
@@ -289,8 +290,9 @@ export PATH="$DVM_DIR/bin:$PATH"
 alias changelog-since='f(){ git log ${1:-HEAD}..HEAD --pretty=format:"- %s (%h)" | pbcopy; }; f'
 alias release-dates='git tag -l --sort=-version:refname --format="%(refname:short) - %(creatordate:short)" | pbcopy'
 
-# Claude local path
+# Claude
 export PATH="$HOME/.claude/local:$PATH"
+alias claude-with-dirs='claude --add-dir $HOME/.claude/ --add-dir $HOME/dev/aichaku --add-dir $HOME/dev/nagare --add-dir $HOME/dev/salty.esolia.pro-dd $HOME/.dotfiles'
 
 # .NET Core SDK tools
 export PATH="$PATH:$HOME/.dotnet/tools"
