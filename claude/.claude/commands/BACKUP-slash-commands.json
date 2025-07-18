@@ -1,0 +1,52 @@
+[
+  {
+    "name": "memin",
+    "description": "Load global and project memory files",
+    "prompt": "Read the following memory files in order:\n1. Global memory at ~/.claude/CLAUDE.md\n2. Project memory at @CLAUDE.md (if it exists)\n\nSummarize what you've learned from these files, particularly any rules about git commits, PR descriptions, and coding standards."
+  },
+  {
+    "name": "security-rules",
+    "description": "Show DevSkim and CodeQL suppression syntax",
+    "prompt": "Show me the security scanning suppression syntax rules from the global memory, specifically the DevSkim and CodeQL sections. Focus on the correct placement and syntax for each tool."
+  },
+  {
+    "name": "preflight",
+    "description": "Show preflight checks for current project",
+    "prompt": "Based on the project type (check for deno.json, package.json, pyproject.toml, etc.), show me the appropriate preflight checks I should run before committing code."
+  },
+  {
+    "name": "owasp",
+    "description": "Show OWASP Top 10 security checklist",
+    "prompt": "Show me the OWASP Top 10 checklist from global memory. Display each item with its title and key verification points."
+  },
+  {
+    "name": "commit-style",
+    "description": "Show conventional commit format and InfoSec guidelines",
+    "prompt": "Show me the conventional commit format and InfoSec guidelines from global memory. Include examples of when to use InfoSec comments and the proper format."
+  },
+  {
+    "name": "directory-structure",
+    "description": "Show recommended project directory structure",
+    "prompt": "Show me the recommended project directory structure from global memory. Include the standard directories, their purposes, and examples for different languages."
+  },
+  {
+    "name": "checkpoint",
+    "description": "Save session summary to docs/checkpoints/checkpoint-YYYY-MM-DD-{descriptive-name}.md",
+    "prompt": "Create a session checkpoint by following these steps in order:\n\n1. CREATE CHECKPOINT FILE:\n   - Path: `docs/checkpoints/checkpoint-YYYY-MM-DD-{descriptive-name}.md` (use today's date and a descriptive name based on the work done)\n   - Create directory if needed: `mkdir -p docs/checkpoints`\n   - Use markdown format\n\n2. CHECKPOINT CONTENT (use these exact sections):\n   # Session Checkpoint - YYYY-MM-DD - {Descriptive Name}\n   \n   ## Summary of Work Accomplished\n   List main tasks completed with brief descriptions\n   \n   ## Key Technical Decisions\n   Document important architectural/implementation choices and rationale\n   \n   ## Files Created/Modified\n   ### Created\n   - List new files with purpose\n   ### Modified\n   - List changed files with type of change\n   \n   ## Problems Solved\n   List issues resolved and their solutions\n   \n   ## Lessons Learned\n   Key insights or patterns discovered\n   \n   ## Next Steps\n   Potential future work or improvements\n\nIf a checkpoint for today already exists with the same descriptive name, append to it with a timestamp separator. Show progress after each step. If any step fails, report the error and continue with remaining steps."
+  },
+  {
+    "name": "project",
+    "description": "Manage project-specific memory",
+    "prompt": "Manage project-specific memory files. Use the following commands:\n- `/project add <file>`: Add a file to the project context\n- `/project remove <file>`: Remove a file from the project context\n- `/project list`: List all files in the project context"
+  },
+  {
+    "name": "commands",
+    "description": "List all available slash commands",
+    "prompt": "List all available slash commands from ~/.claude/settings.json in a clear, formatted way. You can use jq to do this. Include the command name, description, and prompt for each command."
+  },
+  {
+    "name": "addglobal",
+    "description": "Add global config to project context",
+    "prompt": "/project add ~/.claude/CLAUDE.md"
+  }
+]

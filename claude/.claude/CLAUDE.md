@@ -1,6 +1,7 @@
 # Global Claude Code Configuration
 
-This file provides universal guidance for Claude Code across all repositories and projects.
+This file provides universal guidance for Claude Code across all repositories
+and projects.
 
 ## Quick Reference - Read This First
 
@@ -12,102 +13,127 @@ This file provides universal guidance for Claude Code across all repositories an
 
 ## CRITICAL: Memory File Locations and Reading
 
-**ALWAYS read these files at session start, after compacting, and when requested:**
+**ALWAYS read these files at session start, after compacting, and when
+requested:**
+
 - Global memory: `~/.claude/CLAUDE.md` (THIS FILE)
 - Project memory: `./CLAUDE.md` (if exists in current directory)
 
-**DO NOT search for these files** - they are at these exact paths. Read them directly.
+**DO NOT search for these files** - they are at these exact paths. Read them
+directly.
 
 ## General Directives
 
-1. Always give your HONEST ASSESSMENT. Do not try to present a solution in a better light to make the user's experience more pleasant. Instead, strive to get to a great and optimized solution. 
+1. Always give your HONEST ASSESSMENT. Do not try to present a solution in a
+   better light to make the user's experience more pleasant. Instead, strive to
+   get to a great and optimized solution.
 2. Don't make assumptions without asking. Be skeptical and questioning.
-3. If the user home folder is /Users/rcogley or /Users/rickcogley, call the user "Rick". 
-4. Fix all issues that come up in formatting, linting or type checking, and NEVER try to work around them. 
+3. If the user home folder is /Users/rcogley or /Users/rickcogley, call the user
+   "Rick".
+4. Fix all issues that come up in formatting, linting or type checking, and
+   NEVER try to work around them.
 
 ## Security & Compliance Standards (Universal)
 
 ### OWASP Top 10 Verification Required
 
-**CRITICAL**: Before suggesting or implementing ANY code changes, verify against current OWASP Top 10:
+**CRITICAL**: Before suggesting or implementing ANY code changes, verify against
+current OWASP Top 10:
 
 #### A01 - Broken Access Control
+
 - Validate all authorization checks in applications, APIs, and CLI tools
 - Implement principle of least privilege for all system access
 - Check for direct object references and ensure proper access controls
 - Validate file system permissions and API endpoint access
 
 #### A02 - Cryptographic Failures
+
 - Use strong, up-to-date encryption algorithms (AES-GCM-256, PBKDF2-SHA512)
 - Properly manage secrets, API keys, and credentials via environment variables
 - Validate SSL/TLS implementations for all external communications
 - Never hardcode cryptographic keys or sensitive data
 
 #### A03 - Injection
+
 - Use parameterized queries/operations for all database and system interactions
 - Validate and sanitize ALL user inputs (CLI args, API requests, config files)
 - Implement proper output encoding for template processing and responses
 - Avoid dynamic code execution (eval, Function constructor)
 
 #### A04 - Insecure Design
+
 - Review architecture for security flaws before implementation
 - Implement secure design patterns (fail-fast, defense in depth)
 - Consider threat modeling implications for all new features
 - Design with security as a primary concern, not an afterthought
 
 #### A05 - Security Misconfiguration
+
 - Check default configurations for security implications
 - Ensure proper error handling (no sensitive data exposure in logs/responses)
 - Validate security headers and settings for web applications
 - Use secure defaults in all configuration options
 
 #### A06 - Vulnerable Components
+
 - Audit all dependencies for known vulnerabilities
 - Keep libraries and frameworks updated (use dependabot, security advisories)
 - Document component security status in dependency updates
 - Pin dependency versions and review before updates
 
 #### A07 - Authentication Failures
+
 - Implement proper authentication handling for APIs and services
 - Use strong authentication mechanisms (tokens, certificates)
 - Protect against unauthorized operations with proper session management
 - Implement rate limiting to prevent brute force attacks
 
 #### A08 - Software/Data Integrity Failures
+
 - Validate data integrity in all processing operations
 - Use secure update mechanisms for file modifications
 - Implement proper CI/CD security for deployment pipelines
 - Verify checksums and signatures where applicable
 
 #### A09 - Logging/Monitoring Failures
+
 - Log security-relevant events in all operations
 - Implement proper monitoring for unauthorized changes
 - Ensure logs NEVER contain sensitive data (tokens, passwords, keys)
 - Create audit trails for critical operations
 
 #### A10 - Server-Side Request Forgery (SSRF)
+
 - Validate ALL external requests and API calls
 - Implement proper URL validation and allowlists
 - Use allowlists for external resources and dependencies
 - Sanitize user-provided URLs and external references
 
 ### ISO 27001 Compliance Notes
+
 - Document all security decisions in commit messages
 - Maintain audit trail for all critical operations
 - Ensure security reviews for all modifications involving sensitive data
 - Flag any potential compliance issues immediately
 
 ### Security Review Process
+
 When reviewing or suggesting code changes:
 
-1. **Security First**: Always perform OWASP Top 10 assessment before any other suggestions
+1. **Security First**: Always perform OWASP Top 10 assessment before any other
+   suggestions
 2. **Flag Issues**: Explicitly call out any potential OWASP violations
-3. **Suggest Mitigations**: Provide specific remediation steps for identified risks
-4. **Document Decisions**: Include security rationale in comments and commit messages
+3. **Suggest Mitigations**: Provide specific remediation steps for identified
+   risks
+4. **Document Decisions**: Include security rationale in comments and commit
+   messages
 5. **Compliance Check**: Note any ISO 27001 implications
 
 ### Required Security Checks
+
 For every code change, verify:
+
 - Input validation and sanitization (especially user-provided data)
 - Authentication and authorization (API access, file permissions)
 - Secure data handling (encryption, secure storage)
@@ -122,6 +148,7 @@ For every code change, verify:
 Based on language capabilities and project requirements:
 
 #### TypeScript/JavaScript Projects
+
 - **Object-Oriented Design** for structure and state management:
   - Classes for complex stateful components (Logger, Manager classes)
   - Encapsulation for sensitive data and operations
@@ -134,22 +161,30 @@ Based on language capabilities and project requirements:
   - No side effects in security-critical functions
 
 #### Other Languages
-- **Go**: Struct-based design with functional interfaces, pure functions for business logic
-- **Python**: Class-based architecture with functional utilities, dataclasses for immutability
-- **Rust**: Struct/enum design with functional patterns, ownership for memory safety
+
+- **Go**: Struct-based design with functional interfaces, pure functions for
+  business logic
+- **Python**: Class-based architecture with functional utilities, dataclasses
+  for immutability
+- **Rust**: Struct/enum design with functional patterns, ownership for memory
+  safety
 - **Java**: Object-oriented with functional interfaces (streams, lambdas)
 - **C#**: Object-oriented with LINQ functional patterns
 
 #### HTML/CSS
+
 - **Declarative Approach**: Use idiomatic, semantic HTML5 and modern CSS
-- **Accessibility First**: ARIA attributes, semantic elements, proper heading hierarchy
+- **Accessibility First**: ARIA attributes, semantic elements, proper heading
+  hierarchy
 - **Modern CSS**: Grid, Flexbox, custom properties, logical properties
 - **Progressive Enhancement**: Core functionality works without JavaScript
 
 ### Code Organization Principles
+
 1. **Separation of Concerns**: Clear boundaries between modules/classes
 2. **Single Responsibility**: Each class/function has one primary purpose
-3. **Dependency Injection**: Pass dependencies rather than creating them internally
+3. **Dependency Injection**: Pass dependencies rather than creating them
+   internally
 4. **Fail-Fast Validation**: Early validation with descriptive errors
 5. **Type Safety**: Leverage type systems for compile-time error prevention
 
@@ -158,6 +193,7 @@ Based on language capabilities and project requirements:
 ### Before ANY Commit - Run Preflight Validation
 
 #### Deno Projects
+
 ```bash
 deno fmt                    # Format code
 deno check **/*.ts         # Type check all TypeScript files
@@ -166,6 +202,7 @@ deno test                  # Run all tests
 ```
 
 #### Node.js/npm Projects
+
 ```bash
 npm run format            # Format code (prettier, etc.)
 npm run lint              # ESLint/TSLint
@@ -175,6 +212,7 @@ npm audit                 # Security vulnerability check
 ```
 
 #### Python Projects
+
 ```bash
 black .                   # Code formatting
 mypy .                    # Type checking
@@ -184,6 +222,7 @@ safety check              # Security vulnerability scanning
 ```
 
 #### Go Projects
+
 ```bash
 go fmt ./...              # Format code
 go vet ./...              # Static analysis
@@ -193,6 +232,7 @@ govulncheck ./...         # Security vulnerability check
 ```
 
 #### Rust Projects
+
 ```bash
 cargo fmt                 # Format code
 cargo clippy              # Linting
@@ -201,6 +241,7 @@ cargo audit               # Security vulnerability check
 ```
 
 #### Java Projects
+
 ```bash
 ./gradlew spotlessApply   # Format code (or equivalent)
 ./gradlew checkstyleMain  # Style checking
@@ -209,6 +250,7 @@ cargo audit               # Security vulnerability check
 ```
 
 #### C# Projects
+
 ```bash
 dotnet format             # Format code
 dotnet build              # Compile and check
@@ -219,13 +261,15 @@ dotnet test               # Run tests
 
 ### Conventional Commits with Security Annotations
 
-Use conventional commits format with InfoSec comments when changes have security implications:
+Use conventional commits format with InfoSec comments when changes have security
+implications:
 
 **Format**: "InfoSec: [brief description of security impact/consideration]"
 
 #### Examples:
 
 **Security-Relevant Changes** (require InfoSec comment):
+
 ```
 feat: add input validation to API endpoints
 
@@ -245,6 +289,7 @@ InfoSec: Patches known security vulnerabilities in lodash and express
 ```
 
 **Non-Security Changes** (no InfoSec comment needed):
+
 ```
 docs: update README installation steps
 ```
@@ -256,6 +301,7 @@ InfoSec: No security impact - code organization only
 ```
 
 ### When to Include InfoSec Comments:
+
 - Input validation or sanitization changes
 - Authentication/authorization modifications
 - Cryptographic operations or key handling
@@ -269,54 +315,73 @@ InfoSec: No security impact - code organization only
 
 ### Critical Development Notes
 
-1. **Security Testing**: When adding features, create corresponding security tests alongside functional tests
-2. **Input Validation**: Always validate inputs at system boundaries with proper error handling
-3. **Error Handling**: Provide actionable error messages without exposing sensitive information
-4. **State Management**: Validate system state early and log security-relevant events
-5. **Pre-flight Checks**: ALWAYS run language-appropriate preflight checks before staging commits
-6. **Attribution**: Never add "Generated with Claude Code" or "Co-Authored-By: Claude" to commit messages or PRs
-7. **Documentation Updates**: Update documentation when functionality is added or security posture changes
-8. **Merge Hygiene**: Ensure both branches are pulled and up-to-date before merging
-9. **Security Documentation**: Document all security-related decisions and rationale for compliance
-10. **Dependency Management**: Regular security audits of dependencies and prompt updates for vulnerabilities
+1. **Security Testing**: When adding features, create corresponding security
+   tests alongside functional tests
+2. **Input Validation**: Always validate inputs at system boundaries with proper
+   error handling
+3. **Error Handling**: Provide actionable error messages without exposing
+   sensitive information
+4. **State Management**: Validate system state early and log security-relevant
+   events
+5. **Pre-flight Checks**: ALWAYS run language-appropriate preflight checks
+   before staging commits
+6. **Attribution**: Never add "Generated with Claude Code" or "Co-Authored-By:
+   Claude" to commit messages or PRs
+7. **Documentation Updates**: Update documentation when functionality is added
+   or security posture changes
+8. **Merge Hygiene**: Ensure both branches are pulled and up-to-date before
+   merging
+9. **Security Documentation**: Document all security-related decisions and
+   rationale for compliance
+10. **Dependency Management**: Regular security audits of dependencies and
+    prompt updates for vulnerabilities
 
 ### Code Style Requirements (Adaptable per Language)
 
 #### TypeScript/JavaScript
-- **Formatting**: 2 spaces, double quotes, semicolons required, 100 char line width
-- **Naming**: kebab-case files, PascalCase classes, camelCase variables/functions
+
+- **Formatting**: 2 spaces, double quotes, semicolons required, 100 char line
+  width
+- **Naming**: kebab-case files, PascalCase classes, camelCase
+  variables/functions
 - **TypeScript**: Strict mode enabled, no implicit any, comprehensive interfaces
 
 #### Python
+
 - **Formatting**: Black formatting, 88 char line width
 - **Naming**: snake_case for variables/functions, PascalCase for classes
 - **Type Hints**: Use type hints for all public functions and class methods
 
 #### Go
+
 - **Formatting**: gofmt standard formatting
 - **Naming**: Go conventions (camelCase private, PascalCase public)
 - **Documentation**: Godoc comments for all exported functions
 
 #### General Principles
-- **Comments**: Avoid unless necessary for complex business logic or security considerations
+
+- **Comments**: Avoid unless necessary for complex business logic or security
+  considerations
 - **Consistency**: Follow language-specific idioms and conventions
 - **Readability**: Code should be self-documenting through clear naming
 
 ## Git Commit Rules - ABSOLUTE REQUIREMENTS
 
 ### NEVER ADD THESE TO COMMITS OR PRs:
+
 - ❌ "Co-authored-by: Claude" or ANY attribution to AI/Claude
 - ❌ "Generated with Claude Code" or similar marketing strings
 - ❌ Any reference to AI assistance in commit messages
 - ❌ Marketing language or promotional text
 
 ### Settings Reminder:
+
 The setting `includeCoAuthoredBy: false` is configured - RESPECT THIS ALWAYS.
 
 ### Example of INCORRECT commit:
-feat: add new feature
-Co-authored-by: Claude  # NEVER DO THIS
-Generated with Claude Code  # NEVER DO THIS
+
+feat: add new feature Co-authored-by: Claude # NEVER DO THIS Generated with
+Claude Code # NEVER DO THIS
 
 ## File Organization Best Practices
 
@@ -356,7 +421,8 @@ Projects should follow a clear separation of concerns for file placement:
    - Auto-generated API documentation (`/docs/api`)
    - User guides and manuals
    - Architecture diagrams
-   - Note: GitHub Pages can be set to serve `/docs` and will use a README.md stored there as the index.
+   - Note: GitHub Pages can be set to serve `/docs` and will use a README.md
+     stored there as the index.
 
 6. **Internal Documentation** (`/docs/projects`, `/docs/design`, `/docs/rfcs`):
    - Architecture decision records (ADRs)
@@ -374,15 +440,20 @@ Projects should follow a clear separation of concerns for file placement:
 
 ### Key Principles:
 
-1. **Root Cleanliness**: Keep the root directory minimal - only files that users or the build system need to interact with directly
+1. **Root Cleanliness**: Keep the root directory minimal - only files that users
+   or the build system need to interact with directly
 2. **Clear Separation**: Runtime code vs. development tools should never mix
-3. **Discoverability**: Standard names help developers navigate unfamiliar projects
-4. **Distribution Awareness**: Know what gets packaged vs. what stays in the repository
-5. **Convention Over Configuration**: Follow language/ecosystem conventions when they exist
+3. **Discoverability**: Standard names help developers navigate unfamiliar
+   projects
+4. **Distribution Awareness**: Know what gets packaged vs. what stays in the
+   repository
+5. **Convention Over Configuration**: Follow language/ecosystem conventions when
+   they exist
 
 ### Examples by Language:
 
 **TypeScript/Node.js:**
+
 ```
 /
 ├── index.ts          # Main entry point
@@ -395,6 +466,7 @@ Projects should follow a clear separation of concerns for file placement:
 ```
 
 **Python:**
+
 ```
 /
 ├── setup.py         # Package config
@@ -406,6 +478,7 @@ Projects should follow a clear separation of concerns for file placement:
 ```
 
 **Go:**
+
 ```
 /
 ├── main.go          # Entry point
@@ -417,37 +490,44 @@ Projects should follow a clear separation of concerns for file placement:
 └── /docs            # Documentation
 ```
 
-This structure promotes maintainability, discoverability, and clear boundaries between different types of code.
+This structure promotes maintainability, discoverability, and clear boundaries
+between different types of code.
 
 ## Security Scanning Configuration
 
 ### DevSkim and CodeQL Integration
 
-When working with GitHub security scanning tools (DevSkim and CodeQL), understanding their suppression syntax and configuration is critical for managing false positives.
+When working with GitHub security scanning tools (DevSkim and CodeQL),
+understanding their suppression syntax and configuration is critical for
+managing false positives.
 
 #### DevSkim Suppressions
 
-**Key Rule**: DevSkim suppression comments MUST be placed inline at the END of the offending line.
+**Key Rule**: DevSkim suppression comments MUST be placed inline at the END of
+the offending line.
 
 **Format**: `// DevSkim: ignore DS######` where DS###### is the specific rule ID
 
 **Common DevSkim Rules**:
+
 - `DS162092` - Hardcoded tokens/keys (use for test SHA values, test credentials)
 - `DS173237` - Alternative rule for tokens/keys
-- `DS137138` - Regex patterns (use for intentionally unanchored patterns, ReDoS test patterns)
+- `DS137138` - Regex patterns (use for intentionally unanchored patterns, ReDoS
+  test patterns)
 - `DS176209` - TODO comments
 - `DS189424` - eval usage (common in security tests)
 - `DS440000` or `DS440011` - SSL/TLS protocol references (documentation strings)
 - `DS172411` - setTimeout with untrusted data
 
 **Example**:
+
 ```javascript
 const testSha = "abc123def456"; // DevSkim: ignore DS162092
 const pattern = /shields\.io\/badge/g; // DevSkim: ignore DS137138
 ```
 
-**Directory Exclusions**:
-Configure in `.github/workflows/devskim.yml`:
+**Directory Exclusions**: Configure in `.github/workflows/devskim.yml`:
+
 ```yaml
 - name: Run DevSkim scanner
   uses: microsoft/DevSkim-Action@v1
@@ -461,17 +541,20 @@ Configure in `.github/workflows/devskim.yml`:
 
 #### CodeQL Suppressions
 
-**Key Rule**: CodeQL suppression comments MUST be placed on a SEPARATE LINE BEFORE the offending code.
+**Key Rule**: CodeQL suppression comments MUST be placed on a SEPARATE LINE
+BEFORE the offending code.
 
 **Format**: `// codeql[rule-id]` where rule-id is the CodeQL query identifier
 
 **Common CodeQL Rules**:
+
 - `js/redos` - Regular expression denial of service
 - `js/regex/missing-regexp-anchor` - Unanchored regex patterns
 - `js/sql-injection` - SQL injection vulnerabilities
 - `js/xss` - Cross-site scripting vulnerabilities
 
 **Example**:
+
 ```javascript
 // codeql[js/redos]
 const dangerousPattern = /(a+)+b/;
@@ -480,8 +563,8 @@ const dangerousPattern = /(a+)+b/;
 const badgePattern = /shields\.io\/badge\/version-([^-]+)/g;
 ```
 
-**Directory Exclusions**:
-Configure in `.github/codeql/codeql-config.yml`:
+**Directory Exclusions**: Configure in `.github/codeql/codeql-config.yml`:
+
 ```yaml
 paths-ignore:
   - docs/
@@ -492,7 +575,7 @@ paths-ignore:
 
 #### Common Pitfalls to Avoid
 
-1. **Wrong placement**: 
+1. **Wrong placement**:
    - ❌ DevSkim on separate line
    - ❌ CodeQL inline at end of line
    - ❌ Using `// lgtm` syntax (deprecated)
@@ -531,11 +614,11 @@ paths-ignore:
 6. **Commit with Security Context**:
    ```bash
    git commit -m "fix: resolve security scanning alerts
-   
+
    - Add DevSkim suppressions for test data
    - Configure CodeQL to exclude auto-generated docs
    - Fix actual vulnerability in user input
-   
+
    InfoSec: Addressed all high-severity alerts, suppressed false positives with documentation"
    ```
 
@@ -547,18 +630,21 @@ paths-ignore:
 #### Common Patterns and Solutions
 
 **Test Data Suppressions**:
+
 ```javascript
 const testToken = "ghp_1234567890"; // DevSkim: ignore DS162092 - Test token
 const testSha = "abc123def"; // DevSkim: ignore DS173237 - Test SHA
 ```
 
 **Intentional Patterns**:
+
 ```javascript
 // codeql[js/regex/missing-regexp-anchor]
 const pattern = /shields\.io\/badge/g; // DevSkim: ignore DS137138
 ```
 
 **Security Testing**:
+
 ```javascript
 // codeql[js/eval-injection]
 expect(() => eval(userInput)).toThrow(); // DevSkim: ignore DS189424
@@ -568,7 +654,8 @@ expect(() => eval(userInput)).toThrow(); // DevSkim: ignore DS189424
 
 1. **Document suppressions**: Always explain why the suppression is safe
 2. **Batch similar alerts**: Process all of one type together
-3. **Global exclusions first**: Configure workflows before adding many inline comments
+3. **Global exclusions first**: Configure workflows before adding many inline
+   comments
 4. **Regular review**: Periodically validate suppressed alerts
 5. **Track technical debt**: Monitor accumulation of suppressions
 
@@ -576,21 +663,27 @@ Remember: DevSkim = inline at end, CodeQL = separate line before!
 
 ## Repository-Specific Overrides
 
-This global configuration provides defaults that can be overridden by local `CLAUDE.md` files in individual repositories. Local configurations take precedence for:
+This global configuration provides defaults that can be overridden by local
+`CLAUDE.md` files in individual repositories. Local configurations take
+precedence for:
+
 - Project-specific architecture patterns
 - Custom build/test commands
 - Domain-specific security requirements
 - Framework-specific coding standards
 
-However, OWASP Top 10 verification and InfoSec commit standards should be maintained across all projects for security compliance.
+However, OWASP Top 10 verification and InfoSec commit standards should be
+maintained across all projects for security compliance.
 
 ## Project Setup Best Practices
 
 ### Git Hooks for Code Quality
 
-**Always set up pre-commit hooks** in projects with formatting/linting requirements to prevent CI failures:
+**Always set up pre-commit hooks** in projects with formatting/linting
+requirements to prevent CI failures:
 
 1. Create `.githooks/pre-commit` file:
+
 ```bash
 #!/bin/sh
 # Pre-commit hook to ensure code quality before committing
@@ -631,26 +724,28 @@ echo "✅ Pre-commit checks complete"
 ```
 
 2. Make it executable:
+
 ```bash
 chmod +x .githooks/pre-commit
 ```
 
 3. Configure git to use the hooks:
+
 ```bash
 git config core.hooksPath .githooks
 ```
 
 4. Add setup instructions to project documentation (README.md or CLAUDE.md):
+
 ```markdown
 ## Initial Setup
 
-Enable git hooks for automatic code formatting:
-\`\`\`bash
-git config core.hooksPath .githooks
-\`\`\`
+Enable git hooks for automatic code formatting: \`\`\`bash git config
+core.hooksPath .githooks \`\`\`
 ```
 
 This approach:
+
 - Prevents formatting-related CI failures
 - Ensures consistent code style
 - Reduces review friction
@@ -659,40 +754,48 @@ This approach:
 ## CI/CD Best Practices
 
 ### Release Verification
+
 1. **Multi-Stage Verification**: A release is only considered successful when:
    - All tests pass locally
    - CI/CD workflows succeed (GitHub Actions, GitLab CI, etc.)
    - Package is published to registry (npm, JSR, PyPI, etc.)
    - Always verify the final publication before considering a release complete
 
-2. **Automated Release Flags**: When tools support it, use non-interactive flags:
+2. **Automated Release Flags**: When tools support it, use non-interactive
+   flags:
    - `--yes`, `-y`, `--skip-confirmation` for automated workflows
    - Document these flags in project-specific CLAUDE.md files
    - Essential for CI/CD pipelines and automated releases
 
 ### TypeScript/JavaScript Specific Guidelines
+
 1. **Type Safety Enforcement**: NEVER use `any` type in TypeScript projects
    - Modern projects enforce `no-explicit-any` lint rules
-   - Always import and use proper types: `import { EnumType, InterfaceType } from "./types"`
+   - Always import and use proper types:
+     `import { EnumType, InterfaceType } from "./types"`
    - Use proper type assertions: `value as SpecificType` not `value as any`
    - This prevents CI failures and ensures type safety
 
-2. **Test Environment Considerations**: Some tests may need different behavior in CI:
+2. **Test Environment Considerations**: Some tests may need different behavior
+   in CI:
    ```typescript
    // Skip tests that require specific environment setup
    Deno.test({
      ignore: Deno.env.get("CI") === "true",
-     name: "Test requiring local filesystem"
-   }, async (t) => { /* test code */ });
+     name: "Test requiring local filesystem",
+   }, async (t) => {/* test code */});
    ```
-   - Common for tests requiring: git repositories, filesystem operations, network access
+   - Common for tests requiring: git repositories, filesystem operations,
+     network access
    - Document these patterns in test files
 
 ### Security Alert Management
+
 1. **False Positive Suppressions**: When security scanners flag false positives:
    - Add appropriate suppression comments with justification
    - Common tools: DevSkim, CodeQL, Semgrep, SonarQube
-   - Format: `// DevSkim: ignore DS123456 - This is test data, not a real secret`
+   - Format:
+     `// DevSkim: ignore DS123456 - This is test data, not a real secret`
    - Document why the suppression is justified
 
 2. **Common False Positives**:
@@ -704,6 +807,7 @@ This approach:
 ## Session Initialization Checklist
 
 When starting a new Claude Code session:
+
 1. Read this global memory file
 2. Read project-specific CLAUDE.md if it exists
 3. Note the includeCoAuthoredBy: false setting
