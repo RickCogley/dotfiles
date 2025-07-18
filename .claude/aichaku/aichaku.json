@@ -1,0 +1,15 @@
+{
+  "version": "0.35.4",
+  "installedAt": "2025-07-13T05:42:37.168Z",
+  "installationType": "local",
+  "lastUpgrade": "2025-07-18T03:36:03.581Z",
+  "standards": {
+    "version": "0.31.3",
+    "selected": [
+      "conventional-commits",
+      "solid",
+      "diataxis-google"
+    ],
+    "customStandards": {}
+  }
+}
