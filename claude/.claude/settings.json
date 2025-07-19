@@ -153,40 +153,6 @@
           }
         ]
       }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "deno run --allow-read --allow-write --allow-env ~/.claude/aichaku/hooks/aichaku-hooks.ts status-updater"
-          },
-          {
-            "type": "command",
-            "command": "deno run --allow-read --allow-write --allow-env ~/.claude/aichaku/hooks/aichaku-hooks.ts smart-reviewer"
-          }
-        ]
-      },
-      {
-        "matcher": "Edit|MultiEdit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "deno run --allow-read --allow-write --allow-env --allow-run ~/.claude/aichaku/hooks/aichaku-hooks.ts code-review"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "deno run --allow-read --allow-write --allow-env ~/.claude/aichaku/hooks/aichaku-hooks.ts conversation-summary"
-          }
-        ]
-      }
     ]
   },
   "model": "sonnet"
