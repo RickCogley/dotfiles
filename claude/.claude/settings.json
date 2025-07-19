@@ -152,15 +152,6 @@
             "command": "deno run --allow-read --allow-write --allow-env ~/.claude/aichaku/hooks/aichaku-hooks.ts commit-validator"
           }
         ]
-      },
-      {
-        "matcher": ".*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "deno run --allow-read --allow-write --allow-env ~/.claude/aichaku/hooks/aichaku-hooks.ts aichaku-feedback"
-          }
-        ]
       }
     ],
     "PostToolUse": [
