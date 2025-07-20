@@ -1,5 +1,5 @@
 ---
-allowed-tools: Write, Bash
+allowed-tools: Write, Bash, Git
 description: Save session summary to docs/checkpoints/checkpoint-YYYY-MM-DD-{descriptive-name}.md
 ---
 
@@ -45,3 +45,5 @@ Create the checkpoint file at `docs/checkpoints/checkpoint-{current-date}-{descr
 ```
 
 First create the docs/checkpoints directory if it doesn't exist, then create the checkpoint file with today's date and the descriptive name from the arguments.
+
+Run a "preflight" check on the created file, making sure it is formatted, then git add, git commit and git push the file. 
