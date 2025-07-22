@@ -125,7 +125,11 @@ ls -la .githooks/hooks.d/
 For a new project, get instant formatting with sensible defaults:
 
 ```bash
+# First time setup
 curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash
+
+# Update existing setup (force overwrite)
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s -- --update
 ```
 
 **📋 For complete installation options, see: [Installation Commands Reference](git-hooks-install-commands.md)**

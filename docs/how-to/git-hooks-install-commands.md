@@ -2,6 +2,12 @@
 
 Quick reference for all installation methods and commands for the modular git hooks system.
 
+> **💡 Tip**: When piping scripts to bash, use `bash -s --` followed by flags to pass arguments:
+> ```bash
+> curl -fsSL script-url | bash -s -- --flag1 --flag2
+> ```
+> The `--` separates bash options from script arguments.
+
 ## Basic Installation
 
 ### Recommended: Simple Piped Installation
@@ -9,6 +15,12 @@ Quick reference for all installation methods and commands for the modular git ho
 ```bash
 # Basic setup (hooks + config files, auto-detected project type)
 curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash
+
+# Force overwrite existing files
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s -- --force
+
+# Update existing installation (equivalent to --auto --configs --force)
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s -- --update
 ```
 
 ### Interactive Installation
@@ -29,35 +41,35 @@ chmod +x setup-git-hooks.sh
 
 ```bash
 # Hooks only (no config files)
-curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --auto
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s -- --auto
 
 # Full setup (explicit)
-curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --auto --configs
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s -- --auto --configs
 
 # Force overwrite existing files
-curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --auto --configs --force
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s -- --auto --configs --force
 
 # Update existing setup
-curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --update
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s -- --update
 ```
 
 ### Project-Specific Setup
 
 ```bash
 # Deno/TypeScript project
-curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --auto --type=deno --configs
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s -- --auto --type=deno --configs
 
 # Node.js project  
-curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --auto --type=node --configs
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s -- --auto --type=node --configs
 
 # Rust project
-curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --auto --type=rust --configs
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s -- --auto --type=rust --configs
 
 # Python project
-curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --auto --type=python --configs
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s -- --auto --type=python --configs
 
 # Go project
-curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --auto --type=go --configs
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s -- --auto --type=go --configs
 ```
 
 ## Manual Installation
@@ -126,10 +138,10 @@ Add these to your `~/.zshrc` or `~/.bashrc` for quick access:
 alias setup-hooks='curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash'
 
 # Full setup with configs
-alias setup-hooks-full='curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --auto --configs'
+alias setup-hooks-full='curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s -- --auto --configs'
 
 # Update existing setup
-alias update-hooks='curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --update'
+alias update-hooks='curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s -- --update'
 
 # Interactive setup
 alias setup-hooks-interactive='curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh -o setup-git-hooks.sh && chmod +x setup-git-hooks.sh && ./setup-git-hooks.sh'
