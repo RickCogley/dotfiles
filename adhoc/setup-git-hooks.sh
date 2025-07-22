@@ -357,7 +357,15 @@ auto_setup() {
 main() {
     check_git_repo
 
-    if [[ "$AUTO_MODE" == true ]]; then
+    # Check if we have interactive stdin (not piped)
+    if [[ "$AUTO_MODE" == true ]] || [[ ! -t 0 ]]; then
+        # Auto mode or piped input - run non-interactively
+        if [[ ! -t 0 ]] && [[ "$AUTO_MODE" != true ]]; then
+            warn "No interactive terminal detected (piped input)"
+            info "Running in auto mode - use --auto flag to suppress this warning"
+            AUTO_MODE=true
+            INSTALL_CONFIGS=true  # Default to installing configs when piped
+        fi
         auto_setup
     else
         interactive_setup

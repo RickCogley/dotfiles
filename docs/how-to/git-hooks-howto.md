@@ -125,9 +125,10 @@ ls -la .githooks/hooks.d/
 For a new project, get instant formatting with sensible defaults:
 
 ```bash
-# From any git repository
 curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash
 ```
+
+**📋 For complete installation options, see: [Installation Commands Reference](git-hooks-install-commands.md)**
 
 ### 2. What You Get
 
@@ -151,37 +152,51 @@ git commit -m "test formatting"
 
 ## Installation Methods
 
-### Method 1: Interactive Installer (Recommended)
+### Method 1: Interactive Installer (Download First)
+
+For the full interactive experience, download and run the script:
 
 ```bash
-# Local installation (if you have dotfiles repo)
-~/.dotfiles/adhoc/setup-git-hooks.sh
+# Download and run interactively
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh -o setup-git-hooks.sh
+chmod +x setup-git-hooks.sh
+./setup-git-hooks.sh
 
-# Remote installation  
-curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash
+# Or from local dotfiles
+~/.dotfiles/adhoc/setup-git-hooks.sh
 ```
 
-**Features:**
-- Detects project type automatically
-- Prompts for what you want to install
-- Handles permissions and git config
+### Method 2: Piped Installation (Auto Mode)
 
-### Method 2: Automated Installation
-
-For scripts or when you know what you want:
+When piping to bash, the script automatically runs in auto mode:
 
 ```bash
-# Install hook only (uses inline defaults)
+# Basic setup (hooks only, with sensible defaults)
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash
+
+# Full setup (hooks + config files) 
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --configs
+```
+
+### Method 3: Explicit Auto Mode
+
+For scripts or when you know exactly what you want:
+
+```bash
+# Hooks only
 curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --auto
 
-# Install hook + config files
+# Hooks + config files
 curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --auto --configs
 
 # Specify project type
 curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --auto --type=deno --configs
+
+# Force overwrite existing files
+curl -fsSL https://raw.githubusercontent.com/rickcogley/dotfiles/main/adhoc/setup-git-hooks.sh | bash -s --auto --configs --force
 ```
 
-### Method 3: Manual Installation
+### Method 4: Manual Installation
 
 ```bash
 # Create hooks directory
@@ -195,7 +210,7 @@ chmod +x .githooks/pre-commit
 git config core.hooksPath .githooks
 ```
 
-### Method 4: Shell Aliases
+### Method 5: Shell Aliases
 
 Add to your `~/.zshrc` or `~/.bashrc`:
 
