@@ -10,12 +10,14 @@ files_changed=false
 # Format TypeScript/JavaScript with Deno
 if command -v deno >/dev/null 2>&1; then
     log_info "Formatting with deno fmt..."
-    if deno fmt --ext=ts,js,tsx,jsx; then
-        if files_modified '*.ts *.js *.tsx *.jsx'; then
+    # Use deno fmt without --ext to respect deno.json configuration
+    if deno fmt; then
+        # Check if any supported files were modified (deno handles exclusions)
+        if files_modified '*.ts *.js *.tsx *.jsx *.md *.json *.jsonc'; then
             files_changed=true
-            log_success "TypeScript/JavaScript formatted"
+            log_success "Files formatted with Deno"
         else
-            log_info "TypeScript/JavaScript already formatted"
+            log_info "Files already formatted"
         fi
     else
         log_error "deno fmt failed"
@@ -32,19 +34,23 @@ elif [ -f "package.json" ] && command -v prettier >/dev/null 2>&1; then
     fi
 fi
 
-# Format Markdown with Prettier
-if command -v prettier >/dev/null 2>&1; then
-    log_info "Formatting Markdown..."
-    if prettier --write '**/*.md' --print-width=100 --prose-wrap=preserve; then
-        if files_modified '*.md'; then
-            files_changed=true
-            log_success "Markdown formatted"
-        else
-            log_info "Markdown already formatted"
+# For Deno projects, skip separate markdown formatting since deno fmt handles it
+# Only do separate markdown formatting for non-Deno projects
+if ! command -v deno >/dev/null 2>&1; then
+    # Format Markdown with Prettier (only if not a Deno project)
+    if command -v prettier >/dev/null 2>&1; then
+        log_info "Formatting Markdown..."
+        if prettier --write '**/*.md' --print-width=100 --prose-wrap=preserve; then
+            if files_modified '*.md'; then
+                files_changed=true
+                log_success "Markdown formatted"
+            else
+                log_info "Markdown already formatted"
+            fi
         fi
+    else
+        log_warn "prettier not found - install with: brew install prettier"
     fi
-else
-    log_warn "prettier not found - install with: brew install prettier"
 fi
 
 # Format other languages based on project type
