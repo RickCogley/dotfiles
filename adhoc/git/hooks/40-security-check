@@ -1,0 +1,36 @@
+#!/bin/sh
+# Security check hook - runs security scans
+# Disabled by default - enable with: chmod +x .githooks/hooks.d/40-security-check
+
+. .githooks/lib/common.sh
+
+echo "    🔒 Running security checks..."
+
+case "$(detect_project_type)" in
+    "node")
+        if [ -f "package.json" ] && command -v npm >/dev/null 2>&1; then
+            log_info "Running npm audit..."
+            if npm audit --audit-level=moderate; then
+                log_success "No security issues found"
+            else
+                log_warn "Security issues detected - review npm audit output"
+                # Don't fail the commit for security issues, just warn
+            fi
+        fi
+        ;;
+    "rust")
+        if command -v cargo >/dev/null 2>&1 && command -v cargo-audit >/dev/null 2>&1; then
+            log_info "Running cargo audit..."
+            if cargo audit; then
+                log_success "No security issues found"
+            else
+                log_warn "Security issues detected - review cargo audit output"
+            fi
+        fi
+        ;;
+    *)
+        log_info "No security scanner configured for this project type"
+        ;;
+esac
+
+exit 0

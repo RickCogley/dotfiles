@@ -1,0 +1,54 @@
+#!/bin/sh
+# Git pre-commit orchestrator - runs all hooks in hooks.d/
+# Individual hooks can be enabled/disabled by making them executable
+
+set -e
+
+HOOKS_DIR=".githooks/hooks.d"
+LIB_DIR=".githooks/lib"
+failed_hooks=()
+
+# Source common functions if available
+if [ -f "$LIB_DIR/common.sh" ]; then
+    . "$LIB_DIR/common.sh"
+fi
+
+echo "🚀 Running pre-commit checks..."
+
+if [ -d "$HOOKS_DIR" ]; then
+    # Run all executable scripts in hooks.d, sorted by name
+    for hook in "$HOOKS_DIR"/*; do
+        if [ -x "$hook" ]; then
+            hook_name=$(basename "$hook")
+            echo "▶️  Running $hook_name..."
+
+            if "$hook"; then
+                echo "  ✅ $hook_name passed"
+            else
+                echo "  ❌ $hook_name failed"
+                failed_hooks="$failed_hooks $hook_name"
+            fi
+        elif [ -f "$hook" ]; then
+            # File exists but not executable - show as skipped
+            hook_name=$(basename "$hook")
+            echo "  ⏭️  Skipping $hook_name (not executable)"
+        fi
+    done
+else
+    echo "  ⚠️  No hooks.d directory found - creating basic structure"
+    mkdir -p "$HOOKS_DIR"
+fi
+
+# Check if any hooks failed
+if [ -n "$failed_hooks" ]; then
+    echo
+    echo "❌ The following hooks failed:$failed_hooks"
+    echo
+    echo "💡 Fix the issues above or:"
+    echo "   • Use 'git commit --no-verify' to bypass hooks"
+    echo "   • Disable specific hooks: chmod -x .githooks/hooks.d/HOOK_NAME"
+    exit 1
+fi
+
+echo "🎉 All pre-commit checks passed!"
+exit 0

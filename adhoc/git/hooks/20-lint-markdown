@@ -1,0 +1,20 @@
+#!/bin/sh
+# Markdown linting hook - checks markdown quality and consistency
+
+. .githooks/lib/common.sh
+
+echo "    🔍 Linting Markdown..."
+
+if command -v markdownlint-cli2 >/dev/null 2>&1; then
+    if markdownlint-cli2 '**/*.md' --config='{"MD013":{"line_length":100,"code_blocks":false},"MD033":false,"MD041":false}'; then
+        log_success "Markdown linting passed"
+    else
+        log_error "Markdown linting failed"
+        exit 1
+    fi
+else
+    log_warn "markdownlint-cli2 not found - install with: brew install markdownlint-cli2"
+    log_info "Skipping markdown linting"
+fi
+
+exit 0

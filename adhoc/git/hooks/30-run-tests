@@ -1,0 +1,48 @@
+#!/bin/sh
+# Test hook - runs project tests
+# Disabled by default - enable with: chmod +x .githooks/hooks.d/30-run-tests
+
+. .githooks/lib/common.sh
+
+echo "    🧪 Running tests..."
+
+case "$(detect_project_type)" in
+    "deno")
+        if command -v deno >/dev/null 2>&1; then
+            log_info "Running Deno tests..."
+            if deno test; then
+                log_success "All tests passed"
+            else
+                log_error "Tests failed"
+                exit 1
+            fi
+        fi
+        ;;
+    "node")
+        if [ -f "package.json" ]; then
+            log_info "Running npm tests..."
+            if npm test; then
+                log_success "All tests passed"
+            else
+                log_error "Tests failed"
+                exit 1
+            fi
+        fi
+        ;;
+    "rust")
+        if command -v cargo >/dev/null 2>&1; then
+            log_info "Running Cargo tests..."
+            if cargo test; then
+                log_success "All tests passed"
+            else
+                log_error "Tests failed"
+                exit 1
+            fi
+        fi
+        ;;
+    *)
+        log_info "No test runner configured for this project type"
+        ;;
+esac
+
+exit 0
