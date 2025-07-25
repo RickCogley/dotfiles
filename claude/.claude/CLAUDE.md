@@ -23,6 +23,7 @@ critical_rules:
   - ALWAYS use InfoSec comments for security-relevant changes
   - NEVER use 'any' type in TypeScript
   - ALWAYS read memory files at session start
+  - ALWAYS read CLAUDE.md in subfolders when working on code there for better context
 
 # General Directives
 directives:
@@ -147,8 +148,9 @@ session_init:
   steps:
     1: "Read global memory (~/.claude/CLAUDE.md)"
     2: "Read project memory (./CLAUDE.md if exists)"
-    3: "Note includeCoAuthoredBy: false setting"
-    4: "Apply all critical rules"
+    3: "Use Glob tool to find all CLAUDE.md files in project subfolders with pattern '**/CLAUDE.md', read and understand their context for the specific code areas they document"
+    4: "Note includeCoAuthoredBy: false setting"
+    5: "Apply all critical rules"
 ```
 
 ## Quick Reference Commands
