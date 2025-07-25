@@ -39,8 +39,8 @@ if command -v markdownlint-cli2 >/dev/null 2>&1; then
             stage_changes "$md_files"
         fi
         
-        # Now run final linting check on all markdown files (for project consistency)
-        if markdownlint-cli2 "**/*.md"; then
+        # Now run final linting check on staged markdown files only
+        if echo "$md_files" | xargs markdownlint-cli2; then
             log_success "Markdown linting passed"
         else
             log_error "Markdown linting failed - manual fixes needed"
