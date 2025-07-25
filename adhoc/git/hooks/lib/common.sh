@@ -35,15 +35,37 @@ files_modified() {
     fi
 }
 
-# Stage modified files
+# Stage modified files (optionally for specific files only)
 stage_changes() {
-    if files_modified; then
-        git add -u
-        log_success "Changes staged"
-        return 0
+    local files="$1"  # Optional: specific files to stage
+    
+    if [ -n "$files" ]; then
+        # Stage only specific files if they were modified by formatting
+        local files_to_stage=""
+        for file in $files; do
+            if [ -f "$file" ] && ! git diff --quiet -- "$file" 2>/dev/null; then
+                files_to_stage="$files_to_stage $file"
+            fi
+        done
+        
+        if [ -n "$files_to_stage" ]; then
+            git add $files_to_stage
+            log_success "Staged formatting changes: $files_to_stage"
+            return 0
+        else
+            log_info "No formatting changes to stage"
+            return 1
+        fi
     else
-        log_info "No files were modified"
-        return 1
+        # Original behavior: stage all modified tracked files
+        if files_modified; then
+            git add -u
+            log_success "Changes staged"
+            return 0
+        else
+            log_info "No files were modified"
+            return 1
+        fi
     fi
 }
 

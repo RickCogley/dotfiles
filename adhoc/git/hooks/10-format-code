@@ -7,50 +7,70 @@
 echo "    🎨 Formatting code..."
 files_changed=false
 
-# Format TypeScript/JavaScript with Deno
-if command -v deno >/dev/null 2>&1; then
-    log_info "Formatting with deno fmt..."
-    # Use deno fmt without --ext to respect deno.json configuration
-    if deno fmt; then
-        # Check if any supported files were modified (deno handles exclusions)
-        if files_modified '*.ts *.js *.tsx *.jsx *.md *.json *.jsonc'; then
-            files_changed=true
-            log_success "Files formatted with Deno"
-        else
-            log_info "Files already formatted"
-        fi
-    else
-        log_error "deno fmt failed"
-        exit 1
-    fi
-elif [ -f "package.json" ] && command -v prettier >/dev/null 2>&1; then
-    # Node.js project - use prettier for JS/TS
-    log_info "Formatting with prettier..."
-    if prettier --write '**/*.{js,ts,tsx,jsx}' --print-width=100 --semi --single-quote=false; then
-        if files_modified '*.js *.ts *.tsx *.jsx'; then
-            files_changed=true
-            log_success "JavaScript/TypeScript formatted"
-        fi
-    fi
+# Get list of staged files to limit formatting scope
+staged_files=$(git diff --cached --name-only)
+if [ -z "$staged_files" ]; then
+    log_info "No staged files to format"
+    exit 0
 fi
 
-# For Deno projects, skip separate markdown formatting since deno fmt handles it
-# Only do separate markdown formatting for non-Deno projects
-if ! command -v deno >/dev/null 2>&1; then
-    # Format Markdown with Prettier (only if not a Deno project)
-    if command -v prettier >/dev/null 2>&1; then
-        log_info "Formatting Markdown..."
-        if prettier --write '**/*.md' --print-width=100 --prose-wrap=preserve; then
-            if files_modified '*.md'; then
-                files_changed=true
-                log_success "Markdown formatted"
+log_info "Staged files: $(echo $staged_files | tr '\n' ' ')"
+
+# Format with Deno (includes TypeScript, JavaScript, Markdown, JSON)
+if command -v deno >/dev/null 2>&1; then
+    log_info "Formatting with deno fmt..."
+    
+    # Filter staged files for Deno-supported extensions
+    deno_files=$(echo "$staged_files" | grep -E '\.(ts|js|tsx|jsx|md|json|jsonc)$' || true)
+    
+    if [ -n "$deno_files" ]; then
+        # Format only the staged files
+        if echo "$deno_files" | xargs deno fmt; then
+            # Check if any of the staged files were modified by formatting
+            for file in $deno_files; do
+                if [ -f "$file" ] && ! git diff --quiet HEAD -- "$file" 2>/dev/null; then
+                    files_changed=true
+                    break
+                fi
+            done
+            
+            if [ "$files_changed" = true ]; then
+                log_success "Staged files formatted with Deno"
             else
-                log_info "Markdown already formatted"
+                log_info "Staged files already formatted"
+            fi
+        else
+            log_error "deno fmt failed"
+            exit 1
+        fi
+    else
+        log_info "No Deno-supported files in staging area"
+    fi
+elif [ -f "package.json" ] && command -v prettier >/dev/null 2>&1; then
+    # Fallback: Node.js project without Deno - use prettier
+    log_info "Formatting with prettier..."
+    
+    # Filter staged files for Prettier-supported extensions
+    prettier_files=$(echo "$staged_files" | grep -E '\.(js|ts|tsx|jsx|md)$' || true)
+    
+    if [ -n "$prettier_files" ]; then
+        if echo "$prettier_files" | xargs prettier --write --print-width=120 --prose-wrap=preserve; then
+            for file in $prettier_files; do
+                if [ -f "$file" ] && ! git diff --quiet HEAD -- "$file" 2>/dev/null; then
+                    files_changed=true
+                    break
+                fi
+            done
+            
+            if [ "$files_changed" = true ]; then
+                log_success "Staged files formatted with Prettier"
             fi
         fi
     else
-        log_warn "prettier not found - install with: brew install prettier"
+        log_info "No Prettier-supported files in staging area"
     fi
+else
+    log_warn "Neither deno nor prettier found - install deno for best experience"
 fi
 
 # Format other languages based on project type
@@ -87,9 +107,9 @@ case "$(detect_project_type)" in
         ;;
 esac
 
-# Stage any changes
+# Stage any changes (only for the originally staged files)
 if [ "$files_changed" = true ]; then
-    stage_changes
+    stage_changes "$staged_files"
 fi
 
 exit 0
