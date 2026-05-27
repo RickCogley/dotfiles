@@ -24,6 +24,9 @@ critical_rules:
   - NEVER use 'any' type in TypeScript
   - ALWAYS read memory files at session start
   - ALWAYS read CLAUDE.md in subfolders when working on code there for better context
+  - ALWAYS check project linting rules BEFORE writing code (deno.json, eslint, etc.)
+  - ALWAYS follow the change management workflow (issue → branch → PR → merge → verify) for non-trivial changes
+  - ALWAYS verify CI and Dependabot after merging to main
 
 # General Directives
 directives:
@@ -72,6 +75,25 @@ security:
 
 # Development Workflow
 workflow:
+  change_management:
+    standard_workflow:
+      - "1. Create or reference a GitHub issue (use change-request template)"
+      - "2. Create feature branch: {type}/{short-description}"
+      - "3. Work on branch, run preflight checks"
+      - "4. Create PR with 'Closes #N' linking to issue"
+      - "5. Merge with: gh pr merge --admin --merge --delete-branch"
+      - "6. Post-merge: check GH CI (gh run list --limit 3), check CF build logs, check Dependabot alerts"
+    fast_track:
+      - "Direct push to main allowed ONLY for: single-file typos, whitespace/formatting, cosmetic copy edits"
+      - "Still requires conventional commit with InfoSec annotation and post-push CI check"
+    rationale: "ISO 27001 A.8.9/A.8.25/A.8.32 — every production change must be traceable from release → PR → issue → commits → CI"
+
+  git_safety:
+    - NEVER use `git stash drop` without first verifying stash contents with `git stash show -p`
+    - When uncommitted changes exist and you need to pull, commit to a temp branch first — do NOT stash-drop-stash
+    - During long sessions with multiple iterations (container builds, deploy cycles), commit working states incrementally rather than accumulating all changes uncommitted
+    - Prefer `git stash pop` (auto-drops on success) over `git stash apply` + manual drop
+
   preflight_checks:
     universal_steps:
       - format      # Code formatting
@@ -91,11 +113,17 @@ workflow:
   
   commit_format:
     pattern: "type(scope): description"
-    types: ["feat", "fix", "docs", "style", "refactor", "test", "chore"]
-    security_annotation: "InfoSec: [security impact/consideration]"
+    types: ["feat", "fix", "docs", "style", "refactor", "test", "chore", "security"]
+    annotation_required: true  # ALWAYS include one of these on the last line
+    annotation_types:
+      - "InfoSec: [security impact or 'no security impact']"
+      - "Quality: [quality consideration, e.g., writing standards compliance]"
+      - "Privacy: [privacy impact or 'no PII handling changes']"
     examples:
-      - "feat: add input validation\\n\\nInfoSec: Prevents injection attacks"
-      - "docs: update README installation steps"  # No InfoSec needed
+      - "feat: add input validation for contact form\\n\\nInfoSec: prevents injection attacks on user-supplied parameters"
+      - "style: remove em dashes from JA content\\n\\nQuality: writing standards compliance per localization guide"
+      - "docs: update README installation steps\\n\\nInfoSec: no security impact — documentation only"
+      - "chore: bump lodash to 4.17.22\\n\\nInfoSec: addresses CVE-2026-XXXX prototype pollution"
 
 # Project Structure
 project_structure:
@@ -152,6 +180,39 @@ session_init:
     4: "Note includeCoAuthoredBy: false setting"
     5: "Apply all critical rules"
 ```
+
+## Cloudflare Workers
+
+Authentication uses a single Account API Token (not OAuth):
+- Token stored in `~/.ssh/tokens/CLOUDFLARE_API_TOKEN`, loaded by `.zshrc`
+- **Never run `wrangler login`** — if `~/.wrangler/config/default.toml` exists, delete it
+- Wrangler reads `CLOUDFLARE_API_TOKEN` env var automatically
+
+**Every `wrangler.jsonc` MUST have `account_id`:**
+
+```jsonc
+{
+  "account_id": "ab2ac8ca4000c79ae4a66377276585be",
+  "name": "worker-name",
+  // ...
+}
+```
+
+Account API tokens cannot call `/memberships` (a user-level endpoint). Without `account_id`, wrangler tries `/memberships` to discover the account and fails with code 9106/10001. This applies to ALL wrangler operations (deploy, R2, D1, secrets, etc.).
+
+**Every Worker should have full observability:**
+
+```jsonc
+"observability": {
+  "enabled": true,
+  "logs": { "enabled": true, "invocation_logs": true, "head_sampling_rate": 1 },
+  "traces": { "enabled": true, "head_sampling_rate": 1 }
+}
+```
+
+**Cloudflare MCP:**
+- Configured at user scope: `claude mcp add --transport http --header "Authorization: Bearer $TOKEN" -s user cloudflare https://mcp.cloudflare.com/mcp`
+- MCP stores the literal token at add-time — must re-add after token rotation
 
 ## Quick Reference Commands
 

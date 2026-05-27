@@ -8,6 +8,7 @@ description: List all available slash commands
 - Aichaku commands: !`ls ~/.claude/commands/aichaku/ 2>/dev/null | sed 's/\.md$//' | sed 's/^/- \/aichaku:/' || echo "No aichaku commands found"`
 - Security commands: !`ls ~/.claude/commands/security/ 2>/dev/null | sed 's/\.md$//' | sed 's/^/- \/security:/' || echo "No security commands found"`
 - Development commands: !`ls ~/.claude/commands/dev/ 2>/dev/null | sed 's/\.md$//' | sed 's/^/- \/dev:/' || echo "No dev commands found"`
+- Standards commands: !`ls ~/.claude/commands/standards/ 2>/dev/null | sed 's/\.md$//' | sed 's/^/- \/standards:/' || echo "No standards commands found"`
 - Utility commands: !`ls ~/.claude/commands/utils/ 2>/dev/null | sed 's/\.md$//' | sed 's/^/- \/utils:/' || echo "No utils commands found"`
 
 ## Your task
