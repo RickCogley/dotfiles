@@ -24,7 +24,7 @@ log_info "Staged markdown files: $(echo $md_files | tr '\n' ' ')"
 if command -v markdownlint-cli2 >/dev/null 2>&1; then
     # Auto-fix simple markdown issues for staged files only
     log_info "Auto-fixing markdown issues..."
-    if echo "$md_files" | xargs markdownlint-cli2 --fix; then
+    if echo "$md_files" | xargs markdownlint-cli2 --fix --no-globs; then
         # Check if any staged files were modified by the fixes
         files_changed=false
         for file in $md_files; do
@@ -40,7 +40,7 @@ if command -v markdownlint-cli2 >/dev/null 2>&1; then
         fi
         
         # Now run final linting check on staged markdown files only
-        if echo "$md_files" | xargs markdownlint-cli2; then
+        if echo "$md_files" | xargs markdownlint-cli2 --no-globs; then
             log_success "Markdown linting passed"
         else
             log_error "Markdown linting failed - manual fixes needed"

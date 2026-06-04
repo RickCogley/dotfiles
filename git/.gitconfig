@@ -10,6 +10,7 @@
 	excludesfile = ~/.gitignore_global
 	whitespace = trailing-space,space-before-tab
 	pager = bat
+	hooksPath = ~/.githooks
 [alias]
   co = checkout
   ci = commit
@@ -52,8 +53,7 @@
 [credential]
 	helper = osxkeychain
 [gpg]
-	program = gpg
-	format = openpgp
+	format = ssh
 [commit]
 	gpgsign = true
 	template = ~/.gitmessage

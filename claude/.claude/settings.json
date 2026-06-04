@@ -1,4 +1,8 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "ENABLE_LSP_TOOL": "1"
+  },
   "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
@@ -88,6 +92,9 @@
       "Bash(which:*)",
       "Bash(xargs:*)",
       "Bash(yarn:*)",
+      "Edit(/Users/rcogley/dev/devkit/**)",
+      "Read(/Users/rcogley/dev/devkit/**)",
+      "Write(/Users/rcogley/dev/devkit/**)",
       "WebFetch(domain:*.github.io)",
       "WebFetch(domain:docs.anthropic.com)",
       "WebFetch(domain:docs.deno.com)",
@@ -115,6 +122,7 @@
       "Bash(killall:*)"
     ]
   },
+  "model": "opus[1m]",
   "hooks": {
     "PreCompact": [
       {
@@ -147,5 +155,26 @@
       }
     ]
   },
-  "model": "sonnet"
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/starship-style-statusline.sh"
+  },
+  "enabledPlugins": {
+    "typescript-lsp@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "sentry@claude-plugins-official": true,
+    "semgrep@claude-plugins-official": true
+  },
+  "alwaysThinkingEnabled": true,
+  "skipDangerousModePermissionPrompt": true,
+  "feedbackSurveyState": {
+    "lastShownTime": 1754078154327
+  },
+  "theme": "light",
+  "verbose": false,
+  "preferredNotifChannel": "iterm2_with_bell"
 }

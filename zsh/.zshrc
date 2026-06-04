@@ -28,18 +28,10 @@ else
 fi
 
 # Perform anything that needs console IO
-if [[ -e ~/.homebrew_github_api_token ]]; then
-    export HOMEBREW_GITHUB_API_TOKEN="$(cat ~/.homebrew_github_api_token)"
-fi
-if [[ -e ~/.homebrew_github_api_token ]]; then
-    export GITHUB_TOKEN="$(cat ~/.homebrew_github_api_token)"
-fi
-if [[ -e ~/.ssh/tokens/PRODB15331TOKEN2411 ]]; then
-    export PRODB15331TOKEN2411="$(cat ~/.ssh/tokens/PRODB15331TOKEN2411)"
-fi
-if [[ -e ~/.ssh/tokens/API_KEY_01 ]]; then
-    export API_KEY_01="$(cat ~/.ssh/tokens/API_KEY_01)"
-fi
+# via .envrc direnv now
+
+
+
 
 # Export environment variables
 export LANG=ja_JP.UTF-8
@@ -292,7 +284,62 @@ alias release-dates='git tag -l --sort=-version:refname --format="%(refname:shor
 
 # Claude
 export PATH="$HOME/.claude/local:$PATH"
+export ENABLE_LSP_TOOL=1
 alias claude-with-dirs='claude --add-dir $HOME/.claude/ --add-dir $HOME/dev/aichaku --add-dir $HOME/dev/nagare --add-dir $HOME/dev/salty.esolia.pro-dd $HOME/.dotfiles'
 
 # .NET Core SDK tools
 export PATH="$PATH:$HOME/.dotnet/tools"
+
+# pnpm
+export PNPM_HOME="/Users/rcogley/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+. "$HOME/.local/share/../bin/env"
+
+# Azure subscription switcher. direnv/.envrc exports a canonical
+# AZURE_SUBSCRIPTION_ID per project (same override pattern as the
+# CLOUDFLARE_* tokens). `azsub` syncs the az CLI's active subscription
+# to it; pass an explicit id/name to override.
+#   azsub            switch to $AZURE_SUBSCRIPTION_ID (project default)
+#   azsub <id|name>  switch to a specific subscription
+# Internal: print the active az subscription context in a form that
+# always shows the canonical ID alongside the friendly name. `az -o table`
+# silently drops columns when its width heuristic decides the table is too
+# wide, which hides the ID and produces wrong-sub mistakes. printf'ing the
+# fields ourselves is the only reliable way to keep both visible.
+_azsub_print_active() {
+  local name id tenant
+  name="$(az account show --query name -o tsv 2>/dev/null)" || return $?
+  id="$(az account show --query id -o tsv)"
+  tenant="$(az account show --query tenantId -o tsv)"
+  printf '  subscription: %s (%s)\n' "$name" "$id"
+  printf '  tenant:       %s\n' "$tenant"
+}
+
+azsub() {
+  local sub="${1:-$AZURE_SUBSCRIPTION_ID}"
+  if [[ -z "$sub" ]]; then
+    echo "AZURE_SUBSCRIPTION_ID not set — is direnv loaded for this project?" >&2
+    _azsub_print_active
+    return 1
+  fi
+  az account set --subscription "$sub" || return $?
+  _azsub_print_active
+  # Loudly indicate whether the now-active sub matches direnv's expectation
+  # (catches the case where someone passed an explicit override that doesn't
+  # match the project, or where direnv isn't loaded in this shell).
+  if [[ -n "$AZURE_SUBSCRIPTION_ID" ]]; then
+    local active_id
+    active_id="$(az account show --query id -o tsv)"
+    if [[ "$active_id" == "$AZURE_SUBSCRIPTION_ID" ]]; then
+      printf '\033[1;32m✓\033[0m active sub matches $AZURE_SUBSCRIPTION_ID (direnv)\n'
+    else
+      printf '\033[1;31m✗\033[0m active sub (%s) does NOT match $AZURE_SUBSCRIPTION_ID (%s)\n' \
+        "$active_id" "$AZURE_SUBSCRIPTION_ID" >&2
+    fi
+  fi
+}

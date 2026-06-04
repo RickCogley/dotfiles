@@ -1,36 +1,221 @@
-#!/bin/sh
-# Security check hook - runs security scans
-# Disabled by default - enable with: chmod +x .githooks/hooks.d/40-security-check
+#!/bin/bash
+# Security check hook - runs security scans via MCP HTTP bridge or direct scanners
+# Enable with: chmod +x .githooks/hooks.d/40-security-check
 
 . .githooks/lib/common.sh
 
 echo "    🔒 Running security checks..."
 
-case "$(detect_project_type)" in
-    "node")
-        if [ -f "package.json" ] && command -v npm >/dev/null 2>&1; then
-            log_info "Running npm audit..."
-            if npm audit --audit-level=moderate; then
-                log_success "No security issues found"
-            else
-                log_warn "Security issues detected - review npm audit output"
-                # Don't fail the commit for security issues, just warn
-            fi
-        fi
-        ;;
-    "rust")
-        if command -v cargo >/dev/null 2>&1 && command -v cargo-audit >/dev/null 2>&1; then
-            log_info "Running cargo audit..."
-            if cargo audit; then
-                log_success "No security issues found"
-            else
-                log_warn "Security issues detected - review cargo audit output"
-            fi
-        fi
-        ;;
-    *)
-        log_info "No security scanner configured for this project type"
-        ;;
-esac
+# Function to check if MCP HTTP bridge is running
+check_mcp_bridge() {
+    if command -v curl >/dev/null 2>&1; then
+        curl -s -f http://localhost:7182/health >/dev/null 2>&1
+        return $?
+    else
+        # Fallback: check if process exists
+        pgrep -f "http-server.ts" >/dev/null 2>&1
+        return $?
+    fi
+}
 
-exit 0
+# Function to scan files via MCP HTTP bridge
+scan_via_mcp_bridge() {
+    local files="$1"
+    local session_id=$(uuidgen 2>/dev/null || echo "git-hook-$$-$(date +%s)")
+    
+    log_info "Using MCP HTTP bridge for security scanning..."
+    
+    # Initialize session
+    local response=$(curl -s -X POST http://localhost:7182/rpc \
+        -H "Content-Type: application/json" \
+        -H "X-Session-ID: $session_id" \
+        -d '{
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "initialize",
+            "params": {
+                "protocolVersion": "0.1.0",
+                "capabilities": {},
+                "clientInfo": {
+                    "name": "git-hook",
+                    "version": "1.0.0"
+                }
+            }
+        }' 2>/dev/null)
+    
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
+    
+    # Scan each file
+    local has_critical=0
+    local has_high=0
+    
+    for file in $files; do
+        if [ -f "$file" ]; then
+            log_info "Scanning $file..."
+            
+            # Read file content
+            local content=$(git show ":$file" 2>/dev/null || cat "$file")
+            
+            # Send review request
+            response=$(curl -s -X POST http://localhost:7182/rpc \
+                -H "Content-Type: application/json" \
+                -H "X-Session-ID: $session_id" \
+                -d "$(cat <<EOF
+{
+    "jsonrpc": "2.0",
+    "id": 2,
+    "method": "tools/call",
+    "params": {
+        "name": "review_file",
+        "arguments": {
+            "file": "$file",
+            "content": $(echo "$content" | jq -Rs .),
+            "includeExternal": true
+        }
+    }
+}
+EOF
+            )" 2>/dev/null)
+            
+            if [ -n "$response" ]; then
+                # Parse security findings
+                local findings=$(echo "$response" | jq -r '.result.content[0].text' 2>/dev/null | grep -E "(CRITICAL|HIGH|MEDIUM):" || true)
+                
+                if echo "$findings" | grep -q "CRITICAL:"; then
+                    has_critical=1
+                    log_error "Critical security issue in $file"
+                    echo "$findings" | grep "CRITICAL:" | head -5
+                elif echo "$findings" | grep -q "HIGH:"; then
+                    has_high=1
+                    log_warn "High severity issue in $file"
+                    echo "$findings" | grep "HIGH:" | head -3
+                fi
+            fi
+        fi
+    done
+    
+    # Close session
+    curl -s -X DELETE http://localhost:7182/session \
+        -H "X-Session-ID: $session_id" >/dev/null 2>&1
+    
+    if [ $has_critical -eq 1 ]; then
+        return 1
+    fi
+    
+    return 0
+}
+
+# Function to run direct scanner (fallback)
+run_direct_scanners() {
+    local files="$1"
+    local has_issues=0
+    
+    log_info "MCP bridge not available, using direct scanners..."
+    
+    # Check for semgrep
+    if command -v semgrep >/dev/null 2>&1; then
+        log_info "Running Semgrep security scan..."
+        
+        # Create temp directory for staged files
+        local scan_dir=$(mktemp -d)
+        trap "rm -rf $scan_dir" EXIT
+        
+        # Copy staged files
+        for file in $files; do
+            if [ -f "$file" ]; then
+                mkdir -p "$scan_dir/$(dirname "$file")"
+                git show ":$file" > "$scan_dir/$file" 2>/dev/null || cp "$file" "$scan_dir/$file"
+            fi
+        done
+        
+        # Run semgrep
+        local semgrep_output=$(semgrep --config=auto --json --quiet "$scan_dir" 2>/dev/null || true)
+        
+        if [ -n "$semgrep_output" ] && echo "$semgrep_output" | jq -e '.results | length > 0' >/dev/null 2>&1; then
+            local critical_count=$(echo "$semgrep_output" | jq '[.results[] | select(.extra.severity == "ERROR")] | length' 2>/dev/null || echo "0")
+            local high_count=$(echo "$semgrep_output" | jq '[.results[] | select(.extra.severity == "WARNING")] | length' 2>/dev/null || echo "0")
+            
+            if [ "$critical_count" -gt 0 ]; then
+                log_error "Semgrep found $critical_count critical issues"
+                echo "$semgrep_output" | jq -r '.results[] | select(.extra.severity == "ERROR") | "  [\(.extra.severity)] \(.path):\(.start.line) - \(.extra.message // .check_id)"' 2>/dev/null | head -5
+                has_issues=1
+            elif [ "$high_count" -gt 0 ]; then
+                log_warn "Semgrep found $high_count high severity issues"
+                echo "$semgrep_output" | jq -r '.results[] | select(.extra.severity == "WARNING") | "  [\(.extra.severity)] \(.path):\(.start.line) - \(.extra.message // .check_id)"' 2>/dev/null | head -3
+            fi
+        else
+            log_success "Semgrep: No security issues found"
+        fi
+    fi
+    
+    # Check for gitleaks
+    if command -v gitleaks >/dev/null 2>&1; then
+        log_info "Running Gitleaks for secret detection..."
+        
+        if gitleaks detect --no-git --quiet 2>/dev/null; then
+            log_success "Gitleaks: No secrets found"
+        else
+            log_error "Gitleaks detected potential secrets!"
+            gitleaks detect --no-git --verbose 2>&1 | grep -A2 "Secret:" | head -10
+            has_issues=1
+        fi
+    fi
+    
+    # Basic pattern checks as last resort
+    if ! command -v semgrep >/dev/null 2>&1 && ! command -v gitleaks >/dev/null 2>&1; then
+        log_info "Running basic security pattern checks..."
+        
+        for file in $files; do
+            if [ -f "$file" ] && [[ "$file" =~ \.(js|ts|py|go|java|rb)$ ]]; then
+                local content=$(git show ":$file" 2>/dev/null || cat "$file")
+                
+                # Check for hardcoded secrets
+                if echo "$content" | grep -iE "(api[_-]?key|secret|password|token)\s*=\s*[\"'][^\"']+[\"']" >/dev/null 2>&1; then
+                    log_warn "Potential hardcoded secret in $file"
+                fi
+                
+                # Check for dangerous functions
+                if echo "$content" | grep -E "(eval\(|exec\(|system\(|\\\$_GET|\\\$_POST)" >/dev/null 2>&1; then
+                    log_warn "Potentially dangerous function in $file"
+                fi
+            fi
+        done
+    fi
+    
+    return $has_issues
+}
+
+# Main logic
+# Get list of staged files
+staged_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|js|jsx|tsx|py|go|java|cs|rb|rs|cpp|c|h|hpp)$' || true)
+
+if [ -z "$staged_files" ]; then
+    log_info "No code files to scan"
+    exit 0
+fi
+
+# Count files
+file_count=$(echo "$staged_files" | wc -l | tr -d ' ')
+log_info "Found $file_count file(s) to scan"
+
+# Try MCP bridge first
+if check_mcp_bridge; then
+    if scan_via_mcp_bridge "$staged_files"; then
+        log_success "Security scan passed"
+        exit 0
+    else
+        log_error "Security issues found - fix before committing"
+        exit 1
+    fi
+else
+    # Fall back to direct scanners
+    if run_direct_scanners "$staged_files"; then
+        log_success "Security scan passed"
+        exit 0
+    else
+        log_error "Security issues found - fix before committing"
+        exit 1
+    fi
+fi
