@@ -1,0 +1,155 @@
+#!/usr/bin/env bash
+#
+# claude-scan — flag risky Claude Code project config before you open an
+# untrusted repo. Defends against the .claude/settings.json hooks-RCE and
+# ANTHROPIC_BASE_URL key-exfiltration vectors (CVE-2025-59536 /
+# CVE-2026-21852). The CVEs themselves are patched in Claude Code >=2.0.65,
+# but a malicious project config remains attacker-controlled code; review it
+# the way you'd review a Makefile or a postinstall script.
+#
+# Usage:
+#   claude-scan [DIR]        scan DIR (default: current dir); exit 1 if findings
+#   claude-scan -q [DIR]     quiet: only print on findings (for wrappers)
+#   claude-scan -h           help
+#
+# Exit codes: 0 = clean, 1 = findings to review, 2 = usage/error.
+#
+# InfoSec: read-only detective control. Reports only; never executes, edits,
+# or trusts the scanned tree. No network calls, no secrets touched.
+
+set -euo pipefail
+
+QUIET=0
+while getopts ":qh" opt; do
+  case "$opt" in
+    q) QUIET=1 ;;
+    h)
+      grep '^#' "$0" | sed '1d;s/^# \{0,1\}//'
+      exit 0
+      ;;
+    *) echo "claude-scan: unknown option -$OPTARG" >&2; exit 2 ;;
+  esac
+done
+shift $((OPTIND - 1))
+
+DIR="${1:-.}"
+if [[ ! -d "$DIR" ]]; then
+  echo "claude-scan: not a directory: $DIR" >&2
+  exit 2
+fi
+
+# Colors only when stdout is a terminal.
+if [[ -t 1 ]]; then
+  BOLD=$'\033[1m'; RED=$'\033[31m'; YEL=$'\033[33m'; GRN=$'\033[32m'; DIM=$'\033[2m'; RST=$'\033[0m'
+else
+  BOLD=""; RED=""; YEL=""; GRN=""; DIM=""; RST=""
+fi
+
+# Directories never worth scanning — heavy and not where Claude reads config.
+PRUNE=(.git node_modules vendor .venv dist build .next .svelte-kit target)
+
+FINDINGS=0
+note() { FINDINGS=$((FINDINGS + 1)); }
+
+# Build a find prune expression from PRUNE.
+prune_expr=()
+for d in "${PRUNE[@]}"; do
+  prune_expr+=(-name "$d" -o)
+done
+unset 'prune_expr[${#prune_expr[@]}-1]'  # drop trailing -o
+
+# Collect candidate files: Claude/MCP config by name.
+config_files=()
+while IFS= read -r f; do
+  config_files+=("$f")
+done < <(find "$DIR" \( "${prune_expr[@]}" \) -prune -o \
+  -type f \( \
+    -name 'settings.json' -path '*/.claude/*' -o \
+    -name 'settings.local.json' -path '*/.claude/*' -o \
+    -name '.mcp.json' -o \
+    -name '.claude.json' \
+  \) -print 2>/dev/null | sort)
+
+# Claude hook directories.
+hook_dirs=()
+while IFS= read -r d; do
+  [[ -n "$d" ]] && hook_dirs+=("$d")
+done < <(find "$DIR" \( "${prune_expr[@]}" \) -prune -o \
+  -type d -path '*/.claude/hooks' -print 2>/dev/null | sort)
+
+# Dangerous string indicators anywhere in the tree (excluding pruned dirs).
+declare -a DANGER_PATTERNS=(
+  'ANTHROPIC_BASE_URL'
+  'ANTHROPIC_API_KEY'
+  'ANTHROPIC_AUTH_TOKEN'
+  'enableAllProjectMcpServers'
+)
+
+header() {
+  [[ $QUIET -eq 1 && $FINDINGS -eq 0 ]] && return 0
+  echo "${BOLD}claude-scan${RST} ${DIM}$(cd "$DIR" && pwd)${RST}"
+}
+
+# --- Report config files ---
+if [[ ${#config_files[@]} -gt 0 ]]; then
+  header
+  echo
+  echo "${YEL}● Claude/MCP project config present${RST} (attacker-controllable if cloned):"
+  for f in "${config_files[@]}"; do
+    note
+    rel="${f#"$DIR"/}"
+    echo "  ${BOLD}$rel${RST}"
+    # Surface the genuinely dangerous keys if present.
+    if grep -Eq '"hooks"|enableAllProjectMcpServers|ANTHROPIC_BASE_URL|ANTHROPIC_API_KEY' "$f" 2>/dev/null; then
+      grep -nE '"hooks"|enableAllProjectMcpServers|ANTHROPIC_BASE_URL|ANTHROPIC_API_KEY' "$f" 2>/dev/null \
+        | sed "s/^/      ${RED}!${RST} /"
+    fi
+  done
+fi
+
+# --- Report hook dirs ---
+if [[ ${#hook_dirs[@]} -gt 0 ]]; then
+  [[ $FINDINGS -eq 0 ]] && header
+  echo
+  echo "${YEL}● Claude hook scripts present${RST} (run automatically by Claude Code):"
+  for d in "${hook_dirs[@]}"; do
+    note
+    rel="${d#"$DIR"/}"
+    echo "  ${BOLD}$rel/${RST}"
+    find "$d" -maxdepth 1 -type f -print 2>/dev/null | sed "s|^$d/|      |"
+  done
+fi
+
+# --- Report dangerous strings (files not already listed) ---
+danger_hits=""
+for pat in "${DANGER_PATTERNS[@]}"; do
+  hits=$(grep -rIlF --exclude-dir=.git --exclude-dir=node_modules \
+    --exclude-dir=vendor --exclude-dir=.venv --exclude-dir=dist \
+    --exclude-dir=build --exclude-dir=.next --exclude-dir=.svelte-kit \
+    --exclude-dir=target "$pat" "$DIR" 2>/dev/null || true)
+  if [[ -n "$hits" ]]; then
+    danger_hits+="$pat"$'\n'"$hits"$'\n'
+  fi
+done
+if [[ -n "$danger_hits" ]]; then
+  [[ $FINDINGS -eq 0 ]] && header
+  note
+  echo
+  echo "${RED}● Credential/redirect indicators found in tree:${RST}"
+  printf '%s' "$danger_hits" | sed "s/^/  /"
+fi
+
+# --- Verdict ---
+if [[ $FINDINGS -eq 0 ]]; then
+  if [[ $QUIET -eq 0 ]]; then
+    header
+    echo "  ${GRN}✓ clean${RST} — no Claude/MCP project config, hooks, or credential indicators."
+  fi
+  exit 0
+fi
+
+echo
+echo "${BOLD}Review the files above before opening this repo in Claude Code.${RST}"
+echo "${DIM}If you didn't author them and don't fully trust the source, delete the${RST}"
+echo "${DIM}.claude/ and .mcp.json entries or open the repo without Claude Code.${RST}"
+exit 1
