@@ -1,0 +1,37 @@
+# claude-safe — scan a repo for risky Claude Code config, then launch Claude
+# Code only if it's clean or you confirm. Use this instead of bare `claude`
+# when opening a repo you didn't author.
+#
+#   claude-safe [DIR] [-- claude args...]
+#
+# Examples:
+#   claude-safe                 # scan ./ then launch claude here
+#   claude-safe ~/dev/some-clone
+#   claude-safe . -- --model opus
+#
+# InfoSec: gate around the .claude/settings.json hooks-RCE and
+# ANTHROPIC_BASE_URL exfiltration vectors. Detective + confirm; never auto-trusts.
+
+local dir="."
+local -a claude_args
+if [[ "$1" != "--" && -n "$1" ]]; then
+  dir="$1"; shift
+fi
+if [[ "$1" == "--" ]]; then
+  shift; claude_args=("$@")
+fi
+
+if claude-scan "$dir"; then
+  ( cd "$dir" && claude "${claude_args[@]}" )
+  return $?
+fi
+
+echo
+if read -q "REPLY?Open this repo in Claude Code anyway? [y/N] "; then
+  echo
+  ( cd "$dir" && claude "${claude_args[@]}" )
+  return $?
+fi
+echo
+echo "Aborted."
+return 1
