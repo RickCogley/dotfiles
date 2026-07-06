@@ -102,19 +102,7 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:jsr.io)",
       "WebFetch(domain:modelcontextprotocol.io)",
-      "WebFetch(domain:www.contributor-covenant.org)",
-      "mcp__aichaku-reviewer__get_standards",
-      "mcp__aichaku-reviewer__review_file",
-      "mcp__aichaku-reviewer__review_methodology",
-      "mcp__github-operations__run_list",
-      "mcp__github-operations__run_view",
-      "mcp__github-operations__run_watch",
-      "mcp__test-formatting__test_ansi",
-      "mcp__test-formatting__test_json",
-      "mcp__test-formatting__test_markdown",
-      "mcp__test-formatting__test_plain",
-      "mcp__test-formatting__test_structured",
-      "mcp__test-formatting__test_unicode"
+      "WebFetch(domain:www.contributor-covenant.org)"
     ],
     "deny": [
       "Bash(rm -rf:*)",
@@ -122,39 +110,7 @@
       "Bash(killall:*)"
     ]
   },
-  "model": "opus[1m]",
-  "hooks": {
-    "PreCompact": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "deno run --allow-read --allow-write --allow-env --allow-run ~/.claude/aichaku/hooks/aichaku-hooks.ts conversation-summary"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Write|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "deno run --allow-read --allow-write --allow-env ~/.claude/aichaku/hooks/aichaku-hooks.ts path-validator"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash(git commit:*)",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "deno run --allow-read --allow-write --allow-env ~/.claude/aichaku/hooks/aichaku-hooks.ts commit-validator"
-          }
-        ]
-      }
-    ]
-  },
+  "model": "fable",
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/starship-style-statusline.sh"
@@ -170,11 +126,12 @@
     "semgrep@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
+  "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
-  "feedbackSurveyState": {
-    "lastShownTime": 1754078154327
-  },
   "theme": "light",
   "verbose": false,
-  "preferredNotifChannel": "iterm2_with_bell"
+  "preferredNotifChannel": "iterm2_with_bell",
+  "feedbackSurveyState": {
+    "lastShownTime": 1754078154327
+  }
 }
