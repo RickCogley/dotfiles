@@ -1,9 +1,5 @@
 ---
-description: Mermaid diagram creation with compact, professional styling
-paths:
-  - "**/*.md"
-  - "**/*.mmd"
-  - "**/*.mermaid"
+description: Mermaid diagram style guide — compact, professional styling. Use whenever creating or editing a Mermaid diagram (flowchart, sequence, state, gantt, ER), BEFORE writing the diagram code.
 ---
 
 # Mermaid Diagram Style Guide
