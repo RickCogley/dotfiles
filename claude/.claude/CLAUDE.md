@@ -48,20 +48,8 @@ directives:
 # Security Standards
 security:
   frameworks:
-    - OWASP Top 10 (mandatory verification)
+    - OWASP Top 10 (mandatory verification - run the security:owasp skill for the full checklist)
     - ISO 27001 (compliance documentation)
-  
-  owasp_checklist:
-    A01_access_control: "Validate authorization, least privilege"
-    A02_crypto_failures: "Strong encryption, secure key management"
-    A03_injection: "Parameterized queries, input sanitization"
-    A04_insecure_design: "Security-first architecture"
-    A05_misconfig: "Secure defaults, proper error handling"
-    A06_vulnerable_components: "Dependency auditing"
-    A07_auth_failures: "Strong authentication mechanisms"
-    A08_data_integrity: "Validate processing operations"
-    A09_logging_failures: "Log security events, no sensitive data"
-    A10_ssrf: "Validate external requests"
   
   infosec_comments_required_for:
     - Input validation/sanitization changes
@@ -75,18 +63,7 @@ security:
 
 # Development Workflow
 workflow:
-  change_management:
-    standard_workflow:
-      - "1. Create or reference a GitHub issue (use change-request template)"
-      - "2. Create feature branch: {type}/{short-description}"
-      - "3. Work on branch, run preflight checks"
-      - "4. Create PR with 'Closes #N' linking to issue"
-      - "5. Merge with: gh pr merge --admin --merge --delete-branch"
-      - "6. Post-merge: check GH CI (gh run list --limit 3), check CF build logs, check Dependabot alerts"
-    fast_track:
-      - "Direct push to main allowed ONLY for: single-file typos, whitespace/formatting, cosmetic copy edits"
-      - "Still requires conventional commit with InfoSec annotation and post-push CI check"
-    rationale: "ISO 27001 A.8.9/A.8.25/A.8.32 — every production change must be traceable from release → PR → issue → commits → CI"
+  change_management: "See ~/.claude/rules/change-management.md (always loaded) for the full issue → branch → PR → merge → verify workflow, fast-track exceptions, and branching safety"
 
   git_safety:
     - NEVER use `git stash drop` without first verifying stash contents with `git stash show -p`
@@ -95,21 +72,8 @@ workflow:
     - Prefer `git stash pop` (auto-drops on success) over `git stash apply` + manual drop
 
   preflight_checks:
-    universal_steps:
-      - format      # Code formatting
-      - lint        # Style/quality checks
-      - typecheck   # Type validation
-      - test        # Run test suite
-      - audit       # Security vulnerabilities
-    
-    language_commands:
-      deno: ["deno fmt", "deno check **/*.ts", "deno lint", "deno test"]
-      node: ["npm run format", "npm run lint", "npm run type-check", "npm test", "npm audit"]
-      python: ["black .", "mypy .", "flake8", "pytest", "safety check"]
-      go: ["go fmt ./...", "go vet ./...", "golint ./...", "go test ./...", "govulncheck ./..."]
-      rust: ["cargo fmt", "cargo clippy", "cargo test", "cargo audit"]
-      java: ["./gradlew spotlessApply", "./gradlew checkstyleMain", "./gradlew test", "./gradlew dependencyCheckAnalyze"]
-      csharp: ["dotnet format", "dotnet build", "dotnet test"]
+    universal_steps: [format, lint, typecheck, test, audit]
+    reference: "Run the dev:preflight skill for per-language commands; prefer the project's own task runner (deno task, npm run) when defined"
   
   commit_format:
     pattern: "type(scope): description"
@@ -214,15 +178,15 @@ Account API tokens cannot call `/memberships` (a user-level endpoint). Without `
 - Configured at user scope: `claude mcp add --transport http --header "Authorization: Bearer $TOKEN" -s user cloudflare https://mcp.cloudflare.com/mcp`
 - MCP stores the literal token at add-time — must re-add after token rotation
 
-## Quick Reference Commands
+## Working Habits (model-agnostic, mandatory on Opus/Sonnet)
 
-```bash
-# Before ANY commit, run appropriate preflight:
-deno fmt && deno check **/*.ts && deno lint && deno test     # Deno
-npm run format && npm run lint && npm test && npm audit      # Node.js
-black . && mypy . && flake8 && pytest && safety check        # Python
-# ... etc
-```
+Before starting any non-trivial task, apply these:
+
+1. **Plan first** — use plan mode for multi-file or architectural work; present the plan before executing
+2. **Delegate searches** — use Explore subagents for broad codebase searches instead of reading many files into the main context
+3. **Verify changes** — run /code-review (or the verify skill) after non-trivial changes before committing
+4. **Keep context lean** — suggest /clear between unrelated tasks; prefer skills over pasting reference material
+5. **Think deeply when it matters** — for hard design or debugging problems, reason step-by-step before acting
 
 ## Override Hierarchy
 
