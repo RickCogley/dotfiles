@@ -56,8 +56,17 @@ _up_brew() {
 }
 
 _up_claude() { _up_note "claude update"; claude update; }
-_up_deno()   { _up_note "deno upgrade";  deno upgrade; }
 _up_rust()   { _up_note "rustup update"; rustup update; }
+
+# Deno is managed by dvm, so `deno upgrade` is wrong here: it overwrites the
+# dvm-managed binary in place and leaves dvm's version list out of sync with
+# what `deno --version` actually reports.
+_up_deno() {
+  _up_note "dvm upgrade self"
+  dvm upgrade self || return 1
+  _up_note "dvm upgrade (all aliases to latest)"
+  dvm upgrade
+}
 
 _up_npm() {
   _up_note "global packages"
@@ -91,7 +100,7 @@ for s in $requested; do
   case $s in
     brew)   _up_run "Homebrew"        brew    _up_brew   ;;
     claude) _up_run "Claude Code"     claude  _up_claude ;;
-    deno)   _up_run "Deno"            deno    _up_deno   ;;
+    deno)   _up_run "Deno (via dvm)"  dvm     _up_deno   ;;
     npm)    _up_run "npm globals"     npm     _up_npm    ;;
     rust)   _up_run "Rust"            rustup  _up_rust   ;;
     gh)     _up_run "gh extensions"   gh      _up_gh     ;;

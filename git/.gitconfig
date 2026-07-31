@@ -6,10 +6,8 @@
 [core]
 	autocrlf = input
 	safecrlf = true
-	# zed-preview is the brew-managed CLI from the zed@preview cask, so it is the
-	# reproducible name on a fresh machine. (/usr/local/bin/zed also points at
-	# Zed Preview, but is root-owned and installed by the app itself.)
-	editor = zed-preview --wait
+	# No core.editor: git falls back to $EDITOR, which .zshrc sets to vim. Commit
+	# messages stay in the terminal instead of opening a GUI editor.
 	excludesfile = ~/.gitignore_global
 	whitespace = trailing-space,space-before-tab
 	# delta, not bat: bat highlights the diff as if it were source text, so +/-

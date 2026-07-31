@@ -9,9 +9,18 @@ else
     PS1='%n@%m %~ %# '
 fi
 
-# Load znap
-[[ -r ~/dev/zsh-snap/znap.zsh ]] || git clone --depth 1 https://github.com/marlonrichert/zsh-snap ~/dev/zsh-snap
-source ~/dev/zsh-snap/znap.zsh
+# Load znap.
+#
+# repos-dir must be set before sourcing. znap defaults it to the *parent* of
+# znap.zsh, so cloning into ~/dev/zsh-snap made ~/dev the plugin store — and
+# ~/dev holds 48 real project repos. `znap pull` then ran git pull --rebase
+# across all of them, including esolia-secrets. Pin it to a dedicated cache dir
+# so plugin updates cannot touch working repos.
+zstyle ':znap:*' repos-dir ~/.cache/zsh-snap
+
+[[ -r ~/.cache/zsh-snap/zsh-snap/znap.zsh ]] ||
+  git clone --depth 1 https://github.com/marlonrichert/zsh-snap ~/.cache/zsh-snap/zsh-snap
+source ~/.cache/zsh-snap/zsh-snap/znap.zsh
 
 # Load plugins with znap (auto-installs if needed)
 znap source zsh-users/zsh-autosuggestions
@@ -19,12 +28,15 @@ znap source zsh-users/zsh-syntax-highlighting
 # Skip autocomplete for now as it may conflict
 # znap source marlonrichert/zsh-autocomplete
 
-# Archive plugin - only load if already cloned
+# romkatv/archive ships executables (archive, lsarchive, unarchive) plus their
+# completions — there is no sourceable plugin file, so `znap source` fails on it
+# with "file not found". That failure used to be masked, which is why none of
+# these three commands have actually been available. Put the scripts on PATH and
+# the completions on fpath instead.
+[[ -d ~/.cache/zsh-snap/romkatv/archive ]] || znap clone romkatv/archive 2>/dev/null || true
 if [[ -d ~/.cache/zsh-snap/romkatv/archive ]]; then
-    znap source romkatv/archive
-else
-    # Clone it for next time
-    znap clone romkatv/archive 2>/dev/null || true
+    path=(~/.cache/zsh-snap/romkatv/archive $path)
+    fpath=(~/.cache/zsh-snap/romkatv/archive $fpath)
 fi
 
 # Perform anything that needs console IO
