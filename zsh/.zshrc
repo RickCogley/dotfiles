@@ -64,11 +64,6 @@ if (( $#commands[(i)lesspipe(|.sh)] )); then
     export LESSOPEN="| /usr/bin/env $commands[(i)lesspipe(|.sh)] %s 2>&-"
 fi
 
-# Compiler flags
-export LDFLAGS="-L/usr/local/opt/libressl/lib"
-export CPPFLAGS="-I/usr/local/opt/libressl/include"
-export PKG_CONFIG_PATH="/usr/local/opt/libressl/lib/pkgconfig"
-
 # Pager
 export MANPAGER="/bin/sh -c \"col -b | vim -c 'set ft=man ts=8 nomod nolist nonu noma' -\""
 if (( $+commands[most] )); then
@@ -82,7 +77,6 @@ alias less=$PAGER
 export DENO_INSTALL="$HOME/.deno"
 export PATH="$DENO_INSTALL/bin:$PATH"
 export DENO_DIR="$HOME/Library/Caches/deno"
-export PATH="$DENO_DIR/bin:$PATH"
 
 # Python with PyEnv
 if (( $+commands[pyenv] )); then
@@ -96,18 +90,15 @@ fi
 export GOPATH=~/gocode
 
 # Homebrew
-export XML_CATALOG_FILES=/usr/local/etc/xml/catalog
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 
 # Zsh configuration
-export HELPDIR=/usr/local/share/zsh/help
 export REPORTTIME=1
 export HISTSIZE="1000000"
 export SAVEHIST="1000000"
 export HISTFILE=~/.zsh_history
 
 # Other environments
-export ONI2_CONFIG_DIR=~/.config/oni2/
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 # NVM
@@ -122,38 +113,39 @@ if [[ -f /opt/homebrew/bin/brew ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-# System paths
-path=(/usr/local/sbin $path)
-path=(/opt/local/bin $path)
-path=(/opt/local/sbin $path)
-path=(/opt/X11/bin $path)
+# Add to PATH only when the directory actually exists. Keeps this list
+# declarative — a toolchain can be listed before it is installed — without
+# accumulating dead entries. Before this guard, 32 of 54 PATH entries pointed
+# at nothing, mostly Intel-Homebrew, MacPorts and XQuartz leftovers.
+_path_prepend() { local d; for d in $@; do [[ -d $d ]] && path=($d $path); done }
+_path_append()  { local d; for d in $@; do [[ -d $d ]] && path+=($d); done }
 
-# Homebrew overrides
-path=(/opt/homebrew/opt/curl/bin $path)
-path=(/opt/homebrew/opt/sqlite/bin $path)
-path=(/opt/homebrew/opt/libressl/bin $path)
-path=(/opt/homebrew/opt/php/bin $path)
-path=(/usr/local/MacGPG2/bin $path)
-path=(/opt/homebrew/opt/gnu-getopt/bin $path)
+# System paths
+_path_prepend /usr/local/sbin /opt/local/bin /opt/local/sbin /opt/X11/bin
+
+# Homebrew overrides — keg-only formulae that need to outrank system copies
+_path_prepend /opt/homebrew/opt/curl/bin \
+              /opt/homebrew/opt/sqlite/bin \
+              /opt/homebrew/opt/libressl/bin \
+              /opt/homebrew/opt/php/bin \
+              /usr/local/MacGPG2/bin \
+              /opt/homebrew/opt/gnu-getopt/bin
 
 # Language-specific paths
-path=(~/.composer/vendor/bin $path)
-path+=(~/.cargo/bin)
-path+=(~/.rbenv/bin)
+_path_prepend ~/.composer/vendor/bin
+_path_append  ~/.cargo/bin ~/.rbenv/bin ~/.nimble/bin
 if (( $+commands[rbenv] )); then
     eval "$(rbenv init - zsh)"
 fi
-path+=(~/.nimble/bin)
-path=(/usr/local/go/bin $path)
-path=(/usr/local/opt/go/libexec/bin $path)
-path=(~/gocode $path)
-path=(~/gocode/bin $path)
+_path_prepend /usr/local/go/bin /usr/local/opt/go/libexec/bin ~/gocode ~/gocode/bin
 
-# PyEnv
+# PyEnv — PYENV_ROOT is only set inside the guard above, so this addition has to
+# be guarded too. Unguarded it expanded to a bare "/bin", which landed /bin near
+# the front of PATH ahead of /opt/homebrew/bin.
 if (( $+commands[pyenv] )); then
     eval "$(pyenv init -)"
+    _path_prepend $PYENV_ROOT/bin
 fi
-path=($PYENV_ROOT/bin $path)
 
 # Direnv
 if (( $+commands[direnv] )); then
@@ -161,8 +153,9 @@ if (( $+commands[direnv] )); then
 fi
 
 # User paths
-path=(~/.local/bin $path)
-path=(~/bin $path)
+_path_prepend ~/.local/bin ~/bin
+
+unfunction _path_prepend _path_append
 
 # Add personal functions to fpath
 [[ -d ~/bin/zsh/functions ]] && fpath=(~/bin/zsh/functions $fpath)
@@ -195,17 +188,31 @@ fi
 (( $+commands[tree]  )) && alias tree='tree -aC -I .git --dirsfirst'
 (( $+commands[gedit] )) && alias gedit='gedit &>/dev/null'
 (( $+commands[rsync] )) && alias rsync='rsync --compress --verbose --iconv=UTF-8-MAC,UTF-8 $@'
-(( $+commands[exa]   )) && alias exa='exa --group --all --group-directories-first --time-style=long-iso --color-scale $@'
-
-# ls aliases with exa fallback
-(( $+commands[exa] )) && alias l='exa --grid --all --group-directories-first --color-scale' || alias l='ls -CF'
-(( $+commands[exa] )) && alias lrs='exa --grid --all --group-directories-first --color-scale --reverse' || alias lrs='ls -F'
-(( $+commands[exa] )) && alias ll='exa --long --header --all --classify --group --git --group-directories-first --time-style=long-iso --color-scale' || alias ll='ls -lhA'
-(( $+commands[exa] )) && alias llrs='exa --long --header --all --classify --group --git --group-directories-first --time-style=long-iso --color-scale --reverse' || alias llrs='ls -lhA'
-(( $+commands[exa] )) && alias llr='exa --long --header --all --classify --group --git --group-directories-first --time-style=long-iso --color-scale --recurse -L ' || alias llr='ls -lhA'
-(( $+commands[exa] )) && alias lt='exa --tree' || alias lt='ls -lhA'
-(( $+commands[exa] )) && alias ltr='exa --tree -L ' || alias lt='ls -lhA'
-(( $+commands[exa] )) && alias le='exa --long --header --all --classify --group --git --group-directories-first --time-style=long-iso --color-scale --extended' || alias le='ls -lhA'
+# ls aliases, backed by eza. exa was unmaintained and renamed to eza; these were
+# all guarded on `exa`, so every one of them had been silently falling through to
+# plain ls.
+if (( $+commands[eza] )); then
+    _eza_long='eza --long --header --all --classify --group --git --group-directories-first --time-style=long-iso --color-scale=all'
+    alias eza="eza --group --all --group-directories-first --time-style=long-iso --color-scale=all"
+    alias l='eza --grid --all --group-directories-first --color-scale=all'
+    alias lrs='eza --grid --all --group-directories-first --color-scale=all --reverse'
+    alias ll="$_eza_long"
+    alias llrs="$_eza_long --reverse"
+    alias llr="$_eza_long --recurse -L "
+    alias le="$_eza_long --extended"
+    alias lt='eza --tree'
+    alias ltr='eza --tree -L '
+    unset _eza_long
+else
+    alias l='ls -CF'
+    alias lrs='ls -F'
+    alias ll='ls -lhA'
+    alias llrs='ls -lhA'
+    alias llr='ls -lhA'
+    alias le='ls -lhA'
+    alias lt='ls -lhA'
+    alias ltr='ls -lhA'
+fi
 
 # Standard aliases
 alias ls="${aliases[ls]:-ls} -A"
@@ -215,7 +222,8 @@ alias myip="curl http://ipecho.net/plain; echo"
 alias t='tail -f'
 
 # Pipe extensions
-alias -g G='| ag'
+# ripgrep, not the silver searcher — ag is no longer installed here
+alias -g G='| rg'
 alias -g NE='2> /dev/null'
 alias -g NUL='> /dev/null 2>&1'
 
@@ -266,13 +274,9 @@ function relogin {
 # Include all custom functions inline for now
 # (These can be moved to separate files later)
 
-# Google Cloud SDK
-if [ -f '/Users/rcogley/Downloads/google-cloud-sdk/path.zsh.inc' ]; then
-    . '/Users/rcogley/Downloads/google-cloud-sdk/path.zsh.inc'
-fi
-if [ -f '/Users/rcogley/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then
-    . '/Users/rcogley/Downloads/google-cloud-sdk/completion.zsh.inc'
-fi
+# Google Cloud SDK — removed. It was sourced from ~/Downloads, which no longer
+# exists and was never a sound home for a toolchain. Reinstall via
+# `brew install --cask google-cloud-sdk` and source it from the Caskroom path.
 
 # Deno version manager
 export DVM_DIR="/Users/rcogley/.dvm"
@@ -283,7 +287,8 @@ alias changelog-since='f(){ git log ${1:-HEAD}..HEAD --pretty=format:"- %s (%h)"
 alias release-dates='git tag -l --sort=-version:refname --format="%(refname:short) - %(creatordate:short)" | pbcopy'
 
 # Claude
-export PATH="$HOME/.claude/local:$PATH"
+# (~/.claude/local was the old npm-style install location; the native installer
+# puts the binary in ~/.local/bin, which is already on PATH)
 export ENABLE_LSP_TOOL=1
 alias claude-with-dirs='claude --add-dir $HOME/.claude/ --add-dir $HOME/dev/aichaku --add-dir $HOME/dev/nagare --add-dir $HOME/dev/salty.esolia.pro-dd $HOME/.dotfiles'
 
