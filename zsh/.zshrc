@@ -313,6 +313,14 @@ setopt print_eight_bit
 # decrypted secrets, tokens and key material to disk unencrypted. Raise it
 # per-shell (`ulimit -c unlimited`) when actually debugging a crash.
 
+# File descriptors are the opposite case. launchd hands GUI-launched shells a
+# soft limit of 256 (`launchctl limit maxfiles`), which is low enough to throttle
+# anything opening many sockets, watchers or files — rustscan's default batch
+# size of 4500 exceeds it outright. The hard limit is unlimited and
+# kern.maxfilesperproc is 61440, so raising the soft limit is free. Guarded so a
+# system with a lower ceiling degrades instead of erroring at every shell start.
+ulimit -Sn 10240 2>/dev/null || true
+
 # Source custom functions
 for func_file in ~/bin/zsh/functions/*.zsh(N); do
     source "$func_file"
