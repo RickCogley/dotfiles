@@ -1,0 +1,20 @@
+# Ghostty configuration
+#
+# Ghostty reads $XDG_CONFIG_HOME/ghostty/config (this file, stow-managed) and,
+# on macOS, ~/Library/Application Support/com.mitchellh.ghostty/config. Only
+# this one is kept, so there is a single authoritative source under version
+# control. Reference: https://ghostty.org/docs/config
+#
+# Inspect what is actually in effect with `ghostty +show-config`.
+
+# Follows the system appearance rather than pinning one mode.
+theme = dark:"Monokai Pro Machine",light:"Monokai Pro Light Sun"
+
+font-size = 18
+
+# Track upstream `tip` builds rather than tagged releases.
+auto-update-channel = tip
+
+# Send a literal newline on shift+enter instead of submitting. Needed by REPLs
+# and by Claude Code, where plain enter submits the prompt.
+keybind = shift+enter=text:\n
