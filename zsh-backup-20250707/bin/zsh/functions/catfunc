@@ -1,1 +1,0 @@
-autoload +X $1 && which $1
