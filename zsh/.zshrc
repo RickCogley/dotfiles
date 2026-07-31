@@ -173,6 +173,18 @@ if (( $+commands[direnv] )); then
     eval "$(direnv hook zsh)"
 fi
 
+# zoxide — frecency-ranked `z <partial>` jumping, on top of normal cd
+if (( $+commands[zoxide] )); then
+    eval "$(zoxide init zsh)"
+fi
+
+# atuin — SQLite-backed shell history on ctrl-r. Up-arrow is deliberately left
+# on zsh's native prefix search: atuin rebinds it by default, which breaks the
+# muscle memory of typing a prefix and arrowing through matches.
+if (( $+commands[atuin] )); then
+    eval "$(atuin init zsh --disable-up-arrow)"
+fi
+
 # User paths
 _path_prepend ~/.local/bin ~/bin
 
@@ -263,7 +275,9 @@ alias dud='du -d 1 -h'
 alias duf='du -sh *'
 
 # Find
-alias fd='find . -type d -name'
+# No `fd` alias here: an alias outranks a binary, so defining one would make the
+# real fd unreachable under its own name. `fd -t d <pattern>` replaces what the
+# old alias did, with smart-case, gitignore awareness and parallel traversal.
 alias ff='find . -type f -name'
 
 # History

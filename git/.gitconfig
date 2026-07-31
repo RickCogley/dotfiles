@@ -6,10 +6,15 @@
 [core]
 	autocrlf = input
 	safecrlf = true
-	editor = code --new-window --wait
+	# zed-preview is the brew-managed CLI from the zed@preview cask, so it is the
+	# reproducible name on a fresh machine. (/usr/local/bin/zed also points at
+	# Zed Preview, but is root-owned and installed by the app itself.)
+	editor = zed-preview --wait
 	excludesfile = ~/.gitignore_global
 	whitespace = trailing-space,space-before-tab
-	pager = bat
+	# delta, not bat: bat highlights the diff as if it were source text, so +/-
+	# markers and hunk headers get no special treatment. delta parses the diff.
+	pager = delta
 	hooksPath = ~/.githooks
 [alias]
   co = checkout
@@ -19,11 +24,27 @@
   hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
   type = cat-file -t
   dump = cat-file -p
+  # Structural diff via difftastic — compares syntax trees rather than lines, so
+  # reindents and moved blocks stop showing up as changes. Opt-in per invocation;
+  # plain `git diff` still goes through delta.
+  dft = -c diff.external=difft diff
+[interactive]
+    # Without this, `git add -p` bypasses core.pager and loses delta entirely.
+    diffFilter = delta --color-only
+[delta]
+    # Auto-detects light vs dark from the terminal, matching the Ghostty theme
+    # pair rather than pinning one.
+    navigate = true
+    line-numbers = true
+    hyperlinks = true
 [diff]
-    tool = code
-[difftool "code"]
-    cmd = code --wait --new-window --diff $LOCAL $REMOTE
+    tool = zed
+    colorMoved = default
+[difftool "zed"]
+    cmd = zed-preview --wait --diff $LOCAL $REMOTE
 [merge]
+  # Stays on code: Zed has no three-way merge CLI (only --diff, which takes two
+  # paths), and the code binary is present via the code-cli cask.
   tool = code
 [mergetool "code"]
   cmd = code --wait --new-window --merge $REMOTE $LOCAL $BASE $MERGED
