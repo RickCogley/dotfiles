@@ -42,7 +42,10 @@ _up_run() {  # _up_run <label> <required-cmd> <function>
 
 _up_brew() {
   _up_note "update + upgrade formulae and casks"
-  brew update && brew upgrade || return 1
+  # --yes: Homebrew 6.0 asks for confirmation by default, which would stall an
+  # unattended run. HOMEBREW_NO_ASK in .zshrc covers interactive use; this makes
+  # the housekeeping path independent of the environment.
+  brew update && brew upgrade --yes || return 1
   # Casks marked auto_updates are skipped by plain upgrade; surface the drift
   # rather than silently falling years behind (this is how wireshark-app rotted).
   local greedy
