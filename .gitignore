@@ -27,7 +27,12 @@ git/.gist-vim
 git/.gist-vim.json
 git/.gitconfig.local
 twty/.config/twty/settings.json
-brew/.homebrew_github_api_token
+# Credentials never belong in this repo. Tokens live in ~/.ssh/tokens/ (mode
+# 600, directory 700) and are exported at runtime by ~/.envrc. These patterns
+# are a backstop, not the control.
+.homebrew_github_api_token*
+*.token
+*.token.gpg
 
 
 oni2/.config/oni2/store/
