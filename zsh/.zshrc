@@ -44,14 +44,35 @@ export EDITOR=$VISUAL
 
 # GPG as SSH agent
 export GPGPRIMARY="E8404D8E8DAB59CD1E5255BD56BCDEBC6448A091"
-export GPGSIGNING=$(\
-  gpg --list-keys --with-subkey-fingerprints $GPGPRIMARY | \
-  sed -n '/\[S\]/,+1p' | \
-  awk '/^[[:space:]]+[0-9A-F]{40}/ {print $1}'\
-)
-export GPG_TTY=$(tty)
+
+# Deriving the signing subkey fingerprint costs a gpg call plus sed and awk
+# (~40ms) on every shell. Cache it, invalidated when the keyring changes.
+() {
+  local cache=${XDG_CACHE_HOME:-$HOME/.cache}/zsh/gpgsigning
+  local keyring=${GNUPGHOME:-$HOME/.gnupg}/pubring.kbx
+  if [[ -s $cache && $cache -nt $keyring ]]; then
+    export GPGSIGNING="$(<$cache)"
+  else
+    export GPGSIGNING=$(
+      gpg --list-keys --with-subkey-fingerprints $GPGPRIMARY | \
+      sed -n '/\[S\]/,+1p' | \
+      awk '/^[[:space:]]+[0-9A-F]{40}/ {print $1}'
+    )
+    [[ -n $GPGSIGNING ]] && {
+      mkdir -p ${cache:h} && print -r -- "$GPGSIGNING" > $cache
+    }
+  fi
+}
+
+# $TTY is set by zsh for interactive shells; fall back to tty(1) so this stays
+# correct in contexts where it is not (pinentry needs it to prompt).
+export GPG_TTY=${TTY:-$(tty)}
 export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
-gpgconf --launch gpg-agent
+
+# `gpgconf --launch` costs ~320ms even when the agent is already running, which
+# made it the single largest cost in shell startup. The liveness probe costs
+# ~20ms, so only pay for the launch when the agent is actually down.
+gpg-connect-agent --no-autostart /bye &>/dev/null || gpgconf --launch gpg-agent
 
 # Browser
 if [[ "$OSTYPE" == darwin* ]]; then
@@ -177,12 +198,22 @@ autoload -Uz zmv
 autoload -Uz ~/bin/zsh/functions/[^_]*(.)
 compdef _directories md
 
-# Brew completions
-if type brew &>/dev/null; then
-  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
-  autoload -Uz compinit
-  compinit
-fi
+# Brew completions. brew shellenv already exported HOMEBREW_PREFIX above, so use
+# it rather than spawning `brew --prefix` to recover a constant.
+[[ -n $HOMEBREW_PREFIX ]] && FPATH=$HOMEBREW_PREFIX/share/zsh/site-functions:$FPATH
+
+# compinit's security audit of every fpath directory is the expensive part. Run
+# it in full once a day; reuse the dump with -C in between.
+autoload -Uz compinit
+() {
+  setopt local_options extended_glob
+  local dump=${ZDOTDIR:-$HOME}/.zcompdump
+  if [[ -n $dump(#qN.mh+24) ]] || [[ ! -s $dump ]]; then
+    compinit -d $dump
+  else
+    compinit -C -d $dump
+  fi
+}
 
 # Aliases
 (( $+commands[tree]  )) && alias tree='tree -aC -I .git --dirsfirst'
@@ -251,7 +282,10 @@ alias mv='mv -i'
 setopt glob_dots
 setopt print_eight_bit
 
-ulimit -c $(((4 << 30) / 512))  # 4GB
+# No `ulimit -c` here: macOS defaults core dumps to 0 and that is the right
+# default. A core file is a verbatim copy of process memory, so it can capture
+# decrypted secrets, tokens and key material to disk unencrypted. Raise it
+# per-shell (`ulimit -c unlimited`) when actually debugging a crash.
 
 # Source custom functions
 for func_file in ~/bin/zsh/functions/*.zsh(N); do
