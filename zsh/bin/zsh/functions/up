@@ -1,0 +1,110 @@
+# up — one-step housekeeping. Runs only the steps whose tools are present,
+# so it degrades quietly on a fresh machine instead of erroring out.
+#
+#   up            run every available step
+#   up brew       run one step (brew|claude|deno|npm|rust|gh|zsh|mac|db)
+#   up -n         dry run: list what would run
+#
+# Replaces the old `allup`, which called z4h/mas/brew-cu/dein — none installed.
+
+emulate -L zsh
+setopt local_options no_unset
+
+local -a steps requested
+local dry=0 failed=() ran=()
+
+steps=(brew claude deno npm rust gh zsh mac db)
+
+while (( $# )); do
+  case "$1" in
+    -n|--dry-run) dry=1 ;;
+    -h|--help)    print -- "usage: up [-n] [${(j:|:)steps}]"; return 0 ;;
+    *)            requested+=("$1") ;;
+  esac
+  shift
+done
+(( $#requested )) || requested=($steps)
+
+_up_head() { print -P "\n%F{4}%B━━━ $1 %f%b"; }
+_up_note() { print -P "%F{5}→%f $1"; }
+_up_skip() { print -P "%F{8}·%f skip: $1"; }
+
+_up_run() {  # _up_run <label> <required-cmd> <function>
+  local label=$1 need=$2 fn=$3
+  # znap and friends are shell functions, not binaries — check both tables.
+  if ! (( $+commands[$need] || $+functions[$need] )); then
+    _up_skip "$label ($need not installed)"; return
+  fi
+  if (( dry )); then print -P "%F{3}would run:%f $label"; return; fi
+  _up_head "$label"
+  if $fn; then ran+=("$label"); else failed+=("$label"); fi
+}
+
+_up_brew() {
+  _up_note "update + upgrade formulae and casks"
+  brew update && brew upgrade || return 1
+  # Casks marked auto_updates are skipped by plain upgrade; surface the drift
+  # rather than silently falling years behind (this is how wireshark-app rotted).
+  local greedy
+  greedy=$(brew outdated --cask --greedy --quiet 2>/dev/null)
+  [[ -n $greedy ]] && { _up_note "auto-updating casks that have drifted:"; print -l -- ${(f)greedy} }
+  _up_note "cleanup"
+  brew cleanup -s
+  _up_note "doctor"
+  brew doctor || true   # doctor exits non-zero on cosmetic warnings
+  return 0
+}
+
+_up_claude() { _up_note "claude update"; claude update; }
+_up_deno()   { _up_note "deno upgrade";  deno upgrade; }
+_up_rust()   { _up_note "rustup update"; rustup update; }
+
+_up_npm() {
+  _up_note "global packages"
+  npm update -g
+}
+
+_up_gh() {
+  _up_note "gh extensions"
+  gh extension upgrade --all
+}
+
+_up_zsh() {
+  _up_note "znap plugins"
+  znap pull
+}
+
+_up_mac() {
+  _up_note "pending macOS software updates (list only — install manually)"
+  softwareupdate --list 2>&1 | sed '/^$/d'
+  return 0
+}
+
+_up_db() {
+  # Weekly only: locate db needs sudo, don't prompt on every run.
+  if [[ $(date +%u) != 3 ]]; then _up_skip "locate db (Wednesdays only)"; return 0; fi
+  _up_note "refreshing locate database (needs sudo)"
+  sudo /usr/libexec/locate.updatedb
+}
+
+for s in $requested; do
+  case $s in
+    brew)   _up_run "Homebrew"        brew    _up_brew   ;;
+    claude) _up_run "Claude Code"     claude  _up_claude ;;
+    deno)   _up_run "Deno"            deno    _up_deno   ;;
+    npm)    _up_run "npm globals"     npm     _up_npm    ;;
+    rust)   _up_run "Rust"            rustup  _up_rust   ;;
+    gh)     _up_run "gh extensions"   gh      _up_gh     ;;
+    zsh)    _up_run "zsh plugins"     znap    _up_zsh    ;;
+    mac)    _up_run "macOS updates"   softwareupdate _up_mac ;;
+    db)     _up_run "locate database" sudo    _up_db     ;;
+    *)      print -u2 "up: unknown step '$s' (valid: ${(j:, :)steps})" ;;
+  esac
+done
+
+(( dry )) && return 0
+
+print -P "\n%F{4}%B━━━ summary %f%b"
+(( $#ran ))    && print -P "%F{2}✓%f ${(j:, :)ran}"
+(( $#failed )) && { print -P "%F{1}✗ failed:%f ${(j:, :)failed}"; return 1 }
+return 0
