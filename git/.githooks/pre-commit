@@ -9,6 +9,42 @@
 #
 # Installed globally via core.hooksPath in ~/.gitconfig
 
+# --- Secret scanning -------------------------------------------------------
+# Runs before the branch check on purpose, so it applies to every commit
+# including FAST_TRACK ones. FAST_TRACK is an exception to change-management,
+# not to secret scanning: a one-line "typo fix" is exactly the shape of commit
+# that leaks a token.
+#
+# Reviewed historical findings are recorded in .gitleaksignore; see issue #24.
+# Add entries there only for false positives or provably dead credentials.
+if command -v gitleaks >/dev/null 2>&1; then
+  # --log-level error keeps the clean path silent. Note there is no --quiet
+  # flag; passing one makes gitleaks exit non-zero on the argument error, which
+  # would block every commit while looking exactly like a detection.
+  if ! gitleaks git --staged --no-banner --redact --log-level error; then
+    echo ""
+    echo "🚫 gitleaks found a secret in the staged changes. Commit blocked."
+    echo ""
+    echo "   Re-run to see the detail (values are redacted):"
+    echo "     gitleaks git --staged --no-banner --redact -v"
+    echo ""
+    echo "   If it is a false positive, add its fingerprint to .gitleaksignore"
+    echo "   WITH a comment explaining why. Never to silence a live secret."
+    echo ""
+    echo "   Real secrets belong in ~/.ssh/tokens/ and are read at runtime:"
+    echo "     export NAME=\"\$(cat ~/.ssh/tokens/NAME)\""
+    echo ""
+    exit 1
+  fi
+else
+  # Not fatal: a freshly stowed machine should not be unable to commit. But say
+  # so loudly, because the preventive control is absent until gitleaks is there.
+  echo "⚠️  gitleaks not installed — staged changes were NOT scanned for secrets."
+  echo "   Install with: brew install gitleaks"
+fi
+
+# --- Change management -----------------------------------------------------
+
 BRANCH="$(git symbolic-ref --short HEAD 2>/dev/null)"
 
 if [[ "$BRANCH" == "main" || "$BRANCH" == "master" ]]; then

@@ -1,0 +1,60 @@
+# gitleaks baseline for this repo.
+#
+# Every entry below was reviewed individually; see issue #24 for the full
+# triage. Fingerprints are `commit:file:rule:line` for history scans and
+# `file:rule:line` for working-tree scans, so both forms appear.
+#
+# Add an entry ONLY after confirming the finding is a false positive or a
+# credential that is provably dead. Never to silence a live secret.
+
+# --- flowdock (24) ---
+# Real but DEAD. Flowdock API tokens in curl calls to an internal host.
+# CA/Broadcom shut Flowdock down in 2023; the eSolia account has been unused for
+# years. Accepted rather than rewritten - see #24 for why history is not rewritten.
+0674e446acdf41caef4c339109e7284451d0b7c4:zsh/.zshrc:curl-auth-user:1067
+0674e446acdf41caef4c339109e7284451d0b7c4:zsh/.zshrc:generic-api-key:227
+0674e446acdf41caef4c339109e7284451d0b7c4:zsh/.zshrc:generic-api-key:244
+0674e446acdf41caef4c339109e7284451d0b7c4:zsh/.zshrc:generic-api-key:261
+0674e446acdf41caef4c339109e7284451d0b7c4:zsh/.zshrc:generic-api-key:277
+0674e446acdf41caef4c339109e7284451d0b7c4:zsh/.zshrc:generic-api-key:295
+19cb2ac27c950ab3367a6141f0e8729e5b7e69a6:zsh/zshrc:generic-api-key:193
+2f1b3667011be7054de871fc2b6eba093c8b36dc:zsh/zshrc:generic-api-key:113
+2f1b3667011be7054de871fc2b6eba093c8b36dc:zsh/zshrc:generic-api-key:130
+2f1b3667011be7054de871fc2b6eba093c8b36dc:zsh/zshrc:generic-api-key:147
+54ba2d4072280e9a629861f9b98eb27c35737963:zsh-backup-20250707/.zshrc:curl-auth-user:1146
+54ba2d4072280e9a629861f9b98eb27c35737963:zsh-backup-20250707/.zshrc:generic-api-key:366
+54ba2d4072280e9a629861f9b98eb27c35737963:zsh-backup-20250707/.zshrc:generic-api-key:383
+54ba2d4072280e9a629861f9b98eb27c35737963:zsh-backup-20250707/.zshrc:generic-api-key:400
+54ba2d4072280e9a629861f9b98eb27c35737963:zsh-backup-20250707/.zshrc:generic-api-key:416
+54ba2d4072280e9a629861f9b98eb27c35737963:zsh-backup-20250707/.zshrc:generic-api-key:434
+archive/zsh/zshrc:curl-auth-user:1061
+archive/zsh/zshrc:generic-api-key:218
+archive/zsh/zshrc:generic-api-key:235
+archive/zsh/zshrc:generic-api-key:252
+archive/zsh/zshrc:generic-api-key:268
+archive/zsh/zshrc:generic-api-key:286
+f4d96a29420955be9dd2a8727c0e58b4b7c3e218:zsh/zshrc:curl-auth-user:940
+fd40ea93dae2361332842b139c0cf28888834209:zsh/zshrc:generic-api-key:173
+
+# --- workwell (2) ---
+# Real but DEAD. WW_SERVICE_SECRET literal, committed 2019-02, removed
+# 2020-07 in "Rm workwell". Absent from HEAD, working tree and environment.
+17a195c0324e7b77122f594fdc6adf8843dd7182:zsh/zshenv:generic-api-key:54
+e6e974f131b98c30d763b1eda3ae85e48983e0e0:zsh/zshrc:generic-api-key:68
+
+# --- gpg-fingerprint (6) ---
+# False positive. GPG key fingerprints are public by design - they are
+# published on keyservers and printed by `gpg --list-keys`.
+1a4834110ca14d2eb2645234d59e743cba08f842:git/.gitconfig:generic-api-key:4
+4282440e74f1fd97345fb48883607826c881b0db:docs/how-to/configure-gpg-signing.md:generic-api-key:65
+4282440e74f1fd97345fb48883607826c881b0db:docs/reference/git-config.md:generic-api-key:32
+9bf8f2be99d6fd5cedfe5500690250d391ffb25f:git/.gitconfig:generic-api-key:4
+docs/how-to/configure-gpg-signing.md:generic-api-key:65
+docs/reference/git-config.md:generic-api-key:32
+
+# --- placeholder (3) ---
+# False positive. Documentation placeholders, not credentials.
+390b209bd5e2edccc877c99d63418ce5fe3d3ae3:claude/.claude/config.md:generic-api-key:512
+4282440e74f1fd97345fb48883607826c881b0db:docs/explanations/security.md:curl-auth-header:97
+docs/explanations/security.md:curl-auth-header:97
+
