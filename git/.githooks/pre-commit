@@ -1,0 +1,34 @@
+#!/bin/bash
+# pre-commit hook — enforce change-management workflow (ISO 27001)
+#
+# Blocks commits directly to main/master. All non-trivial changes must
+# go through a feature branch → PR → merge workflow.
+#
+# Fast-track override (single-file typos, formatting, cosmetic edits):
+#   FAST_TRACK=1 git commit -m "fix: typo ..."
+#
+# Installed globally via core.hooksPath in ~/.gitconfig
+
+BRANCH="$(git symbolic-ref --short HEAD 2>/dev/null)"
+
+if [[ "$BRANCH" == "main" || "$BRANCH" == "master" ]]; then
+  if [[ "$FAST_TRACK" == "1" ]]; then
+    echo "⚡ Fast-track commit on $BRANCH (FAST_TRACK=1)"
+    exit 0
+  fi
+
+  echo ""
+  echo "🚫 Direct commits to '$BRANCH' are blocked by change-management policy."
+  echo ""
+  echo "   See: .claude/rules/change-management.md (or ~/.claude/rules/change-management.md)"
+  echo ""
+  echo "   Standard workflow:"
+  echo "     git checkout -b feat/your-change"
+  echo "     # ... make changes, commit, push ..."
+  echo "     gh pr create && gh pr merge --admin --merge --delete-branch"
+  echo ""
+  echo "   Fast-track (typos/formatting only):"
+  echo "     FAST_TRACK=1 git commit -m \"fix: typo ...\""
+  echo ""
+  exit 1
+fi

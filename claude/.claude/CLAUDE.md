@@ -35,6 +35,12 @@ directives:
     - Don't make assumptions without asking
     - Be skeptical and questioning
     - Fix all formatting/linting/type issues (no workarounds)
+
+  writing_style:
+    english_spelling: "US English ALWAYS (organization, authorized, favor, analyze, defense, center, license, behavior, apologize). NEVER British forms. Applies even when an existing document in the same folder uses British spellings — do not match it for consistency; flag the inconsistency instead."
+    dates_english: "ISO 8601 (2026-07-17, 2026-07-17T19:41:22+09:00). Never MM/DD/YYYY, never day-month-name."
+    dates_japanese: "Japanese documents keep native conventions (2026年7月17日 / 7月17日). ISO reads oddly in a Japanese business letter."
+    currency: "JPY in both English and Japanese documents (¥1,234,567 or JPY 1,234,567). Do not convert to USD unless explicitly asked."
   
   programming_paradigm:
     preferred: "pragmatic_hybrid"

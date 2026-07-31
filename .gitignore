@@ -1,5 +1,11 @@
 *.pem
 task.*.task
+
+# Compiled zsh functions — machine- and version-specific, regenerated on demand.
+# Previously committed, and a stray zcompile over its own output produced
+# md.zwc.zwc.zwc.zwc.zwc and friends.
+*.zwc
+
 .vim_tw.history
 undo.data
 public/

@@ -110,7 +110,7 @@
       "Bash(killall:*)"
     ]
   },
-  "model": "fable",
+  "model": "opus",
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/starship-style-statusline.sh"
