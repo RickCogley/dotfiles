@@ -58,14 +58,27 @@ _up_brew() {
 _up_claude() { _up_note "claude update"; claude update; }
 _up_rust()   { _up_note "rustup update"; rustup update; }
 
-# Deno is managed by dvm, so `deno upgrade` is wrong here: it overwrites the
-# dvm-managed binary in place and leaves dvm's version list out of sync with
-# what `deno --version` actually reports.
+# Deno version selection is deliberate on this machine and this step must not
+# change it. esolia-llm-guard builds eSolia Redact with `deno desktop`, an
+# unstable feature whose output layout still churns between canaries; its CI
+# pins an exact canary commit and says to bump it on purpose, and a matching
+# canary is kept at ~/.dvm/canary/deno.
+#
+# So: upgrade dvm itself, then report. Neither `deno upgrade` (overwrites
+# ~/.dvm/bin/deno in place, desyncing dvm's metadata from the binary that
+# actually runs) nor `dvm upgrade` (moves aliases to latest) belongs in an
+# unattended housekeeping run.
+# `dvm upgrade self` is not used either: in dvm 1.9.0 it fetches the install
+# script and hands the whole text to bash as an argument instead of piping it,
+# so it prints the script, dies with "File name too long", and still exits 0.
+# The documented alternative is curl | sh, which does not belong in an
+# unattended run. Upgrading dvm stays manual.
 _up_deno() {
-  _up_note "dvm upgrade self"
-  dvm upgrade self || return 1
-  _up_note "dvm upgrade (all aliases to latest)"
-  dvm upgrade
+  _up_note "installed versions — bump deliberately, desktop build pins a canary"
+  dvm list
+  _up_note "active: $(deno --version 2>/dev/null | head -1)"
+  _up_note "dvm $(dvm --version 2>/dev/null | awk '{print $2}') — upgrade manually if needed"
+  return 0
 }
 
 _up_npm() {
