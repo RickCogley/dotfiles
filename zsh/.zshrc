@@ -124,6 +124,11 @@ export GOPATH=~/gocode
 
 # Homebrew
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
+# Homebrew 6.0 made "ask before upgrading" the default. Accepted risk: upgrades
+# proceed without review, in exchange for `up` never stalling on a prompt. The
+# `up` brew step also passes --yes explicitly, so an environment missing this
+# variable still cannot hang.
+export HOMEBREW_NO_ASK=1
 
 # Zsh configuration
 export REPORTTIME=1
