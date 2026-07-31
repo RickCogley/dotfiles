@@ -1,0 +1,101 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "project_panel": {
+    "dock": "right"
+  },
+  "outline_panel": {
+    "dock": "right"
+  },
+  "collaboration_panel": {
+    "dock": "right"
+  },
+  "agent": {
+    "dock": "left",
+    "favorite_models": [],
+    "model_parameters": []
+  },
+  "git_panel": {
+    "dock": "right"
+  },
+  "ui_font_family": "Moralerspace Argon JPDOC",
+  "icon_theme": "JetBrains Icons Light",
+  "preview_tabs": {
+    "enabled": false
+  },
+  "minimap": {
+    "show": "never"
+  },
+  "cursor_blink": true,
+  "buffer_font_fallbacks": [
+    "Ricty Diminished Discord with Fira Code",
+    "PragmataPro Mono",
+    "Menlo",
+    "Monaco",
+    "Courier New",
+    "monospace"
+  ],
+  "buffer_font_family": "Moralerspace Argon NF",
+  "preferred_line_length": 72,
+  "tab_size": 2,
+  "base_keymap": "VSCode",
+  "ui_font_size": 16,
+  "buffer_font_size": 21.0,
+  "soft_wrap": "prefer_line",
+  "theme": {
+    "mode": "light",
+    "light": "Cyan Light",
+    "dark": "Colorizer Pro"
+  },
+  "lsp": {
+    "deno": {
+      "settings": {
+        "deno": {
+          "enable": true
+        }
+      }
+    }
+  },
+  "languages": {
+    "TypeScript": {
+      "preferred_line_length": 72,
+      "soft_wrap": "prefer_line",
+      "tab_size": 2,
+      "language_servers": [
+        "deno",
+        "!typescript-language-server",
+        "!vtsls",
+        "!eslint"
+      ],
+      "formatter": "language_server"
+    },
+    "TSX": {
+      "preferred_line_length": 72,
+      "soft_wrap": "prefer_line",
+      "tab_size": 2,
+      "language_servers": [
+        "deno",
+        "!typescript-language-server",
+        "!vtsls",
+        "!eslint"
+      ],
+      "formatter": "language_server"
+    },
+    "terminal": {
+      "preferred_line_length": 72,
+      "soft_wrap": "prefer_line",
+      "tab_size": 2,
+      "font_family": "PragmataPro Nerd Font",
+      "font_features": {
+        "calt": true
+        // See Buffer Font Features for more features
+      }
+    }
+  }
+}
