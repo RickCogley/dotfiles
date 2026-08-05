@@ -109,7 +109,17 @@ _up_db() {
   # Weekly only: locate db needs sudo, don't prompt on every run.
   if [[ $(date +%u) != 3 ]]; then _up_skip "locate db (Wednesdays only)"; return 0; fi
   _up_note "refreshing locate database (needs sudo)"
-  sudo /usr/libexec/locate.updatedb
+  # macOS's locate.updatedb drops privs via `su -fm nobody`, which is broken on
+  # this machine (triggers a password-change prompt -> "su: Sorry"). Replicate its
+  # intent with `sudo -u nobody`: build the codes file as nobody, install as root.
+  # Run from / because nobody cannot getcwd() inside $HOME.
+  local fcodes rc
+  fcodes=$(cd / && sudo -u nobody mktemp -t updatedb) || return 1
+  ( cd / && sudo -u nobody env FCODES="$fcodes" SEARCHPATHS=/ /usr/libexec/locate.updatedb ) \
+    && sudo install -m 0444 -o nobody -g wheel "$fcodes" /var/db/locate.database
+  rc=$?
+  sudo rm -f "$fcodes"
+  return $rc
 }
 
 for s in $requested; do
