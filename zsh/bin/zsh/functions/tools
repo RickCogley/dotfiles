@@ -1,0 +1,35 @@
+# tools — modern (mostly Rust) CLI replacements installed on this machine and
+# what each one replaces, with versions. Single source of truth: `up` shows this
+# same list as its "Modern CLI tools" section. Only lists tools actually present,
+# so it degrades quietly on a machine missing some.
+#
+# Note: these are NOT aliased over the POSIX names on purpose — an alias outranks
+# a binary and the flags/semantics differ (see dotfiles issue #16). Call them by
+# their own names.
+emulate -L zsh
+
+# tool : what it replaces  (version is parsed from `<tool> --version`)
+local -a spec=(
+  'eza:ls'
+  'bat:cat'
+  'fd:find'
+  'rg:grep'
+  'zoxide:cd (z)'
+  'dust:du'
+  'duf:df'
+  'procs:ps'
+  'btm:top'
+  'sd:sed'
+  'delta:git diff'
+  'tokei:cloc'
+  'hyperfine:time'
+)
+
+local entry cmd replaces ver
+for entry in $spec; do
+  cmd=${entry%%:*}; replaces=${entry#*:}
+  (( $+commands[$cmd] )) || continue
+  ver=$("$cmd" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+(\.[0-9]+)?' | head -1)
+  printf '  %-10s → %-11s %s\n' "$cmd" "$replaces" "${ver:-—}"
+done
+print -P "%F{8}  run 'tools' anytime · they keep their own names (not aliased)%f"

@@ -2,7 +2,7 @@
 # so it degrades quietly on a fresh machine instead of erroring out.
 #
 #   up            run every available step
-#   up brew       run one step (brew|claude|deno|npm|pnpm|uv|rust|gh|zsh|mac|db)
+#   up brew       run one step (brew|claude|deno|npm|pnpm|uv|rust|gh|zsh|mac|db|tools)
 #   up -n         dry run: list what would run
 #
 # Replaces the old `allup`, which called z4h/mas/brew-cu/dein — none installed.
@@ -13,7 +13,7 @@ setopt local_options no_unset
 local -a steps requested
 local dry=0 failed=() ran=()
 
-steps=(brew claude deno npm pnpm uv rust gh zsh mac db)
+steps=(brew claude deno npm pnpm uv rust gh zsh mac db tools)
 
 while (( $# )); do
   case "$1" in
@@ -119,6 +119,10 @@ _up_mac() {
   return 0
 }
 
+# Informational, not an update: reminds me what modern CLI tools are installed
+# (see the `tools` function — single source of truth). Always "succeeds".
+_up_tools() { tools; }
+
 _up_db() {
   # Weekly only: locate db needs sudo, don't prompt on every run.
   if [[ $(date +%u) != 3 ]]; then _up_skip "locate db (Wednesdays only)"; return 0; fi
@@ -149,6 +153,7 @@ for s in $requested; do
     zsh)    _up_run "zsh plugins"     znap    _up_zsh    ;;
     mac)    _up_run "macOS updates"   softwareupdate _up_mac ;;
     db)     _up_run "locate database" sudo    _up_db     ;;
+    tools)  _up_run "Modern CLI tools" tools  _up_tools  ;;
     *)      print -u2 "up: unknown step '$s' (valid: ${(j:, :)steps})" ;;
   esac
 done
