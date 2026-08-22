@@ -165,3 +165,5 @@ coverage/
 *.lcov
 .coverage
 htmlcov/
+
+**/.claude/settings.local.json

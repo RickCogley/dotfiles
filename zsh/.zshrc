@@ -369,10 +369,13 @@ alias claude-with-dirs='claude --add-dir $HOME/.claude/ --add-dir $HOME/dev/aich
 export PATH="$PATH:$HOME/.dotnet/tools"
 
 # pnpm
+# pnpm v11's global bin dir is $PNPM_HOME/bin, not $PNPM_HOME itself. The old
+# block put $PNPM_HOME on PATH, so freshly `pnpm add -g` shims (which land in
+# bin/) were invisible while stale orphan shims in the root shadowed them.
 export PNPM_HOME="/Users/rcogley/.local/share/pnpm"
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
 esac
 # pnpm end
 

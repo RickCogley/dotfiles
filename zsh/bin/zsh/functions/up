@@ -2,7 +2,7 @@
 # so it degrades quietly on a fresh machine instead of erroring out.
 #
 #   up            run every available step
-#   up brew       run one step (brew|claude|deno|npm|rust|gh|zsh|mac|db)
+#   up brew       run one step (brew|claude|deno|npm|pnpm|uv|rust|gh|zsh|mac|db)
 #   up -n         dry run: list what would run
 #
 # Replaces the old `allup`, which called z4h/mas/brew-cu/dein — none installed.
@@ -13,7 +13,7 @@ setopt local_options no_unset
 local -a steps requested
 local dry=0 failed=() ran=()
 
-steps=(brew claude deno npm rust gh zsh mac db)
+steps=(brew claude deno npm pnpm uv rust gh zsh mac db)
 
 while (( $# )); do
   case "$1" in
@@ -89,6 +89,20 @@ _up_npm() {
   npm update -g
 }
 
+# pnpm global tools (wrangler lives here). `update -g` bumps each global within
+# its recorded semver range; a new major (e.g. wrangler 4 -> 5) is deliberate,
+# so bump that by hand with `pnpm add -g wrangler@latest`.
+_up_pnpm() {
+  _up_note "global packages"
+  pnpm update -g
+}
+
+# uv-managed CLI tools. No-op when none are installed, so it's safe to always run.
+_up_uv() {
+  _up_note "uv tools"
+  uv tool upgrade --all
+}
+
 _up_gh() {
   _up_note "gh extensions"
   gh extension upgrade --all
@@ -128,6 +142,8 @@ for s in $requested; do
     claude) _up_run "Claude Code"     claude  _up_claude ;;
     deno)   _up_run "Deno (via dvm)"  dvm     _up_deno   ;;
     npm)    _up_run "npm globals"     npm     _up_npm    ;;
+    pnpm)   _up_run "pnpm globals"    pnpm    _up_pnpm   ;;
+    uv)     _up_run "uv tools"        uv      _up_uv     ;;
     rust)   _up_run "Rust"            rustup  _up_rust   ;;
     gh)     _up_run "gh extensions"   gh      _up_gh     ;;
     zsh)    _up_run "zsh plugins"     znap    _up_zsh    ;;
