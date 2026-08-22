@@ -25,8 +25,6 @@ Last audited: 2026-08-22.
 | `ghostty` | Ghostty terminal | Current terminal (replaced kitty/iterm2, #12) |
 | `zed` | Zed editor | |
 | `vim` | Vim | |
-| `karabiner` | Karabiner-Elements key remapping | App not found in `/Applications` — verify it's still installed |
-| `hammerspoon` | Hammerspoon automation | App not found in `/Applications` — verify it's still installed |
 
 ## Present but intentionally not stowed
 
@@ -39,20 +37,15 @@ Last audited: 2026-08-22.
 | `vscode` | VS Code settings | `code` CLI installed (2026-08); stow if you want it managed |
 | `tmux` | tmux config (`~/.config/tmux`) | tmux installed (2026-08) but config not stowed — stow it or drop the package |
 
-## Candidates for removal (not stowed, tool absent)
+## Removed
 
-Verified absent from PATH / `/Applications` on the audit date. Remove the package
-(and this row) once confirmed you no longer want it:
+Deleted from the repo on 2026-08-22 (all experiments no longer in use; still
+recoverable from git history if ever needed):
 
-| Package | Was | Status |
-|---|---|---|
-| `oni2` | Onivim 2 editor | Project defunct; binary absent |
-| `gqrx` | SDR receiver GUI | Binary absent |
-| `twty` | Twitter CLI | Binary absent |
-| `valet` | Laravel Valet (PHP) | Absent; no PHP/Composer workflow anymore |
-| `vnote` | VNote note-taking app | App absent |
-| `jgit` | jgit config | Binary absent |
-| `streamdeck` | Elgato Stream Deck profile | App absent |
+`oni2` (Onivim 2), `gqrx` (SDR GUI), `twty` (Twitter CLI), `valet` (Laravel
+Valet), `vnote` (note app), `jgit`, `streamdeck` (Elgato profile),
+`karabiner` (key remapping — used previously, unstowed), `hammerspoon`
+(automation — used previously, unstowed).
 
 ## Archived
 
