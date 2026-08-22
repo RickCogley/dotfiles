@@ -106,9 +106,9 @@ else
 fi
 alias less=$PAGER
 
-# Deno
-export DENO_INSTALL="$HOME/.deno"
-export PATH="$DENO_INSTALL/bin:$PATH"
+# Deno — installs are managed by dvm (see DVM_DIR below), including the pinned
+# canary the esolia-llm-guard desktop build compiles against. DENO_DIR is the
+# shared module cache, used regardless of which deno is active.
 export DENO_DIR="$HOME/Library/Caches/deno"
 
 # Python with PyEnv
@@ -116,7 +116,6 @@ if (( $+commands[pyenv] )); then
   export PYENV_SHELL=zsh
   export PYENV_ROOT=$(pyenv root)
   export PYENV_VERSION=$(pyenv version-name)
-  export PYTHONPATH=$PYENV_ROOT/shims
 fi
 
 # Go
@@ -138,10 +137,6 @@ export HISTFILE=~/.zsh_history
 
 # Other environments
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
-
-# NVM
-export NVM_DIR="$HOME/.nvm"
-[[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"
 
 # PATH configuration
 typeset -gU cdpath fpath mailpath path
@@ -170,11 +165,7 @@ _path_prepend /opt/homebrew/opt/curl/bin \
               /opt/homebrew/opt/gnu-getopt/bin
 
 # Language-specific paths
-_path_prepend ~/.composer/vendor/bin
-_path_append  ~/.cargo/bin ~/.rbenv/bin ~/.nimble/bin
-if (( $+commands[rbenv] )); then
-    eval "$(rbenv init - zsh)"
-fi
+_path_append  ~/.cargo/bin ~/.nimble/bin
 _path_prepend /usr/local/go/bin /usr/local/opt/go/libexec/bin ~/gocode ~/gocode/bin
 
 # PyEnv — PYENV_ROOT is only set inside the guard above, so this addition has to
@@ -212,7 +203,6 @@ unfunction _path_prepend _path_append
 
 # Export PATH
 export PATH
-export FPATH
 
 # Key bindings
 bindkey '^H'   backward-kill-word    # Ctrl+H and Ctrl+Backspace: Delete previous word
@@ -224,7 +214,12 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 # Autoload functions
 autoload -Uz zmv
-autoload -Uz ~/bin/zsh/functions/[^_]*(.)
+# Exclude *.zwc: znap auto-compiles sourced/fpath files and the plain glob would
+# otherwise autoload the compiled artifacts as junk functions named e.g. md.zwc.
+() {
+  setopt local_options extended_glob
+  autoload -Uz ~/bin/zsh/functions/[^_]*~*.zwc(.)
+}
 compdef _directories md
 
 # Brew completions. brew shellenv already exported HOMEBREW_PREFIX above, so use
@@ -341,11 +336,6 @@ function relogin {
   exec $SHELL --login
 }
 
-# Source function files if they exist
-[[ -f ~/.dotfiles/zsh/functions/backup.zsh ]] && source ~/.dotfiles/zsh/functions/backup.zsh
-
-# Include all custom functions inline for now
-# (These can be moved to separate files later)
 
 # Google Cloud SDK — removed. It was sourced from ~/Downloads, which no longer
 # exists and was never a sound home for a toolchain. Reinstall via
@@ -379,7 +369,9 @@ case ":$PATH:" in
 esac
 # pnpm end
 
-. "$HOME/.local/share/../bin/env"
+# uv writes this env file (~/.local/bin/env). Guard it so a missing file — e.g.
+# after uv is removed — cannot error out every shell start.
+[[ -f "$HOME/.local/bin/env" ]] && . "$HOME/.local/bin/env"
 
 # Azure subscription switcher. direnv/.envrc exports a canonical
 # AZURE_SUBSCRIPTION_ID per project (same override pattern as the
