@@ -194,6 +194,23 @@ Before starting any non-trivial task, apply these:
 4. **Keep context lean** — suggest /clear between unrelated tasks; prefer skills over pasting reference material
 5. **Think deeply when it matters** — for hard design or debugging problems, reason step-by-step before acting
 
+## Fast CLI tools on this machine
+
+Modern, much faster replacements for common Unix tools are installed here. Run
+`tools` in a shell to see the current list with versions. Prefer them **in
+ad-hoc session Bash** over the POSIX equivalents:
+
+- `rg` (ripgrep) over `grep`; `fd` over `find`; `sd` over `sed` for simple subs
+- `bat` over `cat` for viewing (`--paging=never --plain` when piping)
+- `eza` over `ls`; `dust` over `du`; `procs` over `ps`; `btm` over `top`
+- `delta` for git diffs; `tokei` for LOC counts; `hyperfine` for benchmarking
+
+Two caveats:
+- The built-in **Grep/Glob tools already use ripgrep** — keep using those
+  dedicated tools for code search; this list is for other Bash usage.
+- For scripts committed **into a repo**, stay POSIX (`grep`/`find`/`sed`) unless
+  the repo already depends on these tools — CI and other machines may lack them.
+
 ## Override Hierarchy
 
 1. This global configuration provides defaults
