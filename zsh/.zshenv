@@ -21,3 +21,4 @@ unset _base_path _d
 
 # Export PATH
 export PATH
+. "$HOME/.cargo/env"

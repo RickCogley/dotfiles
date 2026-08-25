@@ -22,10 +22,20 @@ zstyle ':znap:*' repos-dir ~/.cache/zsh-snap
   git clone --depth 1 https://github.com/marlonrichert/zsh-snap ~/.cache/zsh-snap/zsh-snap
 source ~/.cache/zsh-snap/zsh-snap/znap.zsh
 
-# Load plugins with znap (auto-installs if needed)
+# Load plugins with znap (auto-installs if needed).
+#
+# Order matters. zsh-completions only adds definitions to fpath, so it has to be
+# sourced before the completion system initializes. zsh-syntax-highlighting hooks
+# every ZLE widget and must be sourced last, after anything that defines widgets.
+# fzf-tab replaces the completion menu with an fzf picker, so per its README it
+# loads after zsh-autosuggestions but before zsh-syntax-highlighting; it needs the
+# fzf binary, which is installed via Homebrew.
+znap source zsh-users/zsh-completions
+znap source MichaelAquilina/zsh-you-should-use
 znap source zsh-users/zsh-autosuggestions
+znap source Aloxaf/fzf-tab
 znap source zsh-users/zsh-syntax-highlighting
-# Skip autocomplete for now as it may conflict
+# Skip autocomplete for now as it may conflict (and it collides with fzf-tab)
 # znap source marlonrichert/zsh-autocomplete
 
 # romkatv/archive ships executables (archive, lsarchive, unarchive) plus their
