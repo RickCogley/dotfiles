@@ -21,4 +21,6 @@ unset _base_path _d
 
 # Export PATH
 export PATH
-. "$HOME/.cargo/env"
+
+# rustup toolchain on PATH — guarded so a machine without rustup starts cleanly
+[[ -r "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
