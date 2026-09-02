@@ -37,6 +37,6 @@ twty/.config/twty/settings.json
 
 oni2/.config/oni2/store/
 gpg/.gnupg/private-keys-v1.d/
-gpg/.gnupg/crls.d/DIR.txt
+gpg/.gnupg/crls.d/
 gpg/.gnupg/tofu.db
 gpg/.gnupg/trustdb.gpg
