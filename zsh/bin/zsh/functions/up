@@ -126,6 +126,12 @@ _up_tools() { tools; }
 _up_db() {
   # Weekly only: locate db needs sudo, don't prompt on every run.
   if [[ $(date +%u) != 3 ]]; then _up_skip "locate db (Wednesdays only)"; return 0; fi
+  # Already rebuilt today? Skip, so a second `up` in one day doesn't re-prompt
+  # for sudo and redo the work. Use the database's own mtime as the marker.
+  if [[ -f /var/db/locate.database \
+        && $(stat -f %Sm -t %F /var/db/locate.database) == $(date +%F) ]]; then
+    _up_skip "locate db (already rebuilt today)"; return 0
+  fi
   _up_note "refreshing locate database (needs sudo)"
   # macOS's locate.updatedb drops privs via `su -fm nobody`, which is broken on
   # this machine (triggers a password-change prompt -> "su: Sorry"). Replicate its
