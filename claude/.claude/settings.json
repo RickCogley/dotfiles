@@ -110,6 +110,7 @@
       "Bash(killall:*)"
     ]
   },
+  "model": "claude-opus-4-8",
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/starship-style-statusline.sh"
@@ -130,8 +131,8 @@
   "theme": "light",
   "verbose": false,
   "preferredNotifChannel": "iterm2_with_bell",
+  "agentPushNotifEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754078154327
-  },
-  "model": "claude-opus-4-8[1m]"
+  }
 }
