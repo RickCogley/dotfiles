@@ -89,12 +89,25 @@ _up_npm() {
   npm update -g
 }
 
-# pnpm global tools (wrangler lives here). `update -g` bumps each global within
-# its recorded semver range; a new major (e.g. wrangler 4 -> 5) is deliberate,
-# so bump that by hand with `pnpm add -g wrangler@latest`.
+# pnpm global tools (wrangler and cf live here). `update -g` bumps each global
+# within its recorded semver range; a new major (e.g. wrangler 4 -> 5) is
+# deliberate, so bump that by hand with `pnpm add -g wrangler@latest`.
+#
+# cf (Cloudflare's wrangler successor) is the exception: while it ships
+# prereleases, pnpm records an exact pin ("1.0.0-beta.6", even when asked for
+# a ^range), so plain `update -g` never moves it. `--latest cf` follows the
+# dist-tag instead. pnpm's minimumReleaseAge cooldown still applies, so this
+# lands on the newest beta that is at least a day old, not the newest beta.
+# Revisit once cf is GA and pnpm records a normal ^range.
 _up_pnpm() {
   _up_note "global packages"
-  pnpm update -g
+  pnpm update -g || return 1
+  if pnpm ls -g --depth 0 2>/dev/null | grep -q ' cf@'; then
+    _up_note "cf (tracks latest dist-tag while in beta)"
+    pnpm update -g --latest cf || return 1
+    _up_note "$(cf --version 2>/dev/null | head -1)"
+  fi
+  return 0
 }
 
 # uv-managed CLI tools. No-op when none are installed, so it's safe to always run.
