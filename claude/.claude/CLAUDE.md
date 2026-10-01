@@ -211,6 +211,24 @@ Two caveats:
 - For scripts committed **into a repo**, stay POSIX (`grep`/`find`/`sed`) unless
   the repo already depends on these tools — CI and other machines may lack them.
 
+## Outlook email drafts
+
+Every block element in an Outlook email body must carry this style inline —
+`<div>`, `<li>` and `<td>` alike. Never emit a bare block element, and never
+use `<p>` (Word adds its own margins):
+
+`direction:ltr;font-family:Aptos,Arial,Helvetica,sans-serif;mso-generic-font-family:swiss;font-size:12pt;color:rgb(0,0,0)`
+
+Unstyled HTML renders as Times New Roman in Windows Outlook, and the defect
+is invisible on macOS. Do not add a signature — Outlook appends it.
+
+**Delivery matters:** the Microsoft 365 MCP draft tools (`outlook_create_draft`,
+`outlook_create_reply_draft`, `outlook_update_draft`, `outlook_send_mail`)
+**reject `style=`**, so a body sent through them is unstyled. For styled,
+Windows-correct mail use an AppleScript draft or paste the HTML into the compose
+window; if only an MCP tool is available, say the body will be unstyled rather
+than present it as correct. Full detail: the `outlook-email-html` skill.
+
 ## Override Hierarchy
 
 1. This global configuration provides defaults

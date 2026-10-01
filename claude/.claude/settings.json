@@ -110,7 +110,7 @@
       "Bash(killall:*)"
     ]
   },
-  "model": "claude-opus-4-8",
+  "model": "opus",
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/starship-style-statusline.sh"
@@ -134,5 +134,10 @@
   "agentPushNotifEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754078154327
+  },
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
   }
 }
