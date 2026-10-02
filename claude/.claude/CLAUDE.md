@@ -170,15 +170,35 @@ Authentication uses a single Account API Token (not OAuth):
 
 Account API tokens cannot call `/memberships` (a user-level endpoint). Without `account_id`, wrangler tries `/memberships` to discover the account and fails with code 9106/10001. This applies to ALL wrangler operations (deploy, R2, D1, secrets, etc.).
 
-**Every Worker should have full observability:**
+**Every Worker should have observability enabled, with both sampling rates
+set explicitly.** An omitted `head_sampling_rate` is not neutral — Cloudflare
+defaults it to `1`, so leaving it out means 100%.
+
+From 2026-12-01 Cloudflare bills observability as one metered pipeline
+($0.25/GB ingested beyond the included 50 GB), and **traces are a second
+ingestion stream alongside logs**, so both rates matter. Classify the Worker:
+
+| Class | What it is | `logs` | `traces` |
+| ----- | ---------- | ------ | -------- |
+| A | Public content site, unauthenticated, crawler-exposed | `0.1` | `0.1` |
+| B | Authenticated app, public API, MCP or form endpoint | `1` | `0.1` |
+| C | Cron, queue consumer, Workflow, service-binding-only | `1` | `1` |
+
+A class B app, the common case:
 
 ```jsonc
 "observability": {
   "enabled": true,
+  // Class B: real users, modest volume — keep every log, sample traces.
   "logs": { "enabled": true, "invocation_logs": true, "head_sampling_rate": 1 },
-  "traces": { "enabled": true, "head_sampling_rate": 1 }
+  "traces": { "enabled": true, "head_sampling_rate": 0.1 }
 }
 ```
+
+Raising a rate to investigate is expected: do it, note the date in a comment,
+and put it back. The full policy and its reasoning live in devkit
+`.claude/shared-rules/cloudflare-cost-guards.md`, which is the source of truth
+— this is the short version.
 
 **Cloudflare MCP:**
 - Configured at user scope: `claude mcp add --transport http --header "Authorization: Bearer $TOKEN" -s user cloudflare https://mcp.cloudflare.com/mcp`
