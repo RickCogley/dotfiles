@@ -184,6 +184,33 @@ Account API tokens cannot call `/memberships` (a user-level endpoint). Without `
 - Configured at user scope: `claude mcp add --transport http --header "Authorization: Bearer $TOKEN" -s user cloudflare https://mcp.cloudflare.com/mcp`
 - MCP stores the literal token at add-time — must re-add after token rotation
 
+### `cf` CLI — installed and preferred for ad-hoc API work
+
+The `cf` CLI (open beta, Cloudflare's successor to Wrangler) is **installed
+globally on this machine** and kept current by the `up` script. Use it freely
+for read-only investigation and ad-hoc account operations — it covers ~3,000
+API operations that Wrangler never exposed (builds, logs, zones, analytics).
+
+- **Discover commands with `cf cli search "<task>"`**, not by chaining
+  `--help`. Keep those queries anonymous: describe the action and resource
+  type, never names, domains, account/resource IDs or tokens.
+- `cf schema <command>` shows the underlying API request.
+- It reads `CLOUDFLARE_API_TOKEN` like Wrangler. **Never run `cf auth login`** —
+  same rule as `wrangler login`; this account uses an Account API Token, not
+  OAuth. If `cf` suggests logging in after a 401, the token is missing a
+  permission; fix the token in the dashboard instead.
+- Useful example: `cf builds logs get <build-uuid>` retrieves Workers Build
+  logs, which the dashboard otherwise hides from automation. This needs the
+  Workers Builds (Workers CI) read permission on the token.
+
+**Do NOT migrate deploys from Wrangler to `cf` yet** (as of 2026-10). It is
+open beta, it still delegates to Wrangler for JS Worker dev/deploy, Cloudflare
+Workers Builds runs `wrangler versions upload` server-side, and devkit's
+`qc-wrangler` workflow plus the cost-guard rules parse `wrangler.jsonc`
+directly — a `cloudflare.config.ts` migration silently drops those guards.
+Wrangler gets 18 months of maintenance after the beta ends, so there is time.
+Pilot `cf migrate` on a non-client Worker first.
+
 ## Working Habits (model-agnostic, mandatory on Opus/Sonnet)
 
 Before starting any non-trivial task, apply these:
