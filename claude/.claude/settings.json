@@ -94,7 +94,6 @@
       "Bash(yarn:*)",
       "Edit(/Users/rcogley/dev/devkit/**)",
       "Read(/Users/rcogley/dev/devkit/**)",
-      "Write(/Users/rcogley/dev/devkit/**)",
       "WebFetch(domain:*.github.io)",
       "WebFetch(domain:docs.anthropic.com)",
       "WebFetch(domain:docs.deno.com)",

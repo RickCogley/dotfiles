@@ -2,7 +2,7 @@
 # so it degrades quietly on a fresh machine instead of erroring out.
 #
 #   up            run every available step
-#   up brew       run one step (brew|claude|deno|npm|pnpm|uv|rust|gh|zsh|mac|db|tools)
+#   up brew       run one step (brew|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|db|tools)
 #   up -n         dry run: list what would run
 #
 # Replaces the old `allup`, which called z4h/mas/brew-cu/dein — none installed.
@@ -13,7 +13,7 @@ setopt local_options no_unset
 local -a steps requested
 local dry=0 failed=() ran=()
 
-steps=(brew claude deno npm pnpm uv rust gh zsh mac db tools)
+steps=(brew claude deno npm pnpm uv rust gh zsh keys mac db tools)
 
 while (( $# )); do
   case "$1" in
@@ -126,6 +126,20 @@ _up_zsh() {
   znap pull
 }
 
+# eSolia Keys: report only. Installing a release replaces the code that
+# handles secrets and asks for an Allow click, so it stays a deliberate
+# `keys upgrade`. --check verifies the newest signed keys-v* tag against the
+# installed copy and exits 4 when an update is available.
+_up_keys() {
+  _up_note "eSolia Keys release check (report only)"
+  keys upgrade --check
+  case $? in
+    0) return 0 ;;
+    4) _up_note "update available: run %F{3}keys upgrade%f (asks you to click Allow)"; return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 _up_mac() {
   _up_note "pending macOS software updates (list only — install manually)"
   softwareupdate --list 2>&1 | sed '/^$/d'
@@ -170,6 +184,7 @@ for s in $requested; do
     rust)   _up_run "Rust"            rustup  _up_rust   ;;
     gh)     _up_run "gh extensions"   gh      _up_gh     ;;
     zsh)    _up_run "zsh plugins"     znap    _up_zsh    ;;
+    keys)   _up_run "eSolia Keys"     keys    _up_keys   ;;
     mac)    _up_run "macOS updates"   softwareupdate _up_mac ;;
     db)     _up_run "locate database" sudo    _up_db     ;;
     tools)  _up_run "Modern CLI tools" tools  _up_tools  ;;

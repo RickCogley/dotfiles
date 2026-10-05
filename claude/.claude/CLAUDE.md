@@ -154,7 +154,7 @@ session_init:
 ## Cloudflare Workers
 
 Authentication uses a single Account API Token (not OAuth):
-- Token stored in `~/.ssh/tokens/CLOUDFLARE_API_TOKEN`, loaded by `.zshrc`
+- Token stored in `~/.ssh/tokens/CLOUDFLARE_API_TOKEN_ESOLIA` (keys catalog pattern `CLOUDFLARE_API_TOKEN_{ACCOUNT}`), exported as `CLOUDFLARE_API_TOKEN` by `~/.envrc`
 - **Never run `wrangler login`** — if `~/.wrangler/config/default.toml` exists, delete it
 - Wrangler reads `CLOUDFLARE_API_TOKEN` env var automatically
 
