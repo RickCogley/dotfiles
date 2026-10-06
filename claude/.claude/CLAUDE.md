@@ -151,10 +151,37 @@ session_init:
     5: "Apply all critical rules"
 ```
 
+## Secrets: use `keys`
+
+Tokens, keys and account IDs live in `~/.ssh/tokens` and reach commands through
+the installed eSolia Keys CLI, `keys` (devkit). This applies in every repo,
+including client repos that keep `.claude/` out of git (jac-2026, j-vad,
+j-pvad), where the shared `secrets-handling` rule only arrives by local sync.
+
+- **See what's wired:** `keys list` in the repo (`--json` to parse). `keys
+  search TERM` finds names used elsewhere; `keys help --json` is the full
+  reference.
+- **Run with secrets:** `keys run --only NAME[,NAME] -- <command>`, giving the
+  command only what it needs. Prefer the repo's own script if it has one.
+- **Call an API with a token:** put the steps in a small script run under
+  `keys run`, and send the header on stdin so the value is never in argv:
+  `printf 'Authorization: Bearer %s\n' "$TOKEN" | curl -H @- …`
+- **Never** read files under `~/.ssh/tokens`, `.dev.vars` or `.env*`
+  (`cat`, `echo`, `$(cat …)`), and never put a value on a command line.
+- **Not registered yet:** the person copies the value and runs `keys add NAME
+  --from-clipboard --wait`; an existing store key is wired with `keys use`.
+  Values never go in the chat.
+- **Allow dialogs are for the person.** Never answer or bypass them; if nobody
+  is there, wait.
+- **`gh` says 401 Bad credentials:** sessions started before 2026-10-04 can
+  still carry the revoked admin `GITHUB_TOKEN`. Run `unset GITHUB_TOKEN` (gh
+  then uses its keychain login) and suggest restarting the session.
+
 ## Cloudflare Workers
 
 Authentication uses a single Account API Token (not OAuth):
 - Token stored in `~/.ssh/tokens/CLOUDFLARE_API_TOKEN_ESOLIA` (keys catalog pattern `CLOUDFLARE_API_TOKEN_{ACCOUNT}`), exported as `CLOUDFLARE_API_TOKEN` by `~/.envrc`
+- In a repo wired with `keys`, use its token instead: `keys run --only CLOUDFLARE_API_TOKEN -- wrangler …` (or the repo's script, e.g. jac-2026 `pnpm cf …`). The global export is the eSolia account only; client accounts are never in it
 - **Never run `wrangler login`** — if `~/.wrangler/config/default.toml` exists, delete it
 - Wrangler reads `CLOUDFLARE_API_TOKEN` env var automatically
 
