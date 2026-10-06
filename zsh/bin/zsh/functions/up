@@ -2,7 +2,7 @@
 # so it degrades quietly on a fresh machine instead of erroring out.
 #
 #   up            run every available step
-#   up brew       run one step (brew|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|db|tools)
+#   up brew       run one step (brew|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|db|tools|expiry)
 #   up -n         dry run: list what would run
 #
 # Replaces the old `allup`, which called z4h/mas/brew-cu/dein — none installed.
@@ -13,7 +13,7 @@ setopt local_options no_unset
 local -a steps requested
 local dry=0 failed=() ran=()
 
-steps=(brew claude deno npm pnpm uv rust gh zsh keys mac db tools)
+steps=(brew claude deno npm pnpm uv rust gh zsh keys mac db tools expiry)
 
 while (( $# )); do
   case "$1" in
@@ -140,6 +140,19 @@ _up_keys() {
   esac
 }
 
+# Last on purpose: what needs doing soon. Store-wide (every GitHub and
+# Cloudflare token in ~/.ssh/tokens), checked with each issuer; --soon prints
+# only expiring, expired or rejected tokens, else a single "nothing expiring"
+# line. Exit 3 means something needs attention — shown, not a step failure.
+_up_expiry() {
+  _up_note "tokens expiring soon (eSolia Keys)"
+  keys expiry --soon
+  case $? in
+    0|3) return 0 ;;
+    *)   return 1 ;;
+  esac
+}
+
 _up_mac() {
   _up_note "pending macOS software updates (list only — install manually)"
   softwareupdate --list 2>&1 | sed '/^$/d'
@@ -188,6 +201,7 @@ for s in $requested; do
     mac)    _up_run "macOS updates"   softwareupdate _up_mac ;;
     db)     _up_run "locate database" sudo    _up_db     ;;
     tools)  _up_run "Modern CLI tools" tools  _up_tools  ;;
+    expiry) _up_run "Token expiry"    keys    _up_expiry ;;
     *)      print -u2 "up: unknown step '$s' (valid: ${(j:, :)steps})" ;;
   esac
 done
