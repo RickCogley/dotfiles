@@ -41,6 +41,7 @@ directives:
     dates_english: "ISO 8601 (2026-07-17, 2026-07-17T19:41:22+09:00). Never MM/DD/YYYY, never day-month-name."
     dates_japanese: "Japanese documents keep native conventions (2026年7月17日 / 7月17日). ISO reads oddly in a Japanese business letter."
     currency: "JPY in both English and Japanese documents (¥1,234,567 or JPY 1,234,567). Do not convert to USD unless explicitly asked."
+    company_name_ja: "eSolia's Japanese name is 株式会社イソリア (株式会社 FIRST). NEVER イソリア株式会社 — models default to the suffix form and it has recurred despite repeated corrections. Contact blocks: 株式会社イソリア（eSolia）; later mentions in prose: イソリア. Rick's JA email self-intro: 株式会社イソリアのR.コグレーです to someone new, イソリアのR.コグレーです after that (the R. distinguishes him from his daughter Kylie). Before presenting JA text, check: rg 'イソリア株式会社'."
   
   programming_paradigm:
     preferred: "pragmatic_hybrid"
