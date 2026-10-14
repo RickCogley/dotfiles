@@ -46,6 +46,15 @@ _up_brew() {
   # unattended run. HOMEBREW_NO_ASK in .zshrc covers interactive use; this makes
   # the housekeeping path independent of the environment.
   brew update && brew upgrade --yes || return 1
+  # openssh stays installed but unlinked: devkit release-keys.sh signs with
+  # YubiKey (ed25519-sk) keys through the keg's ssh-keygen by full path, while
+  # plain `ssh` must stay Apple's (Keychain, UseKeychain). An upgrade relinks
+  # the keg and puts upstream ssh first on PATH, so undo that here.
+  local brew_ssh="$(brew --prefix)/bin/ssh"
+  if [[ -L $brew_ssh && $(readlink "$brew_ssh") == *Cellar/openssh/* ]]; then
+    _up_note "unlink openssh (keg-only use for YubiKey release signing)"
+    brew unlink openssh >/dev/null
+  fi
   # Casks marked auto_updates are skipped by plain upgrade; surface the drift
   # rather than silently falling years behind (this is how wireshark-app rotted).
   local greedy
