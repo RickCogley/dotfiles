@@ -1,0 +1,29 @@
+# keys-release — cut a signed eSolia Keys release from devkit.
+#
+#   keys-release                    prompt for the version
+#   keys-release 0.17.2             release that version
+#   keys-release 0.17.2 --signing-key ~/.ssh/id_esolia_release_backup_sk.pub
+#
+# Pulls devkit first, then hands off to scripts/release-keys.sh, which checks
+# everything that matters (on main, clean, KEYS_VERSION matches, tests pass)
+# and signs with the YubiKey. The prompt offers KEYS_VERSION from
+# scripts/keys.mts, since the script refuses any other version anyway.
+# Runs in a subshell so the current directory is left alone.
+
+emulate -L zsh
+setopt local_options no_unset
+
+local devkit=~/dev/devkit version=${1:-}
+(( $# )) && shift
+[[ -d $devkit ]] || { print -u2 "keys-release: no devkit at $devkit"; return 1 }
+
+(
+  cd $devkit && git pull --ff-only || exit 1
+  if [[ -z $version ]]; then
+    version=$(sed -n "s/^export const KEYS_VERSION = '\([^']*\)';/\1/p" scripts/keys.mts)
+    vared -p 'release version: ' version
+  fi
+  version=${version#v}   # tolerate "v0.17.2"
+  [[ -n $version ]] || { print -u2 "keys-release: no version given"; exit 1 }
+  scripts/release-keys.sh $version "$@"
+)
