@@ -204,27 +204,33 @@ defaults it to `1`, so leaving it out means 100%.
 
 From 2026-12-01 Cloudflare bills observability as one metered pipeline
 ($0.25/GB ingested beyond the included 50 GB), and **traces are a second
-ingestion stream alongside logs**, so both rates matter. Classify the Worker:
+ingestion stream alongside logs**, so both rates matter.
 
-| Class | What it is | `logs` | `traces` |
-| ----- | ---------- | ------ | -------- |
-| A | Public content site, unauthenticated, crawler-exposed | `0.1` | `0.1` |
-| B | Authenticated app, public API, MCP or form endpoint | `1` | `0.1` |
-| C | Cron, queue consumer, Workflow, service-binding-only | `1` | `1` |
-
-A class B app, the common case:
+**Default to `1` on both streams; sample only a Worker measured to need
+it.** Measured 2026-10-03, the whole eSolia account is ~2.6M invocations a
+month, roughly 10–13 GB with everything at 100% against 50 GB included, so
+sampling buys nothing yet and costs diagnostic fidelity:
 
 ```jsonc
 "observability": {
   "enabled": true,
-  // Class B: real users, modest volume — keep every log, sample traces.
   "logs": { "enabled": true, "invocation_logs": true, "head_sampling_rate": 1 },
-  "traces": { "enabled": true, "head_sampling_rate": 0.1 }
+  "traces": { "enabled": true, "head_sampling_rate": 1 }
 }
 ```
 
-Raising a rate to investigate is expected: do it, note the date in a comment,
-and put it back. The full policy and its reasoning live in devkit
+When one Worker's own ingestion becomes a meaningful share of the allowance,
+sample **that Worker**: traces first (a sample still shows where time goes),
+logs last (a sampled log loses the one error you are chasing). Any rate
+below `1` carries the measurement behind it, with its date, in a config
+comment.
+
+**Every Worker also sets `limits.cpu_ms`** (5000–10000 for HTTP handlers,
+higher only with a documented reason), the one Cloudflare-native per-Worker
+spend cap, and `workers_dev: false` unless a `workers.dev` hostname is the
+product.
+
+The full policy and its reasoning live in devkit
 `.claude/shared-rules/cloudflare-cost-guards.md`, which is the source of truth
 — this is the short version.
 
