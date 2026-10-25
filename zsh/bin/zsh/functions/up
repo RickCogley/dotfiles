@@ -2,7 +2,7 @@
 # so it degrades quietly on a fresh machine instead of erroring out.
 #
 #   up            run every available step
-#   up brew       run one step (brew|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|db|tools|expiry)
+#   up brew       run one step (brew|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|certs|db|tools|expiry)
 #   up -n         dry run: list what would run
 #
 # Replaces the old `allup`, which called z4h/mas/brew-cu/dein — none installed.
@@ -13,7 +13,7 @@ setopt local_options no_unset
 local -a steps requested
 local dry=0 failed=() ran=()
 
-steps=(brew claude deno npm pnpm uv rust gh zsh keys mac db tools expiry)
+steps=(brew claude deno npm pnpm uv rust gh zsh keys mac certs db tools expiry)
 
 while (( $# )); do
   case "$1" in
@@ -168,6 +168,52 @@ _up_mac() {
   return 0
 }
 
+# Compromised eMudhra intermediate CAs (Apple support 149555, 2026-10-19).
+# Apple blocks the 12 certificates automatically in Safari, Mail and apps on
+# its frameworks, but curl, git, python3, ruby, perl and openssl trust
+# /etc/ssl/cert.pem and never consult that block or revocation. Until a macOS
+# update fixes the file, follow Apple's steps and remove the two roots the
+# compromised intermediates chain to:
+#   emSign ECC Root CA - G3   the 6 issued under emSign Root TLS CA - G3
+#   AAA Certificate Services  the 6 Sectigo cross-signs
+# Removing AAA also stops cert.pem-only tools verifying other old Comodo
+# chains through it; Apple calls that step optional, taken here on purpose.
+#
+# Lives in `up` because a macOS update can put the file back: each run
+# re-checks and asks for sudo only when a root has returned. Once Apple's
+# update ships the roots stay gone, this reports so, and the step can go.
+_up_certs() {
+  local pem=/etc/ssl/cert.pem s t rc
+  local -a subjects present
+  subjects=(
+    '=== /C=IN/OU=emSign PKI/O=eMudhra Technologies Limited/CN=emSign ECC Root CA - G3'
+    '=== /C=GB/ST=Greater Manchester/L=Salford/O=Comodo CA Limited/CN=AAA Certificate Services'
+  )
+  for s in $subjects; do grep -qxF -- "$s" $pem && present+=("$s"); done
+  if (( ! $#present )); then _up_note "eMudhra-chained roots already absent from $pem"; return 0; fi
+  # Both present means this is Apple's file (first run, or an update replaced
+  # it), so the backup is refreshed to match, as Apple's steps direct.
+  if (( $#present == $#subjects )) || [[ ! -e $pem.orig ]]; then
+    _up_note "backing up $pem to $pem.orig (needs sudo)"
+    sudo cp -p $pem $pem.orig || return 1
+  fi
+  for s in $present; do
+    _up_note "removing ${s##*CN=} (needs sudo)"
+    t=$(mktemp) || return 1
+    awk -v s="$s" '/^(===|###) /{skip=0} $0==s{skip=1} !skip' $pem > "$t" \
+      && [[ -s $t ]] && sudo install -m 0644 -o root -g wheel "$t" $pem
+    rc=$?
+    rm -f "$t"
+    (( rc )) && return 1
+  done
+  # Apple's check: no output means both roots are gone.
+  if openssl crl2pkcs7 -nocrl -certfile $pem | openssl pkcs7 -print_certs -noout \
+       | grep -E 'emSign ECC Root CA - G3|AAA Certificate Services'; then
+    _up_note "still present; restore with: sudo cp -p $pem.orig $pem"; return 1
+  fi
+  _up_note "verified: neither root left in $pem"
+}
+
 # Informational, not an update: reminds me what modern CLI tools are installed
 # (see the `tools` function — single source of truth). Always "succeeds".
 _up_tools() { tools; }
@@ -208,6 +254,7 @@ for s in $requested; do
     zsh)    _up_run "zsh plugins"     znap    _up_zsh    ;;
     keys)   _up_run "eSolia Keys"     keys    _up_keys   ;;
     mac)    _up_run "macOS updates"   softwareupdate _up_mac ;;
+    certs)  _up_run "eMudhra roots"   openssl _up_certs  ;;
     db)     _up_run "locate database" sudo    _up_db     ;;
     tools)  _up_run "Modern CLI tools" tools  _up_tools  ;;
     expiry) _up_run "Token expiry"    keys    _up_expiry ;;
