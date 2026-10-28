@@ -12,7 +12,7 @@ git clone https://github.com/RickCogley/dotfiles.git .dotfiles
 cd .dotfiles
 
 # Apply configurations
-stow git zsh vim
+stow git zsh vim npm
 
 # Set up your private configuration
 cp ~/.gitconfig.local.template ~/.gitconfig.local
@@ -24,6 +24,7 @@ $EDITOR ~/.gitconfig.local  # Add your GPG key and other secrets
 - **Git**: Comprehensive git configuration with secure secret management
 - **Zsh**: Modern shell setup with Znap plugin manager and Starship prompt
 - **Vim**: Editor configuration and plugins
+- **npm**: `~/.npmrc` with no secrets; the GitHub Packages token comes from `NODE_AUTH_TOKEN` (keys)
 - **Security**: GPG signing, SSH key management, and secret handling patterns
 - **Documentation**: Complete guides following industry standards
 
