@@ -9,6 +9,7 @@ echo "Install via stow"
 stow zsh
 stow vim
 stow git
+stow npm
 echo "Change to home then confirm"
 cd
 ls -la

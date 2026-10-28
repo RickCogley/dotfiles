@@ -118,9 +118,21 @@ _up_deno() {
   return 0
 }
 
+# pnpm 11+ installs as a shebang-less placeholder that its install script
+# swaps for a native binary. npm 12 runs no install scripts unless allowed,
+# so without `allow-scripts=pnpm` in ~/.npmrc an update leaves the
+# placeholder: shells still run it, but Node's spawn (`keys run -- pnpm`)
+# fails with ENOEXEC. Fail the step so the summary shows it.
 _up_npm() {
   _up_note "global packages"
-  npm update -g
+  npm update -g || return 1
+  local pnpm_bin="$(npm root -g)/pnpm/pnpm"
+  if [[ -f $pnpm_bin && $(file -b "$pnpm_bin") != Mach-O* ]]; then
+    _up_note "%F{1}pnpm is the placeholder, not the native binary%f"
+    _up_note "fix: %F{3}npm install -g pnpm --allow-scripts=pnpm%f, and add allow-scripts=pnpm to ~/.npmrc"
+    return 1
+  fi
+  return 0
 }
 
 # pnpm global tools (wrangler and cf live here). `update -g` bumps each global
