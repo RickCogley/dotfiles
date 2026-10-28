@@ -9,9 +9,11 @@
 
 emulate -L zsh
 setopt local_options no_unset
+zmodload zsh/datetime   # EPOCHREALTIME: float clock, no fork per reading
 
 local -a steps requested
-local dry=0 failed=() ran=()
+local s dry=0 failed=() ran=()
+local -F t0=$EPOCHREALTIME
 
 steps=(brew claude deno npm pnpm uv rust gh zsh keys mac certs db tools expiry)
 
@@ -25,19 +27,42 @@ while (( $# )); do
 done
 (( $#requested )) || requested=($steps)
 
-_up_head() { print -P "\n%F{4}%B━━━ $1 %f%b"; }
-_up_note() { print -P "%F{5}→%f $1"; }
+_up_dur() {  # <seconds> → 3.2s | 42s | 1m05s | 1h02m
+  local -i t=$1
+  if   (( t < 10 ));   then printf '%.1fs' $1
+  elif (( t < 60 ));   then print -n -- ${t}s
+  elif (( t < 3600 )); then printf '%dm%02ds' $(( t / 60 )) $(( t % 60 ))
+  else                      printf '%dh%02dm' $(( t / 3600 )) $(( t % 3600 / 60 ))
+  fi
+}
+
+_up_head() { print -P "\n%F{4}%B━━━ $1 %f%b%F{8}%D{%H:%M:%S}%f"; }
+# Notes trail the time elapsed in the current step (s0, set by _up_run), so a
+# slow sub-command shows up as a jump between consecutive notes. Hidden under 1s.
+_up_note() {
+  local -F e=$(( EPOCHREALTIME - ${s0:-$EPOCHREALTIME} ))
+  if (( e >= 1 )); then print -P "%F{5}→%f $1 %F{8}+$(_up_dur $e)%f"
+  else                  print -P "%F{5}→%f $1"
+  fi
+}
 _up_skip() { print -P "%F{8}·%f skip: $1"; }
 
 _up_run() {  # _up_run <label> <required-cmd> <function>
-  local label=$1 need=$2 fn=$3
+  local label=$1 need=$2 fn=$3 took
   # znap and friends are shell functions, not binaries — check both tables.
   if ! (( $+commands[$need] || $+functions[$need] )); then
     _up_skip "$label ($need not installed)"; return
   fi
   if (( dry )); then print -P "%F{3}would run:%f $label"; return; fi
   _up_head "$label"
-  if $fn; then ran+=("$label"); else failed+=("$label"); fi
+  local -F s0=$EPOCHREALTIME
+  if $fn; then
+    took="%F{8}$(_up_dur $(( EPOCHREALTIME - s0 )))%f"
+    ran+=("$label $took"); print -P "%F{2}✓%f $label $took"
+  else
+    took="%F{8}$(_up_dur $(( EPOCHREALTIME - s0 )))%f"
+    failed+=("$label $took"); print -P "%F{1}✗%f $label $took"
+  fi
 }
 
 _up_brew() {
@@ -266,5 +291,7 @@ done
 
 print -P "\n%F{4}%B━━━ summary %f%b"
 (( $#ran ))    && print -P "%F{2}✓%f ${(j:, :)ran}"
-(( $#failed )) && { print -P "%F{1}✗ failed:%f ${(j:, :)failed}"; return 1 }
+(( $#failed )) && print -P "%F{1}✗ failed:%f ${(j:, :)failed}"
+print -P "%F{8}⏱%f $(_up_dur $(( EPOCHREALTIME - t0 ))) total %F{8}· finished%f %D{%H:%M:%S}"
+(( $#failed )) && return 1
 return 0
