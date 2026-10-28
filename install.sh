@@ -10,6 +10,7 @@ stow zsh
 stow vim
 stow git
 stow npm
+stow direnv
 echo "Change to home then confirm"
 cd
 ls -la
