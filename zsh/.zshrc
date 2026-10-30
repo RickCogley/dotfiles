@@ -144,6 +144,13 @@ export REPORTTIME=1
 export HISTSIZE="1000000"
 export SAVEHIST="1000000"
 export HISTFILE=~/.zsh_history
+# Without inc_append_history zsh writes history only when a shell exits, so a
+# crashed or killed tab loses every command it ran. atuin keeps its own copy,
+# but up-arrow prefix search still reads this file. Not share_history: that
+# feeds other tabs' commands into up-arrow mid-session.
+setopt inc_append_history   # write each command as it runs
+setopt hist_ignore_dups     # skip a command identical to the one before it
+setopt hist_ignore_space    # a leading space keeps a command out of history
 
 # Other environments
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
@@ -303,7 +310,8 @@ alias duf='du -sh *'
 alias ff='find . -type f -name'
 
 # History
-alias h='history'
+# Bare `history` prints only the last 16 entries; start from 1 for all of them.
+alias h='history 1'
 alias hgrep="fc -El 0 | grep"
 
 # Process

@@ -11,6 +11,7 @@ stow vim
 stow git
 stow npm
 stow direnv
+stow atuin
 echo "Change to home then confirm"
 cd
 ls -la
