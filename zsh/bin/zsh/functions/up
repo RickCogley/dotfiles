@@ -2,7 +2,7 @@
 # so it degrades quietly on a fresh machine instead of erroring out.
 #
 #   up            run every available step
-#   up brew       run one step (brew|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|certs|db|tools|expiry)
+#   up brew       run one step (brew|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|certs|db|tools|stale|expiry)
 #   up -n         dry run: list what would run
 #
 # Replaces the old `allup`, which called z4h/mas/brew-cu/dein — none installed.
@@ -15,7 +15,7 @@ local -a steps requested
 local s dry=0 failed=() ran=()
 local -F t0=$EPOCHREALTIME
 
-steps=(brew claude deno npm pnpm uv rust gh zsh keys mac certs db tools expiry)
+steps=(brew claude deno npm pnpm uv rust gh zsh keys mac certs db tools stale expiry)
 
 while (( $# )); do
   case "$1" in
@@ -263,6 +263,57 @@ _up_certs() {
   _up_note "verified: neither root left in $pem"
 }
 
+# Dev servers nobody is attached to. Closing a terminal tab ends `wrangler dev`
+# or `vite dev` but can leave its workerd child running, reparented to launchd.
+# By 2026-10-31, 109 had piled up (the oldest 60 days) while the Mac was deep
+# in swap. Stopped only when all of these hold, so a server in an open
+# terminal is never touched:
+#   - mine, and its parent is launchd (pid 1): no shell owns it any more
+#   - running for 12 hours or more
+#   - its command matches a known dev server or test watcher
+# Old ones still attached to a terminal are listed, not stopped.
+_up_stale() {
+  local -a patterns rows pids keep summary
+  local -A by_project
+  local line pid ppid etime cmd p project
+  local -i hours
+  # A space before "dev": every path under ~/dev contains "dev" too.
+  patterns=('*workerd serve*' '*wrangler* dev*' '*/vite/bin/vite.js*' '*/vitest/*'
+            '*astro* dev*' '*esbuild --service*')
+  rows=( ${(f)"$(ps -U $USER -o pid=,ppid=,etime=,command=)"} )
+  for line in $rows; do
+    read -r pid ppid etime cmd <<< "$line"
+    for p in $patterns; do [[ $cmd == ${~p} ]] && break; p=; done
+    [[ -n $p ]] || continue
+    # etime is [[DD-]HH:]MM:SS; count whole hours.
+    if [[ $etime == *-* ]]; then hours=$(( 10#${etime%%-*} * 24 ))
+    elif [[ $etime == *:*:* ]]; then hours=$(( 10#${etime%%:*} ))
+    else hours=0; fi
+    project=${${cmd%%/node_modules/*}##* }; project=${project:t}
+    if (( ppid == 1 && hours >= 12 )); then
+      pids+=($pid); (( by_project[$project]++ ))
+    elif (( ppid != 1 && hours >= 24 * 7 )); then
+      keep+=("$project ($(( hours / 24 ))d, pid $pid)")
+    fi
+  done
+  if (( $#pids )); then
+    for project in ${(k)by_project}; do summary+=("$by_project[$project] $project"); done
+    _up_note "stopping $#pids orphaned dev server(s): ${(j:, :)summary}"
+    kill -TERM $pids 2>/dev/null
+    sleep 3
+    pids=( ${(f)"$(ps -o pid= -p ${(j:,:)pids} 2>/dev/null)"} )
+    pids=( ${pids// /} ); pids=( ${pids:#} )
+    if (( $#pids )); then
+      _up_note "$#pids still running after TERM; sending KILL"
+      kill -KILL $pids 2>/dev/null
+    fi
+  else
+    _up_note "no orphaned dev servers"
+  fi
+  (( $#keep )) && _up_note "still attached to a terminal, a week or older (left running): ${(j:, :)keep}"
+  return 0
+}
+
 # Informational, not an update: reminds me what modern CLI tools are installed
 # (see the `tools` function — single source of truth). Always "succeeds".
 _up_tools() { tools; }
@@ -306,6 +357,7 @@ for s in $requested; do
     certs)  _up_run "eMudhra roots"   openssl _up_certs  ;;
     db)     _up_run "locate database" sudo    _up_db     ;;
     tools)  _up_run "Modern CLI tools" tools  _up_tools  ;;
+    stale)  _up_run "Stale dev servers" ps    _up_stale  ;;
     expiry) _up_run "Token expiry"    keys    _up_expiry ;;
     *)      print -u2 "up: unknown step '$s' (valid: ${(j:, :)steps})" ;;
   esac
