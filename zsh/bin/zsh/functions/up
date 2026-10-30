@@ -66,6 +66,18 @@ _up_run() {  # _up_run <label> <required-cmd> <function>
 }
 
 _up_brew() {
+  # When `brew link` overwrites a file it did not put there (npm/npx after
+  # `npm update -g` replaced node's own copies, pip after a pip self-upgrade),
+  # it moves the old file into $(brew --cache)/Backup, and nothing ever prunes
+  # that, not even `brew cleanup -s`. Clear the previous run's backups before
+  # upgrading, so the newest set survives until the next run in case one is
+  # needed back.
+  local cache="$(brew --cache)" ; local -a old
+  [[ -n $cache ]] && old=( $cache/Backup/*(DN) )
+  if (( $#old )); then
+    _up_note "clear previous link backups ($(du -sh $cache/Backup | cut -f1)) in $cache/Backup"
+    rm -rf -- $old
+  fi
   _up_note "update + upgrade formulae and casks"
   # --yes: Homebrew 6.0 asks for confirmation by default, which would stall an
   # unattended run. HOMEBREW_NO_ASK in .zshrc covers interactive use; this makes
