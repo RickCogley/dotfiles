@@ -105,25 +105,41 @@ _up_brew() {
 }
 
 # mise: the Node versions repos pin in .node-version or .nvmrc (dotfiles#81).
-# mise remembers each config it has read. In each of those repos, `upgrade`
-# moves a range such as "24" to the newest 24.x and leaves an exact pin such
-# as 24.14.1 alone; without --bump it never edits a repo's file. stdin is
-# /dev/null so a repo whose mise.toml isn't trusted fails the step instead of
-# stopping at a trust prompt. prune then removes versions no repo still uses.
+# mise remembers each config it has read; only repos that pin something are
+# visited (a bare package.json gets tracked too). In each, `upgrade` moves a
+# range such as "24" to the newest 24.x and leaves an exact pin such as
+# 24.14.1 alone; without --bump it never edits a repo's file, so --quiet hides
+# mise's hint to run `upgrade --bump`. A newer major is listed once instead:
+# moving to it is a repo change, made in that repo's PR. stdin is /dev/null so
+# an untrusted mise.toml fails the step instead of stopping at a trust prompt.
+# prune then removes versions no repo still uses.
 _up_mise() {
-  local link dir rc=0 global=$HOME/.config/mise
-  local -aU dirs
-  global=${global:A}   # stow links it into ~/.dotfiles
+  local link dir name rc=0 behind
+  local -aU dirs majors
   for link in ~/.local/state/mise/tracked-configs/*(N@); do
+    name=${link:A:t}
+    case $name in
+      .node-version|.nvmrc|.tool-versions|mise.toml|.mise.toml) ;;
+      *) continue ;;
+    esac
     dir=${link:A:h}
-    [[ -d $dir && $dir != $global ]] && dirs+=($dir)
+    [[ -d $dir && $dir != ${${:-$HOME/.config/mise}:A} ]] && dirs+=($dir)
   done
   for dir in $dirs; do
-    _up_note "${dir/#$HOME/~}"
-    mise -C $dir upgrade </dev/null || rc=1
+    if [[ $(mise -C $dir outdated --json </dev/null 2>/dev/null) != '{}' ]]; then
+      _up_note "${dir/#$HOME/~}: newer release in its range"
+      mise -C $dir upgrade --quiet </dev/null || rc=1
+    fi
+    if (( $+commands[jq] )); then
+      behind=$(mise -C $dir outdated --bump --json </dev/null 2>/dev/null \
+        | jq -r '.node | select(.) | "\(.current) → \(.bump)"')
+      [[ -n $behind ]] && majors+=("${dir:t} $behind")
+    fi
   done
+  (( $#dirs )) && _up_note "${#dirs} repos on their pinned Node"
+  (( $#majors )) && _up_note "%F{8}newer major (bump .node-version in the repo): ${(j:, :)majors}%f"
   _up_note "remove versions nothing uses"
-  mise prune --tools </dev/null || rc=1
+  mise prune --tools --quiet </dev/null || rc=1
   return $rc
 }
 
