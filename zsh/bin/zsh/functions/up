@@ -2,7 +2,7 @@
 # so it degrades quietly on a fresh machine instead of erroring out.
 #
 #   up            run every available step
-#   up brew       run one step (brew|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|certs|db|tools|stale|expiry)
+#   up brew       run one step (brew|mise|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|certs|db|tools|stale|expiry)
 #   up -n         dry run: list what would run
 #
 # Replaces the old `allup`, which called z4h/mas/brew-cu/dein — none installed.
@@ -15,7 +15,7 @@ local -a steps requested
 local s dry=0 failed=() ran=()
 local -F t0=$EPOCHREALTIME
 
-steps=(brew claude deno npm pnpm uv rust gh zsh keys mac certs db tools stale expiry)
+steps=(brew mise claude deno npm pnpm uv rust gh zsh keys mac certs db tools stale expiry)
 
 while (( $# )); do
   case "$1" in
@@ -104,6 +104,45 @@ _up_brew() {
   return 0
 }
 
+# mise: the Node versions repos pin in .node-version or .nvmrc (dotfiles#81).
+# mise remembers each config it has read; only repos that pin something are
+# visited (a bare package.json gets tracked too). In each, `upgrade` moves a
+# range such as "24" to the newest 24.x and leaves an exact pin such as
+# 24.14.1 alone; without --bump it never edits a repo's file, so --quiet hides
+# mise's hint to run `upgrade --bump`. A newer major is listed once instead:
+# moving to it is a repo change, made in that repo's PR. stdin is /dev/null so
+# an untrusted mise.toml fails the step instead of stopping at a trust prompt.
+# prune then removes versions no repo still uses.
+_up_mise() {
+  local link dir name rc=0 behind
+  local -aU dirs majors
+  for link in ~/.local/state/mise/tracked-configs/*(N@); do
+    name=${link:A:t}
+    case $name in
+      .node-version|.nvmrc|.tool-versions|mise.toml|.mise.toml) ;;
+      *) continue ;;
+    esac
+    dir=${link:A:h}
+    [[ -d $dir && $dir != ${${:-$HOME/.config/mise}:A} ]] && dirs+=($dir)
+  done
+  for dir in $dirs; do
+    if [[ $(mise -C $dir outdated --json </dev/null 2>/dev/null) != '{}' ]]; then
+      _up_note "${dir/#$HOME/~}: newer release in its range"
+      mise -C $dir upgrade --quiet </dev/null || rc=1
+    fi
+    if (( $+commands[jq] )); then
+      behind=$(mise -C $dir outdated --bump --json </dev/null 2>/dev/null \
+        | jq -r '.node | select(.) | "\(.current) → \(.bump)"')
+      [[ -n $behind ]] && majors+=("${dir:t} $behind")
+    fi
+  done
+  (( $#dirs )) && _up_note "${#dirs} repos on their pinned Node"
+  (( $#majors )) && _up_note "%F{8}newer major (bump .node-version in the repo): ${(j:, :)majors}%f"
+  _up_note "remove versions nothing uses"
+  mise prune --tools --quiet </dev/null || rc=1
+  return $rc
+}
+
 _up_claude() { _up_note "claude update"; claude update; }
 _up_rust()   { _up_note "rustup update"; rustup update; }
 
@@ -135,7 +174,13 @@ _up_deno() {
 # so without `allow-scripts=pnpm` in ~/.npmrc an update leaves the
 # placeholder: shells still run it, but Node's spawn (`keys run -- pnpm`)
 # fails with ENOEXEC. Fail the step so the summary shows it.
-_up_npm() {
+#
+# npm's global folder belongs to the Node that runs it. Homebrew's Node owns
+# these globals, but inside a pinned repo mise puts the repo's Node first
+# (dotfiles#81), so the step runs in a subshell from home with mise off PATH.
+_up_npm() (
+  cd ~ || return 1
+  path=(${path:#$HOME/.local/share/mise/*})
   _up_note "global packages"
   npm update -g || return 1
   local pnpm_bin="$(npm root -g)/pnpm/pnpm"
@@ -145,7 +190,7 @@ _up_npm() {
     return 1
   fi
   return 0
-}
+)
 
 # pnpm global tools (wrangler and cf live here). `update -g` bumps each global
 # within its recorded semver range; a new major (e.g. wrangler 4 -> 5) is
@@ -344,6 +389,7 @@ _up_db() {
 for s in $requested; do
   case $s in
     brew)   _up_run "Homebrew"        brew    _up_brew   ;;
+    mise)   _up_run "mise (Node per repo)" mise _up_mise ;;
     claude) _up_run "Claude Code"     claude  _up_claude ;;
     deno)   _up_run "Deno (via dvm)"  dvm     _up_deno   ;;
     npm)    _up_run "npm globals"     npm     _up_npm    ;;

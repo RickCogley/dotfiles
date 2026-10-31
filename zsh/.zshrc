@@ -221,6 +221,15 @@ unfunction _path_prepend _path_append
 # Export PATH
 export PATH
 
+# mise — per-repo tool versions, Node only for now (dotfiles#81). The shims go
+# first so commands started without a prompt (Claude Code, scripts) still get
+# each repo's Node by directory; activation then puts the real install first at
+# every prompt. Outside a pinned repo the shim falls back to Homebrew's node.
+if (( $+commands[mise] )); then
+    path=(~/.local/share/mise/shims $path)
+    eval "$(mise activate zsh)"
+fi
+
 # Key bindings
 bindkey '^H'   backward-kill-word    # Ctrl+H and Ctrl+Backspace: Delete previous word
 bindkey '^[^H' backward-kill-word    # Ctrl+Alt+Backspace: Delete previous shell word
