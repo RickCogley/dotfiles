@@ -1,0 +1,12 @@
+# mise — per-repo tool versions (RickCogley/dotfiles#81)
+#
+# Node only, for now. Repos pin Node in .node-version or .nvmrc, the files
+# Cloudflare builds and CI follow; mise makes local runs follow them too.
+# Outside a pinned repo nothing is configured, so `node` stays Homebrew's
+# (not_found_system_fallback, on by default).
+#
+# Secrets never go in an [env] section here or in a repo's mise.toml: they
+# reach commands through `keys run`, one process at a time.
+
+[settings]
+idiomatic_version_file_enable_tools = ["node"]
