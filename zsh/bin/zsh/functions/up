@@ -138,6 +138,12 @@ _up_mise() {
   done
   (( $#dirs )) && _up_note "${#dirs} repos on their pinned Node"
   (( $#majors )) && _up_note "%F{8}newer major (bump .node-version in the repo): ${(j:, :)majors}%f"
+  # The global fnox pin moves only when bumped in the dotfiles config (#83).
+  if (( $+commands[jq] )); then
+    behind=$(mise -C ~ outdated --bump --json </dev/null 2>/dev/null \
+      | jq -r '.fnox | select(.) | "fnox \(.requested) → \(.bump)"')
+    [[ -n $behind ]] && _up_note "%F{8}newer release (bump the pin in ~/.dotfiles/mise/.config/mise/config.toml): $behind%f"
+  fi
   _up_note "remove versions nothing uses"
   mise prune --tools --quiet </dev/null || rc=1
   return $rc
