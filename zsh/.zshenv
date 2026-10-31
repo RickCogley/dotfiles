@@ -19,6 +19,11 @@ done
 path=($_base_path $path)
 unset _base_path _d
 
+# mise shims (#85): tools mise manages (fnox) for every shell, including ones
+# that never read .zshrc (zsh -lc, scripts, agent sessions). Interactive shells
+# still run `mise activate` in .zshrc, which puts the exact versions first.
+[[ -d $HOME/.local/share/mise/shims ]] && path=($HOME/.local/share/mise/shims $path)
+
 # Export PATH
 export PATH
 
