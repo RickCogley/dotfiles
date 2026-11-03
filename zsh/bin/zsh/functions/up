@@ -2,7 +2,7 @@
 # so it degrades quietly on a fresh machine instead of erroring out.
 #
 #   up            run every available step
-#   up brew       run one step (brew|mise|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|certs|db|tools|stale|expiry)
+#   up brew       run one step (brew|mise|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|certs|db|tools|stale|vault|expiry)
 #   up -n         dry run: list what would run
 #
 # Replaces the old `allup`, which called z4h/mas/brew-cu/dein — none installed.
@@ -15,7 +15,7 @@ local -a steps requested
 local s dry=0 failed=() ran=() todo=()
 local -F t0=$EPOCHREALTIME
 
-steps=(brew mise claude deno npm pnpm uv rust gh zsh keys mac certs db tools stale expiry)
+steps=(brew mise claude deno npm pnpm uv rust gh zsh keys mac certs db tools stale vault expiry)
 
 while (( $# )); do
   case "$1" in
@@ -257,6 +257,43 @@ _up_keys() {
   esac
 }
 
+# Vault keys (eSolia Keys 0.37.0+, eSolia/devkit#655): report only. One
+# listing per vault through the vault login, never a value, never an Allow.
+# Exit 3 means a copy is out of date, a key was removed or disabled in its
+# vault, or a vault can't be read: shown and added to the to-do list, not a
+# step failure. Older keys accept --check (it is upgrade's flag) and would
+# run a real sync, so the step runs only when keys' help lists sync --check.
+_up_vault() {
+  if ! keys help sync 2>/dev/null | grep -q -- 'sync --check'; then
+    _up_note "keys has no sync --check yet (0.37.0 adds it); skipped"
+    return 0
+  fi
+  _up_note "vault keys changed since your last sync (report only)"
+  local out rc
+  out=$(keys sync --check --json </dev/null); rc=$?
+  case $rc in
+    0) return 0 ;;
+    3) _up_vault_todos "$out"; return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+_up_vault_todos() {  # <json from keys sync --check --json>
+  local out=$1
+  local -a changed gone unreadable
+  changed=(${(f)"$(jq -r '.result.changed[]?' <<<"$out" 2>/dev/null)"})
+  gone=(${(f)"$(jq -r '((.result.removed // []) + (.result.disabled // []))[]' <<<"$out" 2>/dev/null)"})
+  unreadable=(${(f)"$(jq -r '.result.unreadable[]? | "\(.vault) (\(.keys | join(", ")))"' <<<"$out" 2>/dev/null)"})
+  (( $#changed )) && _up_todo "$#changed secret(s) changed in their vault since your last sync
+    (${(j:, :)changed})
+    run: keys sync"
+  (( $#gone )) && _up_todo "$#gone secret(s) removed or disabled in their vault: ${(j:, :)gone}
+    ask the bundle's owner; keys sync --check says which"
+  (( $#unreadable )) && _up_todo "can't read ${(j:; :)unreadable}
+    keys sync --check says why"
+  return 0
+}
+
 # Last on purpose: what needs doing soon. Store-wide (every GitHub and
 # Cloudflare token in ~/.ssh/tokens), checked with each issuer; --soon prints
 # only expiring, expired or rejected tokens, else a single "nothing expiring"
@@ -418,6 +455,7 @@ for s in $requested; do
     db)     _up_run "locate database" sudo    _up_db     ;;
     tools)  _up_run "Modern CLI tools" tools  _up_tools  ;;
     stale)  _up_run "Stale dev servers" ps    _up_stale  ;;
+    vault)  _up_run "Vault keys"      keys    _up_vault  ;;
     expiry) _up_run "Token expiry"    keys    _up_expiry ;;
     *)      print -u2 "up: unknown step '$s' (valid: ${(j:, :)steps})" ;;
   esac
