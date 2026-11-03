@@ -154,8 +154,17 @@ _up_mise() {
     4. the Keychain shouldn't ask again; if it does, allow only after
        codesign -dv \"\$(mise which fnox)\" shows TeamIdentifier=4993Y37DX6"
   fi
+  # mise 2026.11.0 asks before pruning, and nobody can answer here, so the
+  # step says what goes and passes --yes (#92). The list prints raw (#90).
   _up_note "remove versions nothing uses"
-  mise prune --tools --quiet </dev/null || rc=1
+  if (( $+commands[jq] )); then
+    local -a prunable
+    prunable=(${(f)"$(mise ls --prunable --json </dev/null 2>/dev/null \
+      | jq -r 'to_entries[] | .key as $t | .value[] | "\($t) \(.version)"')"})
+    (( $#prunable )) || return $rc
+    print -r -- "  ${(j:, :)prunable}"
+  fi
+  mise prune --tools --yes --quiet </dev/null || rc=1
   return $rc
 }
 
