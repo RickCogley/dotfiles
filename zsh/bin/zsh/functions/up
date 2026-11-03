@@ -261,8 +261,8 @@ _up_keys() {
 # listing per vault through the vault login, never a value, never an Allow.
 # Exit 3 means a copy is out of date, a key was removed or disabled in its
 # vault, or a vault can't be read: shown and added to the to-do list, not a
-# step failure. Older keys accept --check (it is upgrade's flag) and would
-# run a real sync, so the step runs only when keys' help lists sync --check.
+# step failure. Keys before 0.37.0 refuse sync --check (exit 1), so the step
+# skips quietly until keys' help lists it, instead of showing as failed.
 _up_vault() {
   if ! keys help sync 2>/dev/null | grep -q -- 'sync --check'; then
     _up_note "keys has no sync --check yet (0.37.0 adds it); skipped"
