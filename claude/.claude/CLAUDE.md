@@ -156,8 +156,7 @@ session_init:
 
 Tokens, keys and account IDs live in `~/.ssh/tokens` and reach commands through
 the installed eSolia Keys CLI, `keys` (devkit). This applies in every repo,
-including client repos that keep `.claude/` out of git (jac-2026, j-vad,
-j-pvad), where the shared `secrets-handling` rule only arrives by local sync.
+including client repos (jac-2026, j-vad, j-pvad).
 
 - **See what's wired:** `keys list` in the repo (`--json` to parse). `keys
   search TERM` finds names used elsewhere; `keys help --json` is the full
