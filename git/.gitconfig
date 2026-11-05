@@ -71,6 +71,15 @@
 	token = !security find-internet-password -a rickcogley -s github.com -l 'ghi token' -w
 [credential]
 	helper = osxkeychain
+# GitHub logins come from gh (gh auth login), never from the keychain, so
+# gh auth status shows the account git pushes as, and gh auth logout signs
+# git out too. The empty helper line drops osxkeychain for these hosts.
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential
 [gpg]
 	format = ssh
 [commit]
