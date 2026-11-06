@@ -110,7 +110,7 @@
       "Bash(killall:*)"
     ]
   },
-  "model": "opus",
+  "model": "fable",
   "hooks": {
     "UserPromptSubmit": [
       {
