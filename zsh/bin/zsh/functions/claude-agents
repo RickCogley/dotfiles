@@ -1,0 +1,90 @@
+# claude-agents — keep the user-level Claude Code agents in dotfiles in step
+# with the plugin agents they override (dotfiles#99, #101).
+#
+# ~/.claude/agents/<name>.md are stow links into claude/.claude/agents/. Each
+# listed one is the plugin's agent file with its `model:` line removed, so the
+# agent inherits the session model instead of the plugin's pin. Plugin updates
+# rewrite the plugin cache but never these copies, so `up` runs
+# `claude-agents check` after `claude update` and adds a to-do when a copy has
+# fallen behind. The refresh is deliberate: the diff is where the new upstream
+# prompt gets a look, and it lands through a branch and PR like any change.
+#
+#   claude-agents check     report; exit 3 when a copy is stale (up's to-do)
+#   claude-agents diff      show what refresh would write
+#   claude-agents refresh   rewrite stale or missing copies, then PR them
+#
+# Exit 0 in step (a plugin that isn't installed is skipped), 3 stale, 1 when a
+# plugin source can't be read or the registry is missing.
+
+emulate -L zsh
+setopt local_options no_unset pipe_fail
+
+# plugin:agent pairs. One line here per override; refresh writes the copy.
+local -a overrides=(
+  feature-dev:code-architect
+  feature-dev:code-reviewer
+)
+local registry=~/.claude/plugins/installed_plugins.json
+local dest=${DOTFILES:-~/.dotfiles}/claude/.claude/agents
+local mode=${1:-check}
+
+case $mode in
+  check|diff|refresh) ;;
+  -h|--help) print -- "usage: claude-agents [check|diff|refresh]"; return 0 ;;
+  *) print -u2 -- "claude-agents: unknown mode '$mode' (check|diff|refresh)"; return 2 ;;
+esac
+if [[ ! -r $registry ]]; then
+  print -u2 -- "claude-agents: no plugin registry at $registry"; return 1
+fi
+(( $+commands[jq] )) || { print -u2 -- "claude-agents: jq is required"; return 1; }
+
+local -a stale unreadable
+local o plugin agent root ver src dst
+for o in $overrides; do
+  plugin=${o%%:*}; agent=${o#*:}
+  root=$(jq -r --arg p "$plugin@claude-plugins-official" \
+    '.plugins[$p][0].installPath // empty' "$registry")
+  ver=$(jq -r --arg p "$plugin@claude-plugins-official" \
+    '.plugins[$p][0].version // "?"' "$registry")
+  if [[ -z $root ]]; then
+    print -- "· $plugin not installed; $agent skipped"; continue
+  fi
+  src=$root/agents/$agent.md; dst=$dest/$agent.md
+  if [[ ! -r $src ]]; then unreadable+=("$src"); continue; fi
+
+  # The override is the plugin file minus its model pin, nothing else.
+  if [[ -r $dst ]] && cmp -s <(grep -v '^model:' "$src") "$dst"; then
+    [[ $mode == check ]] && print -- "✓ $agent matches $plugin $ver"
+    continue
+  fi
+  stale+=("$agent")
+  case $mode in
+    check)
+      if [[ -r $dst ]]; then print -- "☐ $agent is behind $plugin $ver"
+      else                   print -- "☐ $agent has no copy yet ($plugin $ver)"; fi ;;
+    diff)
+      print -P -- "%B── $agent  ($plugin $ver)%b"
+      diff -u --label "dotfiles/$agent.md" --label "$plugin $ver/$agent.md" \
+        "$dst" <(grep -v '^model:' "$src") 2>/dev/null
+      [[ ! -r $dst ]] && print -- "(no copy yet; refresh creates it)" ;;
+    refresh)
+      mkdir -p "$dest"
+      grep -v '^model:' "$src" > "$dst" || { unreadable+=("$src"); continue; }
+      print -- "↻ $agent refreshed from $plugin $ver" ;;
+  esac
+done
+
+if (( $#unreadable )); then
+  print -u2 -- "claude-agents: can't read ${(j:, :)unreadable}"; return 1
+fi
+case $mode in
+  refresh)
+    if (( $#stale )); then
+      print -- "now: cd ${dest:h:h:h} && git diff, then branch and PR the refresh"
+      [[ -L ~/.claude/agents/${stale[1]}.md ]] || print -- "then: stow claude (new copy has no link yet)"
+    else
+      print -- "nothing to refresh"
+    fi
+    return 0 ;;
+  *) (( $#stale )) && return 3; return 0 ;;
+esac

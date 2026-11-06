@@ -168,7 +168,30 @@ _up_mise() {
   return $rc
 }
 
-_up_claude() { _up_note "claude update"; claude update; }
+_up_claude() {
+  _up_note "claude update"; claude update || return 1
+  _up_claude_agents
+}
+
+# Plugin agents overridden in dotfiles (claude-agents, dotfiles#99/#101):
+# report only. Exit 3 means a plugin update changed an agent whose copy we
+# keep: shown and added to the to-do list, not a step failure. The copy is
+# refreshed by hand (claude-agents diff, then refresh) and goes out as a PR,
+# so the new upstream prompt gets a look before it is adopted.
+_up_claude_agents() {
+  (( $+functions[claude-agents] )) || return 0
+  _up_note "plugin agent overrides (report only)"
+  local out rc
+  out=$(claude-agents check </dev/null); rc=$?
+  [[ -n $out ]] && print -r -- "$out"
+  case $rc in
+    0) return 0 ;;
+    3) _up_todo "plugin agent override(s) behind the installed plugin
+    run: claude-agents diff, then claude-agents refresh, and PR the change"
+       return 0 ;;
+    *) return 1 ;;
+  esac
+}
 _up_rust()   { _up_note "rustup update"; rustup update; }
 
 # Deno version selection is deliberate on this machine and this step must not
