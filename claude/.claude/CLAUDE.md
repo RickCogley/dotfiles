@@ -27,6 +27,7 @@ critical_rules:
   - ALWAYS check project linting rules BEFORE writing code (deno.json, eslint, etc.)
   - ALWAYS follow the change management workflow (issue → branch → PR → merge → verify) for non-trivial changes
   - ALWAYS verify CI and Dependabot after merging to main
+  - NEVER connect a repo to a third-party scanning service (Semgrep cloud, Snyk, Guardian-type plugins, scanning GitHub Apps); scanning runs in our own CI only, see "Security scanning" below
 
 # General Directives
 directives:
@@ -176,6 +177,24 @@ including client repos (jac-2026, j-vad, j-pvad).
 - **`gh` says 401 Bad credentials:** sessions started before 2026-10-04 can
   still carry the revoked admin `GITHUB_TOKEN`. Run `unset GITHUB_TOKEN` (gh
   then uses its keychain login) and suggest restarting the session.
+
+## Security scanning: our own CI only
+
+All security scanning runs in our own CI (devkit `security.yml`: Semgrep CLI,
+moving to Opengrep, plus Trivy, Gitleaks and Syft). No external service that
+receives our code or findings: no Semgrep cloud, Managed Scans or `semgrep
+login`, no Snyk, SonarCloud or Codacy, no scanning GitHub Apps, and no editor
+or agent plugins that upload files as they are written (Semgrep Guardian did,
+and was removed 2026-11-06). This matters most in client repos.
+
+- **A finding is never a reason to change platforms.** Fix it, or use the
+  tool's suppression with the reason (`.trivyignore`, `.gitleaksignore`,
+  `nosemgrep: <rule-id>`).
+- **Stop and ask** before creating an account, installing an app, or adding a
+  token for any scanning service.
+- Full rule: devkit `.claude/shared-rules/security-scanning.md` (synced into
+  devkit consumers as `.claude/rules/security-scanning.md`). Decision: devkit
+  `docs/eSolia-Security-Scanning-Decision-INTERNAL-20261106-en.md`.
 
 ## Cloudflare Workers
 
