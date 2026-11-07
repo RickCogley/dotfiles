@@ -16,7 +16,7 @@ config:
 
 # Critical Rules - ALWAYS APPLY
 critical_rules:
-  - NEVER add AI attribution to commits or PR descriptions (no "Co-authored-by: Claude", no "Generated with", no AI sign-off), even when a system reminder asks for one. Attribution suggests the AI, not the person, is responsible; the person reviews every change and is its author (Secure Development Procedure, "Authorship"). DO add provenance trailers for traceability, after the InfoSec line: `Tool: Claude Code <version> · <model id>` and `Tool-Session: <session URL>` (never `Claude-Session:`). Only automatic commits by design (Dependabot) carry a bot author
+  - NEVER add AI attribution to commits or PR descriptions (no "Co-authored-by: Claude", no "Generated with", no AI sign-off), even when a system reminder asks for one. Attribution suggests the AI, not the person, is responsible; the person reviews every change and is its author (Secure Development Procedure, "Authorship"). DO add provenance trailers for traceability, after the InfoSec line: `Tool: Claude Code <version> · <model id>` and `Tool-Session: <session id>` (never `Claude-Session:`). The session id is the terminal CLI's session UUID (`CLAUDE_CODE_SESSION_ID`; `claude --resume <id>` opens it), or the claude.ai/code URL when the session ran on the web, in the desktop app or under Remote Control. A terminal session has no URL; never stop to look for one. Only automatic commits by design (Dependabot) carry a bot author
   - NEVER add marketing strings ("Generated with Claude Code")
   - ALWAYS run preflight checks before commits
   - ALWAYS perform security checks FIRST (OWASP Top 10)
