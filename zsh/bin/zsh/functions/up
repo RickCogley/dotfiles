@@ -2,11 +2,11 @@
 # so it degrades quietly on a fresh machine instead of erroring out.
 #
 #   up            run every available step
-#   up brew       run one step (brew|mise|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|certs|db|tools|stale|docker|cache|vault|expiry)
+#   up brew       run one step (brew|mise|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|qc|certs|db|tools|stale|docker|cache|vault|expiry)
 #   up -n         dry run: list what would run
 #
-# Steps that need root (certs, db) share one sudo prompt at the start of the
-# run, and only when one of them has work to do (see _up_sudo).
+# Steps that need root (certs, db, qc's login banner) share one sudo prompt at
+# the start of the run, and only when one of them has work to do (see _up_sudo).
 #
 # Replaces the old `allup`, which called z4h/mas/brew-cu/dein — none installed.
 
@@ -24,7 +24,11 @@ local -i sudo_keepalive=0
 # Function-scoped in zsh: runs when `up` returns, also after a Ctrl-C.
 trap '(( sudo_keepalive )) && kill $sudo_keepalive 2>/dev/null' EXIT
 
-steps=(brew mise claude deno npm pnpm uv rust gh zsh keys mac certs db tools stale docker cache vault expiry)
+steps=(brew mise claude deno npm pnpm uv rust gh zsh keys mac qc certs db tools stale docker cache vault expiry)
+
+# The login-window banner `up qc` keeps (a system domain, so sudo; mise's
+# preference engine is user-only).
+local qc_banner='Authorized Personnel Only - eSolia Inc.'
 
 # The two roots the compromised eMudhra intermediates chain to (see _up_certs),
 # as /etc/ssl/cert.pem labels them.
@@ -384,6 +388,104 @@ _up_mac() {
   return 0
 }
 
+# macOS settings QC (dotfiles#113): the preferences this Mac should have, and
+# the security posture it should keep, checked every run.
+#   1. Preferences declared in ~/.config/mise/config.toml under
+#      [bootstrap.macos.defaults] (dotfiles mise package). mise reports each
+#      as set, differs or unset and writes only the drift, type included; it
+#      never deletes. Finder and Dock are relaunched only when their domains
+#      changed; NSGlobalDomain changes reach each app as it next launches.
+#   2. The login-window banner: a system domain, so `up` writes it with sudo.
+#   3. Posture, report only: anything off becomes a to-do with the fix, never
+#      changed from here (FileVault, SIP and Gatekeeper are deliberate acts).
+_up_qc_pending() {  # banner missing or different: sudo work this run
+  [[ $(defaults read /Library/Preferences/com.apple.loginwindow LoginwindowText 2>/dev/null) != $qc_banner ]]
+}
+
+# _up_qc_check [-x] <label> <expected> <fix> -- <command...>
+# A posture check: runs the command, passes when its output contains the
+# expected text (with -x: is exactly that text, for a `defaults read` value),
+# otherwise adds a to-do quoting what it said.
+_up_qc_check() {
+  local -i exact=0
+  [[ $1 == -x ]] && { exact=1; shift }
+  local label=$1 want=$2 fix=$3 out
+  shift 4
+  out=$("$@" 2>&1)
+  if (( exact )) && [[ $out == "$want" ]] || (( ! exact )) && [[ $out == *"$want"* ]]; then
+    qc_ok+=($label)
+  else
+    _up_todo "$label: ${out:-no output}"$'\n'"    fix: $fix"
+  fi
+}
+
+_up_qc() {
+  local json row state domain key current
+  local -a rows drift domains
+  local -a qc_ok
+  if ! (( $+commands[mise] && $+commands[jq] )); then
+    _up_note "needs mise and jq; skipped"; return 0
+  fi
+  _up_note "declared preferences (mise bootstrap macos defaults)"
+  # From $HOME on purpose: run inside a repo, mise would also load that
+  # repo's mise.toml (or stop at its trust prompt).
+  json=$(mise -C ~ bootstrap macos defaults status --json </dev/null 2>&1) || {
+    _up_note "mise could not report preference state:"; print -r -- "$json"; return 1
+  }
+  rows=( ${(f)"$(jq -r '.macos_defaults.entries[] | [.state, .domain, .key, .current] | @tsv' <<<"$json")"} )
+  for row in $rows; do
+    IFS=$'\t' read -r state domain key current <<<"$row"
+    [[ $state == set ]] && continue
+    drift+=("$domain $key: $state${current:+ (now $current)}")
+    domains+=($domain)
+  done
+  if (( $#drift )); then
+    print -rl -- ${drift/#/  }
+    _up_note "writing $#drift of $#rows"
+    mise -C ~ bootstrap macos defaults apply --yes </dev/null || return 1
+    if (( ${domains[(Ie)com.apple.finder]} || ${domains[(Ie)com.apple.desktopservices]} )); then
+      _up_note "relaunching Finder"; killall Finder 2>/dev/null
+    fi
+    if (( ${domains[(Ie)com.apple.dock]} )); then
+      _up_note "relaunching Dock"; killall Dock 2>/dev/null
+    fi
+    (( ${domains[(Ie)NSGlobalDomain]} )) && _up_note "NSGlobalDomain changes apply to each app as it next launches"
+  else
+    _up_note "all $#rows declared preferences set"
+  fi
+  if _up_qc_pending; then
+    _up_note "login window banner (needs sudo)"
+    sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText -string "$qc_banner" || return 1
+  fi
+  _up_qc_check FileVault   'FileVault is On'      'System Settings > Privacy & Security > FileVault' -- fdesetup status
+  # "status: enabled" exactly: a custom configuration prints "unknown" and
+  # then per-feature lines that also say enabled.
+  _up_qc_check SIP         'status: enabled'      'boot to Recovery, then: csrutil enable' -- csrutil status
+  _up_qc_check Gatekeeper  'assessments enabled'  'System Settings > Privacy & Security > Allow applications from' -- spctl --status
+  _up_qc_check Firewall    'enabled'              'sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on' \
+    -- /usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate
+  _up_qc_check 'Firewall stealth' 'stealth mode is on' 'sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on' \
+    -- /usr/libexec/ApplicationFirewall/socketfilterfw --getstealthmode
+  _up_qc_check 'Screen lock' 'immediate' 'System Settings > Lock Screen > Require password: Immediately' \
+    -- sysadminctl -screenLock status
+  local key
+  for key in AutomaticDownload CriticalUpdateInstall ConfigDataInstall AutomaticallyInstallMacOSUpdates; do
+    _up_qc_check -x "Auto-update $key" 1 'System Settings > General > Software Update > Automatic Updates' \
+      -- defaults read /Library/Preferences/com.apple.SoftwareUpdate $key
+  done
+  _up_qc_check -x 'App Store auto-update' 1 'System Settings > General > Software Update > Automatic Updates' \
+    -- defaults read /Library/Preferences/com.apple.commerce AutoUpdate
+  # Services that should stay off: loaded means on.
+  local svc
+  for svc in com.apple.screensharing:'Screen Sharing' com.openssh.sshd:'Remote Login'; do
+    if launchctl print system/${svc%%:*} >/dev/null 2>&1; then
+      _up_todo "${svc#*:} is on"$'\n'"    fix: System Settings > General > Sharing"
+    else qc_ok+=("${svc#*:} off"); fi
+  done
+  _up_note "posture ok: ${(j:, :)qc_ok}"
+  return 0
+}
+
 # Compromised eMudhra intermediate CAs (Apple support 149555, 2026-10-19).
 # Apple blocks the 12 certificates automatically in Safari, Mail and apps on
 # its frameworks, but curl, git, python3, ruby, perl and openssl trust
@@ -663,6 +765,7 @@ _up_sudo() {
     case $s in
       certs) (( $+commands[openssl] )) && _up_certs_pending && why+=(certs) ;;
       db)    (( $+commands[sudo] )) && _up_db_pending && why+=(db) ;;
+      qc)    (( $+commands[defaults] && $+commands[mise] )) && _up_qc_pending && why+=(qc) ;;
     esac
   done
   (( $#why )) || return 0
@@ -700,6 +803,7 @@ for s in $requested; do
     zsh)    _up_run "zsh plugins"     znap    _up_zsh    ;;
     keys)   _up_run "eSolia Keys"     keys    _up_keys   ;;
     mac)    _up_run "macOS updates"   softwareupdate _up_mac ;;
+    qc)     _up_run "macOS settings QC" defaults _up_qc  ;;   # Mac-only; mise and jq checked inside
     certs)  _up_run "eMudhra roots"   openssl _up_certs  ;;
     db)     _up_run "locate database" sudo    _up_db     ;;
     tools)  _up_run "Modern CLI tools" tools  _up_tools  ;;
