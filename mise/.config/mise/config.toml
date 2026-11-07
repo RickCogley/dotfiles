@@ -21,3 +21,59 @@ idiomatic_version_file_enable_tools = ["node"]
 [tools]
 fnox = "1.46.0"
 node = "26.13.0"
+
+# macOS preferences, declared (RickCogley/dotfiles#113). `up qc` runs
+# `mise bootstrap macos defaults status --missing` and applies drift; mise
+# writes only keys that differ, type included, and never deletes. User
+# domains only: mise has no sudo, so the login-window banner lives in `up`.
+# To stop managing a key, remove it here and `defaults delete` it by hand.
+# Sandboxed apps (Safari, Calendar, Music, Photos) are left out on purpose:
+# their plists need Full Disk Access for the terminal.
+
+[bootstrap.macos.defaults.NSGlobalDomain]
+NSRecentDocumentsLimit = 25
+AppleShowAllExtensions = true
+NSNavPanelExpandedStateForSaveMode = true   # Save panel opens expanded
+PMPrintingExpandedStateForPrint = true      # Print panel too
+NSDocumentSaveNewDocumentsToCloud = false   # new documents save locally
+AppleKeyboardUIMode = 3                     # Tab reaches every control
+KeyRepeat = 2
+InitialKeyRepeat = 15
+
+[bootstrap.macos.defaults."com.apple.CrashReporter"]
+UseUNC = true                               # "unexpectedly quit" as a notification
+
+[bootstrap.macos.defaults."com.apple.screencapture"]
+name = "JRC-Screenshot"
+# location is left out: a literal home path would be wrong on the other Mac,
+# and mise does not expand templates in these values (checked 2026-11-07).
+showsCursor = true
+disable-shadow = true
+
+[bootstrap.macos.defaults."com.apple.finder"]
+AppleShowAllFiles = true
+_FXShowPosixPathInTitle = true
+CreateDesktop = false                       # no icons on the Desktop
+QuitMenuItem = true
+FXEnableExtensionChangeWarning = false
+ShowPathbar = true
+ShowStatusBar = true
+_FXSortFoldersFirst = true
+FXDefaultSearchScope = "SCcf"               # search the current folder
+
+[bootstrap.macos.defaults."com.apple.NetworkBrowser"]
+EnableODiskBrowsing = true                  # Remote Disc
+
+[bootstrap.macos.defaults."com.apple.desktopservices"]
+DSDontWriteNetworkStores = true             # no .DS_Store on shares
+DSDontWriteUSBStores = true                 # nor on USB volumes
+
+[bootstrap.macos.defaults."com.apple.dock"]
+showhidden = true                           # hidden apps' icons go translucent
+autohide = true
+autohide-time-modifier = 0                  # no slide animation
+show-recents = false
+mru-spaces = false                          # Spaces keep their order
+
+[bootstrap.macos.defaults."com.apple.TextEdit"]
+RichText = false
