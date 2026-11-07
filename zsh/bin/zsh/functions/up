@@ -2,7 +2,7 @@
 # so it degrades quietly on a fresh machine instead of erroring out.
 #
 #   up            run every available step
-#   up brew       run one step (brew|mise|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|certs|db|tools|stale|vault|expiry)
+#   up brew       run one step (brew|mise|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|certs|db|tools|stale|docker|vault|expiry)
 #   up -n         dry run: list what would run
 #
 # Replaces the old `allup`, which called z4h/mas/brew-cu/dein — none installed.
@@ -15,7 +15,7 @@ local -a steps requested
 local s dry=0 failed=() ran=() todo=()
 local -F t0=$EPOCHREALTIME
 
-steps=(brew mise claude deno npm pnpm uv rust gh zsh keys mac certs db tools stale vault expiry)
+steps=(brew mise claude deno npm pnpm uv rust gh zsh keys mac certs db tools stale docker vault expiry)
 
 while (( $# )); do
   case "$1" in
@@ -444,6 +444,57 @@ _up_stale() {
   return 0
 }
 
+# Docker leftovers (dotfiles#107). Builds leave three kinds of waste that
+# nothing else removes; on 2026-11-07 they came to 9.67 GB of images and
+# 3.65 GB of build cache:
+#   - dangling images: the previous build of a tag that was built again
+#     (typst-pdf:local-test and friends). Untagged, so nothing can use them.
+#   - build cache: kept here for 7 days, so a rebuild this week stays fast.
+#   - old releases of images pushed to Cloudflare's container registry
+#     (typst-pdf, git-backup), each held twice: name:vX.Y.Z and its
+#     registry.cloudflare.com/<account>/name:vX.Y.Z tag. The registry keeps
+#     every version; locally the newest 2 per image stay for re-testing.
+# Tool images (pandoc, actionlint, veraPDF) and anything not pushed to the
+# Cloudflare registry are left alone. Skipped when OrbStack isn't running, so
+# `up` never starts it just to clean it.
+_up_docker() {
+  if (( $+commands[orbctl] )) && [[ $(orbctl status 2>/dev/null) != Running ]]; then
+    _up_note "OrbStack not running; skipped"; return 0
+  fi
+  docker info >/dev/null 2>&1 || { _up_note "Docker engine not reachable; skipped"; return 0; }
+
+  local -i keep=2
+  local repo tag id name line
+  local -a rows old
+  local -A seen kept
+  # `docker images` lists newest first, so the first IDs seen per image are kept.
+  rows=( ${(f)"$(docker images --format '{{.Repository}} {{.Tag}} {{.ID}}')"} )
+  for line in $rows; do
+    read -r repo tag id <<< "$line"
+    [[ $repo == registry.cloudflare.com/*/* && $tag == v[0-9]* ]] || continue
+    name=${repo:t}
+    if [[ -z ${seen[$name:$id]-} ]]; then
+      seen[$name:$id]=1
+      (( kept[$name]++ ))
+    fi
+    (( ${kept[$name]:-0} > keep )) || continue
+    old+=("$repo:$tag")
+    docker image inspect "$name:$tag" >/dev/null 2>&1 && old+=("$name:$tag")
+  done
+  if (( $#old )); then
+    _up_note "untag $#old old Cloudflare release tag(s), keeping the newest $keep per image (all stay in the registry)"
+    docker rmi $old >/dev/null || return 1
+  else
+    _up_note "no old Cloudflare release images"
+  fi
+  _up_note "dangling images"
+  docker image prune -f | tail -1
+  _up_note "build cache older than 7 days"
+  docker builder prune -f --filter until=168h | tail -1
+  _up_note "$(docker system df --format '{{.Type}}: {{.Size}}' | paste -sd ' ' - | sed 's/  */ /g')"
+  return 0
+}
+
 # Informational, not an update: reminds me what modern CLI tools are installed
 # (see the `tools` function — single source of truth). Always "succeeds".
 _up_tools() { tools; }
@@ -489,6 +540,7 @@ for s in $requested; do
     db)     _up_run "locate database" sudo    _up_db     ;;
     tools)  _up_run "Modern CLI tools" tools  _up_tools  ;;
     stale)  _up_run "Stale dev servers" ps    _up_stale  ;;
+    docker) _up_run "Docker leftovers" docker _up_docker ;;
     vault)  _up_run "Vault keys"      keys    _up_vault  ;;
     expiry) _up_run "Token expiry"    keys    _up_expiry ;;
     *)      print -u2 "up: unknown step '$s' (valid: ${(j:, :)steps})" ;;
