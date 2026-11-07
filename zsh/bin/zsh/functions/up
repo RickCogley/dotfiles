@@ -2,20 +2,36 @@
 # so it degrades quietly on a fresh machine instead of erroring out.
 #
 #   up            run every available step
-#   up brew       run one step (brew|mise|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|certs|db|tools|stale|docker|vault|expiry)
+#   up brew       run one step (brew|mise|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|certs|db|tools|stale|docker|cache|vault|expiry)
 #   up -n         dry run: list what would run
+#
+# Steps that need root (certs, db) share one sudo prompt at the start of the
+# run, and only when one of them has work to do (see _up_sudo).
 #
 # Replaces the old `allup`, which called z4h/mas/brew-cu/dein — none installed.
 
 emulate -L zsh
 setopt local_options no_unset
 zmodload zsh/datetime   # EPOCHREALTIME: float clock, no fork per reading
+# zstat only: a bare `zmodload zsh/stat` would shadow /usr/bin/stat, whose
+# BSD flags _up_db relies on.
+zmodload -F zsh/stat b:zstat
 
 local -a steps requested
 local s dry=0 failed=() ran=() todo=()
 local -F t0=$EPOCHREALTIME
+local -i sudo_keepalive=0
+# Function-scoped in zsh: runs when `up` returns, also after a Ctrl-C.
+trap '(( sudo_keepalive )) && kill $sudo_keepalive 2>/dev/null' EXIT
 
-steps=(brew mise claude deno npm pnpm uv rust gh zsh keys mac certs db tools stale docker vault expiry)
+steps=(brew mise claude deno npm pnpm uv rust gh zsh keys mac certs db tools stale docker cache vault expiry)
+
+# The two roots the compromised eMudhra intermediates chain to (see _up_certs),
+# as /etc/ssl/cert.pem labels them.
+local -a cert_subjects=(
+  '=== /C=IN/OU=emSign PKI/O=eMudhra Technologies Limited/CN=emSign ECC Root CA - G3'
+  '=== /C=GB/ST=Greater Manchester/L=Salford/O=Comodo CA Limited/CN=AAA Certificate Services'
+)
 
 while (( $# )); do
   case "$1" in
@@ -101,8 +117,12 @@ _up_brew() {
   local greedy
   greedy=$(brew outdated --cask --greedy --quiet 2>/dev/null)
   [[ -n $greedy ]] && { _up_note "auto-updating casks that have drifted:"; print -l -- ${(f)greedy} }
+  # autoremove: formulae installed only as dependencies that nothing needs now.
+  # --prune=all: plain `cleanup -s` keeps the downloads of installed versions
+  # (4.9 GB on 2026-11-07); they are re-fetched on a reinstall, so drop them.
   _up_note "cleanup"
-  brew cleanup -s
+  brew autoremove
+  brew cleanup -s --prune=all
   _up_note "doctor"
   brew doctor || true   # doctor exits non-zero on cosmetic warnings
   return 0
@@ -344,6 +364,23 @@ _up_expiry() {
 _up_mac() {
   _up_note "pending macOS software updates (list only — install manually)"
   softwareupdate --list 2>&1 | sed '/^$/d'
+  # What matters before installing one: room for the installer (it wants
+  # 20-30 GB), local snapshots that may be holding space, and a backup that
+  # is recent and reachable. Listing snapshots needs no sudo; thinning does.
+  local free last
+  local -a snaps
+  free=$(df -h / | awk 'NR == 2 { print $4 }')
+  snaps=( ${(f)"$(tmutil listlocalsnapshots / 2>/dev/null \
+    | sed -n 's/^com\.apple\.TimeMachine\.\(.*\)\.local$/\1/p')"} )
+  # Hourly snapshots are normal (24 a day); the oldest shows whether one is
+  # stuck. latestbackup prints nothing, with exit 0, when the disk is away.
+  _up_note "free space ${free}B; ${#snaps} local snapshot(s)${snaps:+, oldest ${snaps[1]%-*}}"
+  last=$(tmutil latestbackup -t 2>/dev/null)
+  if [[ -n $last ]]; then
+    _up_note "last Time Machine backup: $last"
+  else
+    _up_note "%F{3}no Time Machine backup disk reachable%f — back up before installing"
+  fi
   return 0
 }
 
@@ -361,13 +398,16 @@ _up_mac() {
 # Lives in `up` because a macOS update can put the file back: each run
 # re-checks and asks for sudo only when a root has returned. Once Apple's
 # update ships the roots stay gone, this reports so, and the step can go.
+_up_certs_pending() {  # true while either root is back in cert.pem
+  local s
+  for s in $cert_subjects; do grep -qxF -- "$s" /etc/ssl/cert.pem && return 0; done
+  return 1
+}
+
 _up_certs() {
   local pem=/etc/ssl/cert.pem s t rc
   local -a subjects present
-  subjects=(
-    '=== /C=IN/OU=emSign PKI/O=eMudhra Technologies Limited/CN=emSign ECC Root CA - G3'
-    '=== /C=GB/ST=Greater Manchester/L=Salford/O=Comodo CA Limited/CN=AAA Certificate Services'
-  )
+  subjects=($cert_subjects)
   for s in $subjects; do grep -qxF -- "$s" $pem && present+=("$s"); done
   if (( ! $#present )); then _up_note "eMudhra-chained roots already absent from $pem"; return 0; fi
   # Both present means this is Apple's file (first run, or an update replaced
@@ -495,19 +535,105 @@ _up_docker() {
   return 0
 }
 
+# Caches that tools fill and never empty (dotfiles#109). On 2026-11-07: npm
+# 15 GB, uv 6.7 GB, puppeteer 5.9 GB (11 Chrome builds back to 131),
+# playwright-mcp 3 GB (25 mcp-chrome builds), node-gyp 1.4 GB (24 header sets
+# for 3 installed Nodes), ~/Library/Logs 1 GB. What goes is re-fetched on
+# demand, except old browser builds, which get a 90-day grace and a recovery
+# hint; nothing needs sudo; Trash and Downloads are user data, measured and
+# left alone (du on both takes ~10 s, worth it before a macOS update).
+_up_cache() {
+  local d f out rc
+  local -a all old sz
+  local -aU keep
+  local -i bytes i
+  if (( $+commands[npm] )); then
+    _up_note "npm cache: verify and garbage-collect"
+    npm cache verify </dev/null || return 1
+  fi
+  # A uvx-served tool holds the cache lock; UV_LOCK_TIMEOUT (uv 0.9.16+)
+  # bounds the wait, and the prune is skipped this run instead of hanging.
+  if (( $+commands[uv] )); then
+    _up_note "uv cache: prune unreachable objects"
+    out=$(UV_LOCK_TIMEOUT=15 uv cache prune 2>&1); rc=$?
+    print -r -- "$out"
+    if (( rc )); then
+      if [[ $out == *(waiting for lock|another uv process|acquire lock)* ]]; then
+        _up_note "uv cache in use; prune skipped this run"
+      else
+        return 1
+      fi
+    fi
+  fi
+  # Browser builds. Each puppeteer version pins one Chrome, fetched at `npm
+  # install` and never again, and each playwright-mcp release pins one
+  # mcp-chrome build by hash, so a build in use can't be told from a dead one
+  # by its files (access times aren't dependable here). Rule: the newest per
+  # directory stays, and so does anything downloaded in the last 90 days;
+  # the rest goes. A project pinned to an older puppeteer gets it back with
+  # `npx puppeteer browsers install chrome`; playwright-mcp re-fetches its own.
+  for d in ~/.cache/puppeteer/chrome ~/.cache/puppeteer/chrome-headless-shell \
+           ~/Library/Caches/ms-playwright ~/Library/Caches/ms-playwright-mcp; do
+    [[ $d == */puppeteer/* ]] && all=( $d/*(N/om) ) || all=( $d/mcp-chrome-*(N/om) )
+    (( $#all > 1 )) || continue
+    old=()
+    for f in $all[2,-1]; do   # all but the newest, downloaded over 90 days ago
+      zstat -A sz +mtime -- $f 2>/dev/null && (( EPOCHSECONDS - sz[1] > 90 * 86400 )) && old+=($f)
+    done
+    (( $#old )) || continue
+    _up_note "${d:h:t}/${d:t}: remove $#old build(s) older than 90 days, keep ${all[1]:t}"
+    rm -rf -- $old
+  done
+  # node-gyp caches a header set per Node version it built against; keep the
+  # ones for Nodes still installed: mise's, Homebrew's, and whichever is on
+  # PATH here (inside a pinned repo that is the repo's).
+  if [[ -d ~/Library/Caches/node-gyp ]]; then
+    keep=()
+    (( $+commands[mise] && $+commands[jq] )) \
+      && keep+=( ${(f)"$(mise ls node --json 2>/dev/null | jq -r '.[].version')"} )
+    (( $+commands[brew] )) && [[ -x $(brew --prefix)/bin/node ]] \
+      && keep+=( ${$($(brew --prefix)/bin/node --version 2>/dev/null)#v} )
+    (( $+commands[node] )) && keep+=( ${$(node --version 2>/dev/null)#v} )
+    keep=( ${keep:#} )
+    old=()
+    for d in ~/Library/Caches/node-gyp/*(N/); do
+      (( ${keep[(Ie)${d:t}]} )) || old+=($d)
+    done
+    if (( $#keep && $#old )); then
+      _up_note "node-gyp: remove headers for $#old Node version(s) no longer installed (keeping ${(j:, :)keep})"
+      rm -rf -- $old
+    fi
+  fi
+  # Log files older than 30 days. Apps keep writing to the newest file; a
+  # deleted open file just vanishes when it is closed.
+  all=( ~/Library/Logs/**/*(.N^mh-720) )
+  if (( $#all )); then
+    bytes=0
+    for f in $all; do zstat -A sz +size -- $f 2>/dev/null && (( bytes += sz[1] )); done
+    _up_note "logs: remove $#all file(s) older than 30 days ($(( bytes / 1048576 )) MB)"
+    # In batches: a year of Homebrew and simulator logs can pass ARG_MAX.
+    for (( i = 1; i <= $#all; i += 500 )); do rm -f -- $all[i,i+499]; done
+  fi
+  _up_note "left alone: Trash $(du -sh ~/.Trash 2>/dev/null | awk '{ print $1 }'), Downloads $(du -sh ~/Downloads 2>/dev/null | awk '{ print $1 }')"
+  return 0
+}
+
 # Informational, not an update: reminds me what modern CLI tools are installed
 # (see the `tools` function — single source of truth). Always "succeeds".
 _up_tools() { tools; }
+
+_up_db_pending() {  # Wednesdays, and not yet rebuilt today (the db's own mtime)
+  [[ $(date +%u) == 3 ]] || return 1
+  ! [[ -f /var/db/locate.database \
+       && $(stat -f %Sm -t %F /var/db/locate.database) == $(date +%F) ]]
+}
 
 _up_db() {
   # Weekly only: locate db needs sudo, don't prompt on every run.
   if [[ $(date +%u) != 3 ]]; then _up_skip "locate db (Wednesdays only)"; return 0; fi
   # Already rebuilt today? Skip, so a second `up` in one day doesn't re-prompt
-  # for sudo and redo the work. Use the database's own mtime as the marker.
-  if [[ -f /var/db/locate.database \
-        && $(stat -f %Sm -t %F /var/db/locate.database) == $(date +%F) ]]; then
-    _up_skip "locate db (already rebuilt today)"; return 0
-  fi
+  # for sudo and redo the work.
+  if ! _up_db_pending; then _up_skip "locate db (already rebuilt today)"; return 0; fi
   _up_note "refreshing locate database (needs sudo)"
   # macOS's locate.updatedb drops privs via `su -fm nobody`, which is broken on
   # this machine (triggers a password-change prompt -> "su: Sorry"). Replicate its
@@ -521,6 +647,44 @@ _up_db() {
   sudo rm -f "$fcodes"
   return $rc
 }
+
+# One sudo prompt per run (dotfiles#109). Asks only when a requested step has
+# root work to do this run: certs when a root is back in cert.pem, db on its
+# day. sudo's ticket lasts 5 minutes per terminal and a brew upgrade outlasts
+# it, so a background loop refreshes the ticket until `up` returns (the EXIT
+# trap above ends it, after a Ctrl-C too) and gives up after 2 hours anyway.
+# InfoSec: extends the sudo timestamp only for this run and this terminal;
+# nothing is written to sudoers. With pam_tid the prompt is a Touch ID dialog.
+_up_sudo() {
+  local s
+  local -a why
+  (( dry )) && return 0
+  for s in $requested; do
+    case $s in
+      certs) (( $+commands[openssl] )) && _up_certs_pending && why+=(certs) ;;
+      db)    (( $+commands[sudo] )) && _up_db_pending && why+=(db) ;;
+    esac
+  done
+  (( $#why )) || return 0
+  if ! sudo -n true 2>/dev/null; then
+    print -P "%F{5}→%f sudo needed by ${(j:, :)why}; asking once"
+    sudo -v || return 1
+  fi
+  # Detached from the terminal: otherwise its `sleep` would hold a pipe such
+  # as `up | tee` open for up to a minute after the run. The sleep runs as a
+  # job so the TERM from the EXIT trap takes it down too, not just the loop.
+  ( local -i i; local nap
+    trap 'kill ${nap:-} 2>/dev/null; exit' TERM
+    for (( i = 0; i < 120; i++ )); do
+      kill -0 $$ 2>/dev/null || exit
+      sudo -n -v 2>/dev/null
+      sleep 60 & nap=$!; wait $nap
+    done ) </dev/null >/dev/null 2>&1 &!
+  sudo_keepalive=$!
+  return 0
+}
+
+_up_sudo || print -P "%F{3}sudo not granted; steps that need it will ask%f"
 
 for s in $requested; do
   case $s in
@@ -541,6 +705,7 @@ for s in $requested; do
     tools)  _up_run "Modern CLI tools" tools  _up_tools  ;;
     stale)  _up_run "Stale dev servers" ps    _up_stale  ;;
     docker) _up_run "Docker leftovers" docker _up_docker ;;
+    cache)  _up_run "Tool caches"     du      _up_cache  ;;
     vault)  _up_run "Vault keys"      keys    _up_vault  ;;
     expiry) _up_run "Token expiry"    keys    _up_expiry ;;
     *)      print -u2 "up: unknown step '$s' (valid: ${(j:, :)steps})" ;;
