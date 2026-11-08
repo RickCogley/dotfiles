@@ -105,13 +105,25 @@
       "WebFetch(domain:www.contributor-covenant.org)"
     ],
     "deny": [
-      "Bash(rm -rf:*)",
       "Bash(sudo:*)",
       "Bash(killall:*)"
     ]
   },
   "model": "fable",
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I \"$HOME/.dotfiles/claude/.claude/hooks/guard-recursive-delete.py\"",
+            "timeout": 10,
+            "onFailure": "block"
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [
