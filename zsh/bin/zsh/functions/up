@@ -2,7 +2,7 @@
 # so it degrades quietly on a fresh machine instead of erroring out.
 #
 #   up            run every available step
-#   up brew       run one step (brew|mise|claude|deno|npm|pnpm|uv|rust|gh|zsh|keys|mac|qc|certs|db|tools|stale|docker|cache|vault|expiry)
+#   up brew       run one step (brew|mise|claude|deno|npm|pnpm|uv|rust|gh|zsh|mac|qc|certs|db|tools|stale|docker|cache|keys|vault|expiry)
 #   up -n         dry run: list what would run
 #
 # Steps that need root (certs, db, qc's login banner) share one sudo prompt at
@@ -24,7 +24,7 @@ local -i sudo_keepalive=0
 # Function-scoped in zsh: runs when `up` returns, also after a Ctrl-C.
 trap '(( sudo_keepalive )) && kill $sudo_keepalive 2>/dev/null' EXIT
 
-steps=(brew mise claude deno npm pnpm uv rust gh zsh keys mac qc certs db tools stale docker cache vault expiry)
+steps=(brew mise claude deno npm pnpm uv rust gh zsh mac qc certs db tools stale docker cache keys vault expiry)
 
 # The login-window banner `up qc` keeps (a system domain, so sudo; mise's
 # preference engine is user-only).
@@ -301,6 +301,9 @@ _up_zsh() {
   znap pull
 }
 
+# The three eSolia Keys reports run together at the end: this release check,
+# then the vault copies, then token expiry (last on purpose, see _up_expiry).
+#
 # eSolia Keys: report only. Installing a release replaces the code that
 # handles secrets and asks for an Allow click, so it stays a deliberate
 # `keys upgrade`. --check verifies the newest signed keys-v* tag against the
