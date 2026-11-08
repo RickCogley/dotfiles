@@ -468,7 +468,6 @@ _up_qc() {
     -- /usr/libexec/ApplicationFirewall/socketfilterfw --getstealthmode
   _up_qc_check 'Screen lock' 'immediate' 'System Settings > Lock Screen > Require password: Immediately' \
     -- sysadminctl -screenLock status
-  local key
   for key in AutomaticDownload CriticalUpdateInstall ConfigDataInstall AutomaticallyInstallMacOSUpdates; do
     _up_qc_check -x "Auto-update $key" 1 'System Settings > General > Software Update > Automatic Updates' \
       -- defaults read /Library/Preferences/com.apple.SoftwareUpdate $key
