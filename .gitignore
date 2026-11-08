@@ -44,3 +44,6 @@ gpg/.gnupg/trustdb.gpg
 # ~/.gitignore_global ignores .npmrc everywhere; this one holds no secrets
 # (token comes from NODE_AUTH_TOKEN) and is tracked on purpose.
 !npm/.npmrc
+
+# Python bytecode from hooks run with python3
+__pycache__/
