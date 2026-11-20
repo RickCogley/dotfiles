@@ -225,9 +225,10 @@ From 2026-12-01 Cloudflare bills observability as one metered pipeline
 ingestion stream alongside logs**, so both rates matter.
 
 **Default to `1` on both streams; sample only a Worker measured to need
-it.** Measured 2026-10-03, the whole eSolia account is ~2.6M invocations a
-month, roughly 10–13 GB with everything at 100% against 50 GB included, so
-sampling buys nothing yet and costs diagnostic fidelity:
+it.** Measured 2026-11-20 over 30 days with everything at 100%, the eSolia
+account ingested 22.9 GB (traces 14.0, logs 8.8) and JAC 6.2 GB, each against
+its own 50 GB included, so sampling buys nothing yet and costs diagnostic
+fidelity:
 
 ```jsonc
 "observability": {
